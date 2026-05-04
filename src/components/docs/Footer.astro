@@ -1,0 +1,37 @@
+---
+import Logo from "@/components/global/Logo.astro";
+import config from ".astro/config.generated.json";
+import { markdownify } from "@/utils/text";
+import { splitProtectedText, useTranslations } from "@/utils/core";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const t = useTranslations();
+const { copyright } = config.settings;
+
+const copyrightEnabled = copyright?.enable !== false;
+const copyrightText = copyright?.text || t("footer.copyright");
+const copyrightLine = copyrightEnabled
+  ? splitProtectedText(copyrightText).join(" / ")
+  : "";
+---
+
+<footer
+  role="contentinfo"
+  aria-label="Site footer"
+  class:list={["docs-footer", className]}>
+  <div class="docs-footer-inner">
+    <Logo loading="lazy" />
+    {
+      copyrightLine && (
+        <p
+          class="docs-footer-copyright md:text-end"
+          set:html={markdownify(copyrightLine)}
+        />
+      )
+    }
+  </div>
+</footer>

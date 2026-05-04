@@ -1,6 +1,7 @@
 ---
 import App from "@/layouts/App.astro";
 import DocsHeader from "@/components/docs/header/Header.astro";
+import DocsFooter from "@/components/docs/Footer.astro";
 import Sidebar from "@/components/docs/Sidebar.astro";
 import Toc from "@/components/docs/Toc.astro";
 import Pagination from "@/components/docs/Pagination.astro";
@@ -36,6 +37,7 @@ const seoProps = {
   <DocsHeader />
   <div class="w-full pt-(--docs-header-h)">
     <Sidebar tree={tree} activeTrail={activeTrail} />
+    {/* Footer stays inside this offset wrapper so the fixed ToC's left border doesn't draw through it. */}
     <div class="lg:pl-(--docs-sidebar-w) xl:pr-(--docs-toc-w)">
       <div class="mx-auto max-w-4xl px-4 py-8 lg:px-8">
         <article class="docs-content-col">
@@ -56,11 +58,12 @@ const seoProps = {
           <div class="prose-styles docs-page-body">
             <slot />
           </div>
-          <footer class="docs-page-footer">
+          <footer class="docs-page-footer" aria-label="Page navigation">
             <Pagination pagination={pagination} />
           </footer>
         </article>
       </div>
+      <DocsFooter />
     </div>
     <!-- TOC Container (Fixed Right) -->
     <aside
