@@ -1,0 +1,75 @@
+@layer components {
+  /* FileTree */
+  .prose-styles .file-tree ul {
+    @apply m-0 list-none border-none p-0;
+  }
+
+  .prose-styles .file-tree li {
+    @apply relative m-0 py-1 pl-7 text-white/90;
+    line-height: 1.2rem;
+  }
+
+  .prose-styles .file-tree > ul > li {
+    @apply pl-6;
+  }
+
+  .prose-styles .file-tree li > p {
+    @apply m-0 inline p-0;
+  }
+
+  .prose-styles .file-tree ul ul {
+    @apply pl-5;
+  }
+
+  .prose-styles .file-tree ul ul > li {
+    background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.1)
+    );
+    background-size: 12px 1px;
+    background-position: 0 1rem;
+    background-repeat: no-repeat;
+  }
+
+  .prose-styles .file-tree li::after {
+    content: none;
+    @apply top-auto left-auto h-auto w-auto rounded-none bg-transparent shadow-none;
+  }
+
+  .prose-styles .file-tree ul ul > li::after {
+    content: "";
+    @apply absolute top-0 bottom-0 left-0 w-px bg-white/10;
+  }
+
+  .prose-styles .file-tree ul ul > li:last-child::after {
+    @apply bottom-auto h-4;
+  }
+
+  .prose-styles .file-tree li::before {
+    @apply absolute top-1 left-2 flex h-6 w-4 items-center justify-center rounded-none bg-transparent text-base leading-none shadow-none;
+  }
+
+  .prose-styles .file-tree > ul > li::before {
+    @apply left-1;
+  }
+
+  .prose-styles .file-tree li:has(> ul)::before {
+    content: "\25BE";
+    @apply text-lg;
+  }
+
+  .prose-styles .file-tree li:not(:has(> ul))::before {
+    content: "\00B7";
+    @apply text-text-default text-xl font-bold opacity-80;
+  }
+
+  /* Callout */
+  .prose-styles .callout-content > *:first-child {
+    @apply mt-0;
+  }
+
+  .prose-styles .callout-content > *:last-child {
+    @apply mb-0;
+  }
+}

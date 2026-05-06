@@ -1,0 +1,49 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+import { toSentenceCase } from "@/utils/text";
+
+interface Props extends HTMLAttributes<"aside"> {
+  type?: "info" | "tip" | "warning" | "danger";
+  title?: string;
+}
+
+const { type = "info", title, class: className, ...rest } = Astro.props;
+const configMap = {
+  info: {
+    icon: "Info",
+    classes: "bg-primary/10 border-primary/20 [&>div>svg]:text-primary",
+  },
+  tip: {
+    icon: "Lightbulb",
+    classes: "bg-green-500/10 border-green-500/20 [&>div>svg]:text-green-500",
+  },
+  warning: {
+    icon: "TriangleAlert",
+    classes: "bg-secondary/10 border-secondary/20 [&>div>svg]:text-secondary",
+  },
+  danger: {
+    icon: "OctagonAlert",
+    classes: "bg-red-500/10 border-red-500/20 [&>div>svg]:text-red-500",
+  },
+} as const;
+
+const activeConfig = configMap[type];
+const displayTitle = title || toSentenceCase(type);
+---
+
+<aside
+  class:list={[
+    "callout my-6 rounded-lg border p-4",
+    activeConfig.classes,
+    className,
+  ]}
+  {...rest}>
+  <div class="mb-2 flex items-center gap-2 font-semibold text-white">
+    <LucideIcon icon={activeConfig.icon} class="h-5 w-5" aria-hidden="true" />
+    <span>{displayTitle}</span>
+  </div>
+  <div class="callout-content text-white/80">
+    <slot />
+  </div>
+</aside>

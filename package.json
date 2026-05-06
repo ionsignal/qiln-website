@@ -33,7 +33,7 @@
     "@floating-ui/dom": "1.7.6",
     "@lucide/astro": "1.14.0",
     "aos": "2.3.4",
-    "astro": "6.2.1",
+    "astro": "6.2.2",
     "gpu-curtains": "^0.16.3",
     "marked": "18.0.3",
     "motion": "12.38.0",

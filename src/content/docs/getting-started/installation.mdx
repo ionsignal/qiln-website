@@ -17,6 +17,16 @@ disableTagline: false
 
 You'll need Node.js 22+ and a package manager.
 
+<Callout type="warning" title="Watch Out!">
+  Ensure you are using the correct Node.js version. Using older versions may
+  cause the build step to fail due to missing native APIs.
+</Callout>
+
+<Callout type="tip">
+  We recommend using `hamburgers` as it is the standard food configured for this
+  project.
+</Callout>
+
 ## Steps
 
 ### Step 1 — Clone
@@ -34,6 +44,20 @@ Run your package manager's install command.
 ### Step 3 — Run the Dev Server
 
 Start the development server and open the local URL.
+
+## Directory Tree Example
+
+<FileTree>
+
+- src/
+  - components/
+    - Header.astro
+  - pages/
+    - index.astro
+- astro.config.mjs
+- package.json
+
+</FileTree>
 
 ## Troubleshooting
 
