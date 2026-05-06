@@ -1,6 +1,7 @@
 ---
 import App from "@/layouts/App.astro";
 import DocsHeader from "@/components/docs/header/Header.astro";
+import DocsFooter from "@/components/docs/Footer.astro";
 import Sidebar from "@/components/docs/Sidebar.astro";
 import Toc from "@/components/docs/Toc.astro";
 import Pagination from "@/components/docs/Pagination.astro";
@@ -56,13 +57,13 @@ const seoProps = {
           <div class="prose-styles docs-page-body">
             <slot />
           </div>
-          <footer class="docs-page-footer">
+          <footer class="docs-page-footer" aria-label="Page navigation">
             <Pagination pagination={pagination} />
           </footer>
         </article>
       </div>
+      <DocsFooter />
     </div>
-    <!-- TOC Container (Fixed Right) -->
     <aside
       class="border-border-light has-customized-scrollbar fixed inset-e-0 top-(--docs-header-h) z-40 hidden h-[calc(100vh-var(--docs-header-h))] w-(--docs-toc-w) overflow-y-auto border-l py-8 pr-4 pl-6 xl:block">
       <Toc headings={headings} entry={entry} />

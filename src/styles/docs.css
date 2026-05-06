@@ -147,3 +147,19 @@ main.docs-layout {
 .docs-pagination-icon {
   @apply h-5 w-5 shrink-0;
 }
+
+.docs-footer {
+  @apply border-border-light mt-12 border-t;
+}
+
+.docs-footer-inner {
+  @apply flex flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between lg:px-8;
+}
+
+.docs-footer-copyright {
+  @apply text-text-default text-sm leading-relaxed opacity-80;
+}
+
+.docs-footer .logo-wrapper .logo-text {
+  @apply text-light text-base font-normal;
+}
