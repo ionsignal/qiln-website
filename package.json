@@ -1,10 +1,19 @@
 {
-  "name": "arachnid-website",
-  "description": "",
+  "name": "qiln-website",
+  "description": "Marketing and documentation site for Qiln, IonSignal's open-source GPU-aware workspace orchestration engine.",
   "type": "module",
   "version": "0.5.0",
   "license": "UNLICENSED",
   "private": true,
+  "author": "IonSignal, Inc.",
+  "homepage": "https://qiln.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ionsignal/qiln-website.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ionsignal/qiln-website/issues"
+  },
   "scripts": {
     "dev": "npm run toml:watch & astro dev",
     "toml:build": "node scripts/toml-watcher.mjs",
@@ -27,22 +36,22 @@
   },
   "overrides": {
     "yaml": "2.8.3",
-    "postcss": "^8.5.12"
+    "postcss": "8.5.12"
   },
   "dependencies": {
     "@floating-ui/dom": "1.7.6",
     "@lucide/astro": "1.14.0",
     "aos": "2.3.4",
     "astro": "6.2.2",
-    "gpu-curtains": "^0.16.3",
+    "gpu-curtains": "0.16.3",
     "marked": "18.0.3",
     "motion": "12.38.0",
     "plyr": "3.8.4",
     "preline": "4.1.3"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.9",
-    "@astrojs/mdx": "^5.0.4",
+    "@astrojs/check": "0.9.9",
+    "@astrojs/mdx": "5.0.4",
     "@astrojs/sitemap": "3.7.2",
     "@realfavicongenerator/generate-favicon": "0.8.3",
     "@realfavicongenerator/image-adapter-node": "0.8.3",
