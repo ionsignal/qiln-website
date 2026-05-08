@@ -1,0 +1,21 @@
+---
+interface Props {
+  label: string;
+  icon?: string;
+}
+
+const { label, icon } = Astro.props;
+
+const preferredSlug = label
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, "-")
+  .replace(/^-+|-+$/g, "");
+---
+
+<section
+  data-code-tab
+  data-label={label}
+  data-slug={preferredSlug}
+  data-icon={icon ?? ""}>
+  <slot />
+</section>

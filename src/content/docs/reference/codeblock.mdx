@@ -1,0 +1,196 @@
+---
+title: "Codeblock Reference"
+sidebarLabel: "Codeblock"
+description: "Complete codeblock configuration reference."
+order: 99
+---
+
+import { Code } from "astro:components";
+import {
+  transformerNotationDiff,
+  transformerNotationHighlight,
+  transformerNotationFocus,
+} from "@shikijs/transformers";
+
+## Configuration File
+
+All site-level configuration lives in `src/config/config.toml`. The same
+shape is supported in three formats — pick whichever your tooling prefers.
+
+<CodeTabs syncKey="config-format" label="Configuration formats">
+  <CodeTab label="qiln.toml">
+
+```toml
+[server]
+port = 8080
+host = "127.0.0.1"
+```
+
+  </CodeTab>
+  <CodeTab label="qiln.yaml">
+
+```yaml
+server:
+  port: 8080
+  host: 127.0.0.1
+```
+
+  </CodeTab>
+  <CodeTab label="qiln.json">
+
+```json
+{
+  "server": {
+    "port": 8080,
+    "host": "127.0.0.1"
+  }
+}
+```
+
+  </CodeTab>
+</CodeTabs>
+
+## Database
+
+The same `syncKey` ties this group to the one above — clicking a tab in
+either group should switch both in lockstep.
+
+<CodeTabs syncKey="config-format" label="Configuration formats">
+  <CodeTab label="qiln.toml">
+
+```toml
+[database]
+url = "postgres://localhost/qiln"
+```
+
+  </CodeTab>
+  <CodeTab label="qiln.yaml">
+
+```yaml
+database:
+  url: postgres://localhost/qiln
+```
+
+  </CodeTab>
+  <CodeTab label="qiln.json">
+
+```json
+{
+  "database": {
+    "url": "postgres://localhost/qiln"
+  }
+}
+```
+
+  </CodeTab>
+</CodeTabs>
+
+## Migrating from v0.4 to v0.5
+
+Diff/highlight/focus notation works in plain fenced blocks across the
+docs site — no shortcode wrapper needed.
+
+```toml
+[server]
+port = 8080
+bind = "0.0.0.0"          # [!code --]
+bind = "127.0.0.1"        # [!code ++]
+tls_enabled = true        # [!code highlight]
+log_level = "info"        # [!code focus]
+```
+
+Inside a `<CodeTab>` the same notation also applies:
+
+<CodeTabs label="Diff inside a tab">
+  <CodeTab label="qiln.toml">
+
+```toml
+[server]
+port = 8080         # [!code --]
+port = 9090         # [!code ++]
+```
+
+  </CodeTab>
+  <CodeTab label="qiln.yaml">
+
+```yaml
+server:
+  port: 9090
+```
+
+  </CodeTab>
+</CodeTabs>
+
+## Standalone titled block
+
+Authors who want a single titled block without tabs use Astro's built-in
+`<Code>` component. Note the explicit `theme` and `transformers` props —
+`<Code>` does NOT inherit `markdown.shikiConfig`.
+
+<figure class="titled-code">
+  <figcaption>qiln.toml</figcaption>
+  <Code
+    lang="toml"
+    code={`[server]
+port = 8080            # [!code --]
+port = 9090            # [!code ++]`}
+    theme="github-dark"
+    transformers={[
+      transformerNotationDiff(),
+      transformerNotationHighlight(),
+      transformerNotationFocus(),
+    ]}
+  />
+</figure>
+
+## Edge case: duplicate labels
+
+The slug-deduplication logic ensures unique IDs even when authors reuse
+a label. The script renames sibling slug collisions to `example`,
+`example-2`, etc.
+
+<CodeTabs label="Duplicate labels">
+  <CodeTab label="example">
+
+```toml
+first = true
+```
+
+  </CodeTab>
+  <CodeTab label="example">
+
+```toml
+second = true
+```
+
+  </CodeTab>
+  <CodeTab label="other">
+
+```toml
+third = true
+```
+
+  </CodeTab>
+</CodeTabs>
+
+## Edge case: emoji-only label
+
+Empty or non-alphanumeric slugs fall back to `tab-${index}` so the
+generated HTML id is always valid.
+
+<CodeTabs label="Emoji label test">
+  <CodeTab label="🎉">
+
+```toml
+party = true
+```
+
+  </CodeTab>
+  <CodeTab label="normal">
+
+```toml
+calm = true
+```
+
+  </CodeTab>
+</CodeTabs>

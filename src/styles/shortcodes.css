@@ -72,4 +72,101 @@
   .prose-styles .callout-content > *:last-child {
     @apply mb-0;
   }
+
+  /* CodeTabs */
+  .prose-styles .qiln-code-tabs {
+    @apply relative my-6 overflow-hidden rounded-lg border border-white/10 bg-white/5;
+  }
+
+  /* No-JS fallback: hide every panel after the first; the script swaps to [hidden] once ready. */
+  .prose-styles
+    .qiln-code-tabs:not(.qiln-code-tabs--ready)
+    > [data-code-tab]
+    ~ [data-code-tab] {
+    display: none;
+  }
+
+  .prose-styles .qiln-code-tabs__row {
+    @apply flex gap-2 border-b border-white/10 px-3;
+    min-height: 2.75rem; /* 44px: covers 28px button + 16px padding (CLS guard) */
+    align-items: center;
+  }
+
+  .prose-styles .qiln-code-tabs__tabs {
+    @apply flex gap-2;
+    align-items: center;
+  }
+
+  .prose-styles .qiln-code-tabs__tab {
+    @apply cursor-pointer rounded border-0 bg-transparent px-2 py-1 font-mono text-sm text-white/60;
+  }
+
+  .prose-styles .qiln-code-tabs__tab[aria-selected="true"] {
+    @apply bg-white/10 font-semibold text-white;
+  }
+
+  .prose-styles .qiln-code-tabs__tab:focus-visible {
+    @apply outline-2 outline-offset-2 outline-amber-400;
+  }
+
+  /* display: flex strips inline whitespace text nodes that otherwise render
+     as a ~24px-tall anonymous inline box above the <pre>. The padding reset
+     defeats the global `main.has-section-spacing-md section { padding-top:
+     3rem }` rule, which would otherwise inject a phantom row above every
+     code panel since <section> elements inherit it. */
+  .prose-styles .qiln-code-tabs [data-code-tab] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+  }
+
+  .prose-styles .qiln-code-tabs [data-code-tab] pre {
+    @apply m-0 overflow-x-auto rounded-none p-4;
+  }
+
+  .prose-styles button.qiln-copy {
+    @apply inline-flex cursor-pointer items-center justify-center rounded border border-white/10 bg-white/5 p-1.5 text-white/50 transition-colors;
+    margin-inline-start: auto;
+    margin-block: 0;
+  }
+
+  .prose-styles button.qiln-copy:hover,
+  .prose-styles button.qiln-copy:focus-visible {
+    @apply bg-white/10 text-white/90;
+  }
+
+  .prose-styles button.qiln-copy:focus-visible {
+    @apply outline-2 outline-offset-2 outline-amber-400;
+  }
+
+  .prose-styles button.qiln-copy--success {
+    @apply border-emerald-400/30 bg-emerald-400/10 text-emerald-400;
+  }
+
+  .prose-styles button.qiln-copy svg {
+    @apply h-4 w-4;
+  }
+
+  /* @shikijs/transformers output classes (apply globally to fenced blocks) */
+  .prose-styles .has-diff .line.diff.add {
+    background: rgba(34, 197, 94, 0.12);
+  }
+
+  .prose-styles .has-diff .line.diff.remove {
+    background: rgba(239, 68, 68, 0.12);
+  }
+
+  .prose-styles .has-highlighted .line.highlighted {
+    background: rgba(245, 166, 35, 0.1);
+  }
+
+  .prose-styles .has-focused .line:not(.focused) {
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+
+  .prose-styles .has-focused:hover .line:not(.focused) {
+    opacity: 1;
+  }
 }

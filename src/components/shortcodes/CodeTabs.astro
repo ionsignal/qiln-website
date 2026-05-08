@@ -1,0 +1,259 @@
+---
+interface Props {
+  syncKey?: string;
+  label?: string;
+}
+
+const { syncKey, label } = Astro.props;
+const groupId = crypto.randomUUID().slice(0, 8);
+---
+
+<div
+  data-code-tabs
+  data-group-id={groupId}
+  data-sync-key={syncKey ?? ""}
+  data-label={label ?? "Code examples"}
+  class="qiln-code-tabs">
+  <slot />
+</div>
+
+<script>
+  // Map root → activate fn so the doc-level sync listener can call activate
+  // directly instead of tab.click() (which would recurse via the click handler).
+  const activators = new WeakMap<
+    Element,
+    (tab: HTMLElement, focusOpt?: boolean, emitEvent?: boolean) => void
+  >();
+
+  let syncListenerBound = false;
+
+  // Inline SVGs because Astro components don't render inside client scripts.
+  const COPY_ICON_SVG =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>';
+  const CHECK_ICON_SVG =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  const STORAGE_PREFIX = "qiln:tabs:";
+
+  function readStored(syncKey: string): string | null {
+    try {
+      return localStorage.getItem(STORAGE_PREFIX + syncKey);
+    } catch {
+      return null;
+    }
+  }
+
+  function writeStored(syncKey: string, slug: string): void {
+    try {
+      localStorage.setItem(STORAGE_PREFIX + syncKey, slug);
+    } catch {
+      // private mode / quota — silent fallback
+    }
+  }
+
+  function initCodeTabs() {
+    if (!syncListenerBound) {
+      syncListenerBound = true;
+      document.addEventListener("qiln:tabchange", (e: Event) => {
+        const detail = (e as CustomEvent).detail as {
+          syncKey: string;
+          slug: string;
+        };
+        if (!detail?.syncKey) return;
+        document
+          .querySelectorAll<HTMLElement>(
+            `[data-code-tabs][data-sync-key="${CSS.escape(detail.syncKey)}"]`,
+          )
+          .forEach((root) => {
+            const activate = activators.get(root);
+            if (!activate) return;
+            const targetTab = root.querySelector<HTMLElement>(
+              `[role="tab"][data-slug="${CSS.escape(detail.slug)}"]`,
+            );
+            // focusOpt=false: don't steal focus from the source group.
+            // emitEvent=false: prevent the n-group dispatch cascade.
+            if (targetTab) activate(targetTab, false, false);
+          });
+      });
+
+      window.addEventListener("storage", (e: StorageEvent) => {
+        if (!e.key?.startsWith(STORAGE_PREFIX) || !e.newValue) return;
+        const syncKey = e.key.slice(STORAGE_PREFIX.length);
+        document.dispatchEvent(
+          new CustomEvent("qiln:tabchange", {
+            detail: { syncKey, slug: e.newValue },
+          }),
+        );
+      });
+    }
+
+    document
+      .querySelectorAll<HTMLElement>("[data-code-tabs]")
+      .forEach((root) => {
+        if (root.dataset.bound === "true") return;
+        root.dataset.bound = "true";
+
+        const panels = Array.from(
+          root.querySelectorAll<HTMLElement>(":scope > [data-code-tab]"),
+        );
+        if (panels.length === 0) return;
+
+        const usedSlugs = new Set<string>();
+        panels.forEach((panel, i) => {
+          let slug = (panel.dataset.slug || "").trim();
+          if (!slug) slug = `tab-${i}`;
+          let final = slug;
+          let n = 2;
+          while (usedSlugs.has(final)) {
+            final = `${slug}-${n++}`;
+          }
+          usedSlugs.add(final);
+          panel.dataset.slug = final;
+          panel.setAttribute("role", "tabpanel");
+          panel.id = `panel-${root.dataset.groupId}-${final}`;
+          panel.setAttribute(
+            "aria-labelledby",
+            `tab-${root.dataset.groupId}-${final}`,
+          );
+        });
+
+        const syncKey = root.dataset.syncKey ?? "";
+        let initialIdx = 0;
+        if (syncKey) {
+          const stored = readStored(syncKey);
+          if (stored) {
+            const found = panels.findIndex((p) => p.dataset.slug === stored);
+            if (found >= 0) initialIdx = found;
+          }
+        }
+
+        // WAI-ARIA: tablist owns only role=tab children, so the copy button must be a sibling.
+        const tabRow = document.createElement("div");
+        tabRow.className = "qiln-code-tabs__row";
+
+        const tablist = document.createElement("div");
+        tablist.setAttribute("role", "tablist");
+        tablist.setAttribute(
+          "aria-label",
+          root.dataset.label || "Code examples",
+        );
+        tablist.className = "qiln-code-tabs__tabs";
+
+        const tabButtons: HTMLButtonElement[] = panels.map((panel, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.setAttribute("role", "tab");
+          btn.id = `tab-${root.dataset.groupId}-${panel.dataset.slug}`;
+          btn.dataset.slug = panel.dataset.slug!;
+          btn.setAttribute("aria-controls", panel.id);
+          btn.setAttribute("aria-selected", i === initialIdx ? "true" : "false");
+          btn.tabIndex = i === initialIdx ? 0 : -1;
+          btn.textContent = panel.dataset.label!;
+          btn.className = "qiln-code-tabs__tab";
+          tablist.appendChild(btn);
+          return btn;
+        });
+        tabRow.appendChild(tablist);
+        root.prepend(tabRow);
+
+        root.classList.add("qiln-code-tabs--ready");
+        panels.forEach((p, i) => {
+          p.hidden = i !== initialIdx;
+        });
+
+        const activate = (
+          tab: HTMLElement,
+          focusOpt = true,
+          emitEvent = true,
+        ) => {
+          if (tab.getAttribute("aria-selected") === "true") return;
+          const idx = tabButtons.indexOf(tab as HTMLButtonElement);
+          if (idx < 0) return;
+          tabButtons.forEach((t, i) => {
+            t.setAttribute("aria-selected", i === idx ? "true" : "false");
+            t.tabIndex = i === idx ? 0 : -1;
+          });
+          panels.forEach((p, i) => {
+            p.hidden = i !== idx;
+          });
+          if (focusOpt) tab.focus();
+          if (emitEvent && syncKey) {
+            writeStored(syncKey, tab.dataset.slug!);
+            document.dispatchEvent(
+              new CustomEvent("qiln:tabchange", {
+                detail: { syncKey, slug: tab.dataset.slug },
+              }),
+            );
+          }
+        };
+        activators.set(root, activate);
+
+        tabButtons.forEach((btn, idx) => {
+          btn.addEventListener("click", () => activate(btn));
+          btn.addEventListener("keydown", (e) => {
+            const last = tabButtons.length - 1;
+            let next = -1;
+            if (e.key === "ArrowLeft") next = idx === 0 ? last : idx - 1;
+            else if (e.key === "ArrowRight") next = idx === last ? 0 : idx + 1;
+            else if (e.key === "Home") next = 0;
+            else if (e.key === "End") next = last;
+            else return;
+            e.preventDefault();
+            activate(tabButtons[next]);
+          });
+        });
+
+        // Reads the active panel at click time so it stays correct after tab switches.
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "qiln-copy";
+        copyBtn.setAttribute("aria-label", "Copy code");
+
+        const iconWrap = document.createElement("span");
+        iconWrap.className = "qiln-copy__icon";
+        iconWrap.setAttribute("aria-hidden", "true");
+        iconWrap.innerHTML = COPY_ICON_SVG;
+
+        // aria-live only announces on content mutation, not when injected pre-populated.
+        // Keep this region persistent and empty; mutate textContent on success/reset.
+        const liveRegion = document.createElement("span");
+        liveRegion.className = "sr-only";
+        liveRegion.setAttribute("aria-live", "polite");
+        liveRegion.setAttribute("aria-atomic", "true");
+
+        copyBtn.appendChild(iconWrap);
+        copyBtn.appendChild(liveRegion);
+
+        let resetTimer: number | undefined;
+        copyBtn.addEventListener("click", async () => {
+          const activeTab = tabButtons.find(
+            (t) => t.getAttribute("aria-selected") === "true",
+          );
+          const activePanel = activeTab
+            ? panels[tabButtons.indexOf(activeTab)]
+            : panels[0];
+          const text = activePanel?.querySelector("pre")?.textContent ?? "";
+          try {
+            await navigator.clipboard.writeText(text);
+            iconWrap.innerHTML = CHECK_ICON_SVG;
+            copyBtn.classList.add("qiln-copy--success");
+            liveRegion.textContent = "Copied";
+          } catch {
+            iconWrap.innerHTML = COPY_ICON_SVG;
+            copyBtn.classList.remove("qiln-copy--success");
+            liveRegion.textContent = "Copy failed";
+          }
+          if (resetTimer) clearTimeout(resetTimer);
+          resetTimer = window.setTimeout(() => {
+            iconWrap.innerHTML = COPY_ICON_SVG;
+            copyBtn.classList.remove("qiln-copy--success");
+            liveRegion.textContent = "";
+          }, 2000);
+        });
+        tabRow.appendChild(copyBtn);
+      });
+  }
+
+  document.addEventListener("DOMContentLoaded", initCodeTabs);
+  document.addEventListener("astro:page-load", initCodeTabs);
+</script>

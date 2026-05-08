@@ -2,7 +2,7 @@
 import { render } from "astro:content";
 import { getAllDocs } from "@/utils/docs";
 import Documentation from "@/layouts/Documentation.astro";
-import { FileTree, Callout } from "@/components/shortcodes";
+import { FileTree, Callout, CodeTabs, CodeTab } from "@/components/shortcodes";
 import type { DocEntry } from "@/types/docs";
 
 export async function getStaticPaths() {
@@ -23,5 +23,5 @@ const { Content, headings } = await render(entry);
 ---
 
 <Documentation entry={entry} headings={headings}>
-  <Content components={{ FileTree, Callout }} />
+  <Content components={{ FileTree, Callout, CodeTabs, CodeTab }} />
 </Documentation>

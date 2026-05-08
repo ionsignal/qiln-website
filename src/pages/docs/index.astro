@@ -1,6 +1,6 @@
 ---
 import { getEntry, render } from "astro:content";
-import { FileTree, Callout } from "@/components/shortcodes";
+import { FileTree, Callout, CodeTabs, CodeTab } from "@/components/shortcodes";
 import Documentation from "@/layouts/Documentation.astro";
 
 const entry = await getEntry("docs", "index");
@@ -12,5 +12,5 @@ const { Content, headings } = await render(entry);
 ---
 
 <Documentation entry={entry} headings={headings}>
-  <Content components={{ FileTree, Callout }} />
+  <Content components={{ FileTree, Callout, CodeTabs, CodeTab }} />
 </Documentation>
