@@ -78,9 +78,10 @@
     @apply relative my-6 overflow-hidden rounded-lg border border-white/10 bg-white/5;
   }
 
-  /* No-JS fallback: hide every panel after the first; the script swaps to [hidden] once ready. */
+  /* Initial-paint gate: hide non-first panels until the script promotes the
+     root to ready, after which Tailwind's `.hidden` class takes over. */
   .prose-styles
-    .qiln-code-tabs:not(.qiln-code-tabs--ready)
+    .qiln-code-tabs:not([data-qiln-ready="true"])
     > [data-code-tab]
     ~ [data-code-tab] {
     display: none;
