@@ -3,6 +3,11 @@ import mdx from "@astrojs/mdx";
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import rehypeExternalLinks from "rehype-external-links";
+import {
+  transformerNotationDiff,
+  transformerNotationHighlight,
+  transformerNotationFocus,
+} from "@shikijs/transformers";
 import config from "./.astro/config.generated.json" with { type: "json" };
 import remarkParseContent from "./src/utils/remark.ts";
 import { fontProviders } from "astro/config";
@@ -76,6 +81,12 @@ export default defineConfig({
     shikiConfig: {
       theme: "github-dark",
       wrap: false,
+      langs: ["toml", "yaml", "json", "bash", "typescript"],
+      transformers: [
+        transformerNotationDiff(),
+        transformerNotationHighlight(),
+        transformerNotationFocus(),
+      ],
     },
     extendDefaultPlugins: true,
   },
