@@ -1,7 +1,7 @@
 ---
 title: "Orchestrate GPUs."
-badge: "open-source · gpu-native"
-description: "The open-source orchestration engine that turns bare-metal GPU servers into managed, multi-tenant workspaces. Declare a YAML blueprint — Qiln handles isolation, storage, scheduling, and HTTPS. Built on **Incus**, **ZFS**, **Fastify**, and **NATS**."
+badge: "qiln --license apache-2.0 --target bare-metal"
+description: "**Qiln (kiln) turns your GPU servers into a managed cloud.** Declare a blueprint — and Qiln handles isolation, storage, networking, and HTTP"
 image: "../../assets/images/product-demo.png"
 subscription:
   enable: true

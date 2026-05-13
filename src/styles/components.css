@@ -206,14 +206,15 @@ footer {
 /* Icon Color Override */
 .match-brand-color {
   *[fill="#"] {
-    @apply [fill-color:themes(colors.primary)]!;
+    @apply [fill-color:theme(--color-primary)]!;
   }
+
   *[stroke="#"] {
-    @apply [stroke-color:themes(colors.primary)]!;
+    @apply [stroke-color:theme(--color-primary)]!;
   }
 
   *[stop-color="#"] {
-    @apply [stop-color:themes(colors.primary)]!;
+    @apply [stop-color:theme(--color-primary)]!;
   }
 }
 
