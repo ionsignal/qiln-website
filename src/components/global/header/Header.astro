@@ -24,8 +24,9 @@ const {
     "header group/header mt-5 transform",
     { "sticky-header": stickyHeader },
   ]}>
-  <div class="relative container">
-    <nav class="relative flex items-center justify-between px-2 py-2.5">
+  <div class="relative mx-auto w-full px-5 xl:container xl:px-4">
+    <nav
+      class="bg-theme-dark/70 relative flex items-center justify-between px-2 py-2.5 backdrop-blur-md max-lg:rounded-none lg:rounded-full">
       <Logo
         class={logoHoverAnimation ? "has-hover-animation" : ""}
         loading="eager"
@@ -90,35 +91,6 @@ const {
   </div>
 </header>
 <script>
-  function stickyHeader(): void {
-    const header = document.querySelector(
-      ".sticky-header",
-    ) as HTMLElement | null;
-    if (!header) return; // Early exit if no header is found
-    let prevScrollPos = window.scrollY;
-    if (prevScrollPos > 0) {
-      header.classList.add("scroll-up");
-    }
-    window.addEventListener("scroll", () => {
-      const currentScrollPos = window.scrollY;
-      if (prevScrollPos > currentScrollPos) {
-        // Scrolling up
-        header.classList.remove("scroll-down");
-        header.classList.add("scroll-up");
-      } else if (prevScrollPos < currentScrollPos) {
-        // Scrolling down
-        header.classList.remove("scroll-up");
-        header.classList.add("scroll-down");
-      }
-      if (currentScrollPos === 0) {
-        header.classList.remove("scroll-up");
-        header.classList.remove("scroll-down");
-      }
-      prevScrollPos = currentScrollPos;
-    });
-  }
-  stickyHeader();
-
   document.addEventListener("click", (event: MouseEvent) => {
     const navMenu = document.getElementById("nav-menu");
     const navToggler = document.querySelector(

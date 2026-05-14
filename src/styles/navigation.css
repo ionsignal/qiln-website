@@ -3,35 +3,16 @@
   @apply relative z-30 w-full;
 
   &.sticky-header {
-    @apply sticky top-5 z-50 transition-[transform,opacity,0.3s_background] duration-500;
+    @apply sticky top-5 z-50 transition-[opacity,background] duration-500;
   }
 
-  &.scroll-up {
-    .hs-dropdown-menu.mega-menu {
-      @apply pointer-events-auto;
-    }
-  }
-
-  &.scroll-down,
-  &.scroll-up {
-    > .container {
-      @apply lg:max-w-5xl!;
-    }
-
-    .nav-item {
-      > .nav-link {
-        @apply lg:px-4 lg:py-2 xl:px-4;
-      }
-    }
+  .hs-dropdown-menu.mega-menu {
+    @apply pointer-events-auto;
   }
 
   /* Header Customize */
   > .container {
-    @apply mx-auto transition-all duration-300 ease-[cubic-bezier(0.617,1.5,0.68,1)];
-
-    > nav {
-      @apply bg-theme-dark/70 rounded-full backdrop-blur-md;
-    }
+    @apply mx-auto;
   }
 }
 

@@ -12,11 +12,11 @@ const { isDarkHeader } = Astro.props;
   ]}>
   <div
     class:list={[
-      "hs-collapse-open:ring-4 ring-opacity-30 relative flex h-12 w-12 transform flex-col items-center justify-center overflow-hidden rounded-full ring-1 duration-200 hover:ring-4",
+      "hs-collapse-open:ring-4 ring-opacity-30 relative flex h-10 w-10 transform flex-col items-center justify-center overflow-hidden rounded-full ring-1 duration-200 hover:ring-4",
       isDarkHeader ? "bg-white ring-white/25" : "ring-primary/25 bg-primary",
     ]}>
     <div
-      class="hs-collapse-open:translate-y-2 hs-collapse-open:rotate-0 -translate-y-[105%] rotate-45 transform overflow-hidden transition-transform duration-300">
+      class="hs-collapse-open:translate-y-2 hs-collapse-open:rotate-0 translate-y-[-105%] rotate-45 transform overflow-hidden transition-transform duration-300">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -55,13 +55,13 @@ const { isDarkHeader } = Astro.props;
     <div
       class="flex h-4.5 w-4.5 origin-center -translate-y-3 transform flex-col justify-between overflow-hidden transition-transform duration-300">
       <div
-        class="group-[&.nav-toggler-dark]:bg-theme-dark hs-collapse-open:translate-y-6 mb-1.5 h-px w-7 origin-left transform transition-transform duration-300 group-[&:not(.nav-toggler-dark)]:bg-white">
+        class="group-[&.nav-toggler-dark]:bg-theme-dark hs-collapse-open:translate-y-6 mb-1.5 h-px w-6 origin-left transform transition-transform duration-300 group-[&:not(.nav-toggler-dark)]:bg-white">
       </div>
       <div
-        class="group-[&.nav-toggler-dark]:bg-theme-dark hs-collapse-open:translate-y-6 mb-1.5 h-px w-7 transform rounded transition-transform delay-75 duration-300 group-[&:not(.nav-toggler-dark)]:bg-white">
+        class="group-[&.nav-toggler-dark]:bg-theme-dark hs-collapse-open:translate-y-6 mb-1.5 h-px w-6 transform rounded transition-transform delay-75 duration-300 group-[&:not(.nav-toggler-dark)]:bg-white">
       </div>
       <div
-        class="group-[&.nav-toggler-dark]:bg-theme-dark hs-collapse-open:translate-y-6 h-px w-7 origin-left transform transition-transform delay-100 duration-300 group-[&:not(.nav-toggler-dark)]:bg-white">
+        class="group-[&.nav-toggler-dark]:bg-theme-dark hs-collapse-open:translate-y-6 h-px w-6 origin-left transform transition-transform delay-100 duration-300 group-[&:not(.nav-toggler-dark)]:bg-white">
       </div>
     </div>
   </div>
