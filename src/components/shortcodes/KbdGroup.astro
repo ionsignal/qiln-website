@@ -1,0 +1,31 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"span"> {
+  keys?: string;
+}
+
+const { keys, class: className, ...rest } = Astro.props;
+const parsedKeys = keys
+  ? keys.split(/\s*\+\s*/).filter((key) => key.length > 0)
+  : null;
+---
+
+<span class:list={["kbd-group", className]} {...rest}>
+  {
+    parsedKeys ? (
+      parsedKeys.map((key, i) => (
+        <>
+          {i > 0 && (
+            <span class="kbd-group__sep" aria-hidden="true">
+              +
+            </span>
+          )}
+          <kbd class="kbd not-prose">{key}</kbd>
+        </>
+      ))
+    ) : (
+      <slot />
+    )
+  }
+</span>

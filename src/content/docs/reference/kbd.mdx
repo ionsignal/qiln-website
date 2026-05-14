@@ -1,0 +1,84 @@
+---
+title: "Kbd Reference"
+sidebarLabel: "Kbd"
+description: "Inline keyboard key and shortcut shortcodes for docs prose."
+order: 2
+---
+
+The `<Kbd>` and `<KbdGroup>` shortcodes render keyboard keys and shortcut combinations inline with body text. Both are pure server-side components with no client JS.
+
+## Single key
+
+Wrap any key label in `<Kbd>`.
+
+```mdx
+Press <Kbd>Esc</Kbd> to close the dialog.
+```
+
+Press <Kbd>Esc</Kbd> to close the dialog.
+
+## Combination — shorthand
+
+Pass a `keys` string to `<KbdGroup>` and the shortcode splits on `+` and renders each key as its own pill with a styled separator between them. The combo never wraps mid-shortcut, even at narrow viewports.
+
+```mdx
+Open search with <KbdGroup keys="Ctrl+K" />.
+
+Open the command palette with <KbdGroup keys="Ctrl+Shift+P" />.
+```
+
+Open search with <KbdGroup keys="Ctrl+K" />.
+
+Open the command palette with <KbdGroup keys="Ctrl+Shift+P" />.
+
+Whitespace around the `+` in the `keys` string is tolerated, so `keys="Ctrl + K"` and `keys="Ctrl+K"` render identically.
+
+## Combination — slot composition
+
+For combos that need custom separator words, icons inside keys, or any non-standard layout, compose `<Kbd>` children inside `<KbdGroup>` directly. The group still enforces `white-space: nowrap` so the combo stays on a single line.
+
+```mdx
+Hold <KbdGroup><Kbd>Shift</Kbd> and <Kbd>B</Kbd></KbdGroup> to bold.
+```
+
+Hold <KbdGroup><Kbd>Shift</Kbd> and <Kbd>B</Kbd></KbdGroup> to bold.
+
+For a `+` separator in slot mode, use a `<span class="kbd-group__sep">` so it picks up the same muted styling as the shorthand path:
+
+```mdx
+<KbdGroup>
+  <Kbd>Ctrl</Kbd>
+  <span class="kbd-group__sep">+</span>
+  <Kbd>K</Kbd>
+</KbdGroup>
+```
+
+<KbdGroup><Kbd>Ctrl</Kbd><span class="kbd-group__sep">+</span><Kbd>K</Kbd></KbdGroup>
+
+## Single-child group
+
+A `<KbdGroup>` with one child renders one pill with no orphan separator, so it's safe to wrap conditional combos without special-casing the single-key case.
+
+```mdx
+<KbdGroup><Kbd>Enter</Kbd></KbdGroup>
+```
+
+<KbdGroup><Kbd>Enter</Kbd></KbdGroup>
+
+## Props
+
+### `<Kbd>`
+
+Extends standard `<kbd>` HTML attributes. No custom props.
+
+### `<KbdGroup>`
+
+Extends standard `<span>` HTML attributes.
+
+| Prop   | Type     | Description                                                                                  |
+| ------ | -------- | -------------------------------------------------------------------------------------------- |
+| `keys` | `string` | Optional. `+`-separated key labels. When provided, the slot is ignored and keys auto-render. |
+
+## Accessibility
+
+Each key is a real `<kbd>` element, so assistive tech reads it as a keyboard input. Separator characters (`+`, `and`, etc.) are styled with `kbd-group__sep` or sit as plain text in the prose; the meaning carries through the surrounding sentence, not the separator glyph.

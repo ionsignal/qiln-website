@@ -72,4 +72,20 @@
   .prose-styles .callout-content > *:last-child {
     @apply mb-0;
   }
+
+  /* Kbd */
+  .prose-styles .kbd {
+    @apply inline-flex items-center rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono leading-none text-light;
+    font-size: 0.85em;
+    vertical-align: baseline;
+  }
+
+  .prose-styles .kbd-group {
+    @apply inline-flex items-center gap-x-1;
+    white-space: nowrap;
+  }
+
+  .prose-styles .kbd-group__sep {
+    @apply text-white/40 select-none;
+  }
 }

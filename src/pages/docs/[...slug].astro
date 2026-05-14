@@ -4,6 +4,8 @@ import { getAllDocs } from "@/utils/docs";
 import Documentation from "@/layouts/Documentation.astro";
 import FileTree from "@/components/shortcodes/FileTree.astro";
 import Callout from "@/components/shortcodes/Callout.astro";
+import Kbd from "@/components/shortcodes/Kbd.astro";
+import KbdGroup from "@/components/shortcodes/KbdGroup.astro";
 import type { DocEntry } from "@/types/docs";
 
 export async function getStaticPaths() {
@@ -24,5 +26,5 @@ const { Content, headings } = await render(entry);
 ---
 
 <Documentation entry={entry} headings={headings}>
-  <Content components={{ FileTree, Callout }} />
+  <Content components={{ FileTree, Callout, Kbd, KbdGroup }} />
 </Documentation>
