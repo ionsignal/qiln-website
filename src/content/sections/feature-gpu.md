@@ -1,7 +1,7 @@
 ---
 enable: true
 title: "GPUs as a Pool, Not a Static Assignment"
-subtitle: "GPU ORCHESTRATION"
+subtitle: "GPU Orchestration"
 description: "Containers can request GPUs from a shared pool, hot-plug them at runtime, and release them when idle. Real-time telemetry shows utilization, VRAM, and thermals."
 features:
   - "PCIe passthrough — bare-metal performance"

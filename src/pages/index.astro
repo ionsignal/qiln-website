@@ -9,6 +9,7 @@ import FaqSection from "@/components/sections/FaqSection.astro";
 
 const homepage = await fetchEntry("homepage", "-index");
 const featureGpu = await fetchEntry("sections", "feature-gpu");
+const featureStorage = await fetchEntry("sections", "feature-storage");
 ---
 
 <Base {...homepage.data}>
@@ -16,6 +17,11 @@ const featureGpu = await fetchEntry("sections", "feature-gpu");
   {
     featureGpu && (
       <FeatureSplit content={featureGpu.data} imagePosition="right" />
+    )
+  }
+  {
+    featureStorage && (
+      <FeatureSplit content={featureStorage.data} imagePosition="left" />
     )
   }
   <Features />

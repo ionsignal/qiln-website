@@ -1,6 +1,5 @@
 ---
 import { fetchEntry } from "@/utils/content";
-import { overrideObjects } from "@/utils/core";
 import { markdownify } from "@/utils/text";
 import Image from "@/components/helpers/Image.astro";
 import LucideIcon from "@/components/helpers/LucideIcon.astro";
@@ -15,7 +14,8 @@ type Props = {
 };
 
 let defaultContent = (await fetchEntry("sections", "feature-gpu"))?.data;
-let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
+let actualContent =
+  Astro.props.content || defaultContent || ({} as SectionData);
 let {
   enable = true,
   title,
