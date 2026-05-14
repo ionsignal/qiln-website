@@ -18,13 +18,13 @@ const getNumber = (value: string) => {
   return valueAsNumber;
 };
 
-type Props = {
+interface Props {
   src?: ImageMetadata | string | null;
   class?: string;
   loading?: "eager" | "lazy";
-};
+}
 
-let { src, class: className, loading } = Astro.props;
+let { src, class: className, loading } = Astro.props as Props;
 let {
   logo,
   logoWidth = "29px",

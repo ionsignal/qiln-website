@@ -14,12 +14,6 @@ export type MarqueeListItem = {
   alt: string;
 };
 
-// Type for this section data
-export type customersSectionType = Section & {
-  list: MarqueeListItem[];
-  marquee: MarqueeConfig;
-};
-
 // Type for the video configuration
 export type VideoConfig = {
   src: string; // youtube or vimeo video ID or path to video file
@@ -30,31 +24,16 @@ export type VideoConfig = {
   id?: string; // required if same video is used on multiple time on same page
 };
 
-export type Button = {
+export type NavButton = {
   enable: boolean;
   label: string;
   url: string;
   type?: string;
   rel?: string;
   target?: string;
+  icon?: string;
+  variant?: string;
   [x: string]: any;
-};
-
-// Universal Type For Every Section
-export type Section = {
-  enable?: boolean;
-  title?: string;
-  badge?: string;
-  excerpt?: string;
-  date?: Date | string;
-  author?: string;
-  subtitle?: string;
-  categories?: string[];
-  description?: string;
-  ctaBtn?: Button;
-  image?: string | ImageMetadata;
-  bg_pattern_image?: string;
-  limit?: false | number;
 };
 
 export type SocialLink = {
@@ -143,7 +122,7 @@ export interface NavigationLinkCTA {
   image: string;
   title: string;
   description: string;
-  ctaBtn: Button;
+  ctaBtn: NavButton;
 }
 
 export interface ChildNavigationLink {

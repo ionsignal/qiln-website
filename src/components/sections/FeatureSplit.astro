@@ -1,0 +1,143 @@
+---
+import { fetchEntry } from "@/utils/content";
+import { overrideObjects } from "@/utils/core";
+import { markdownify } from "@/utils/text";
+import Image from "@/components/helpers/Image.astro";
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+import Subtitle from "@/components/widgets/Subtitle.astro";
+import type { CollectionEntry } from "astro:content";
+
+type SectionData = CollectionEntry<"sections">["data"];
+type Props = {
+  content?: SectionData;
+  imagePosition?: "left" | "right";
+  class?: string;
+};
+
+let defaultContent = (await fetchEntry("sections", "feature-gpu"))?.data;
+let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
+let {
+  enable = true,
+  title,
+  subtitle,
+  description,
+  features,
+  image,
+} = actualContent;
+const { imagePosition = "right", class: className } = Astro.props;
+const flexOrderClass =
+  imagePosition === "left" ? "lg:flex-row-reverse" : "lg:flex-row";
+const textJustifyClass =
+  imagePosition === "left" ? "lg:justify-start" : "lg:justify-end";
+const textPaddingClass =
+  imagePosition === "left" ? "lg:pl-10 xl:pl-16" : "lg:pr-10 xl:pr-16";
+const imageAlignClass =
+  imagePosition === "left" ? "justify-start" : "justify-end";
+---
+
+{
+  enable && (
+    <section
+      class:list={["feature-split relative w-full overflow-hidden", className]}
+      data-direction={imagePosition}>
+      <div
+        class:list={["flex w-full flex-col lg:items-stretch", flexOrderClass]}>
+        <div
+          class:list={[
+            "flex w-full items-center py-16 lg:w-1/2 lg:py-24",
+            textJustifyClass,
+          ]}>
+          <div
+            class:list={[
+              "motion-text flex w-full max-w-2xl flex-col gap-6 px-4 opacity-0 will-change-transform lg:px-8",
+              textPaddingClass,
+            ]}>
+            {subtitle && <Subtitle content={subtitle} class="mr-auto! ml-0!" />}
+            {title && (
+              <h2
+                class="has-italic-text capitalize"
+                set:html={markdownify(title)}
+              />
+            )}
+            {description && (
+              <p
+                class="text-text-default text-lg leading-relaxed opacity-80"
+                set:html={markdownify(description)}
+              />
+            )}
+            {features && features.length > 0 && (
+              <ul class="mt-2 flex flex-col gap-3">
+                {features.map((feature) => (
+                  <li class="flex items-start gap-3">
+                    <LucideIcon
+                      icon="CheckCircle2"
+                      class="text-primary mt-0.5 h-5 w-5 shrink-0"
+                    />
+                    <span
+                      class="text-sm text-white/70"
+                      set:html={markdownify(feature)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+        <div
+          class:list={[
+            "relative flex min-h-75 w-full items-center lg:min-h-125 lg:w-1/2",
+            imageAlignClass,
+          ]}>
+          <div class="motion-image relative w-full shrink-0 opacity-0 will-change-transform lg:w-[115%]">
+            {image && (
+              <Image
+                src={image}
+                alt="Feature screenshot"
+                class="h-auto w-full"
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  import { animate, inView } from "motion";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const sections = document.querySelectorAll(".feature-split");
+    sections.forEach((section) => {
+      const textEl = section.querySelector(".motion-text");
+      const imageEl = section.querySelector(".motion-image");
+      const direction = section.getAttribute("data-direction");
+      inView(
+        section,
+        () => {
+          if (textEl) {
+            animate(
+              textEl,
+              { opacity: [0, 1], y: [30, 0] },
+              { duration: 0.8, ease: "easeOut" },
+            );
+          }
+          if (imageEl) {
+            const xOffset = direction === "left" ? -100 : 100;
+            animate(
+              imageEl,
+              { opacity: [0, 1], scale: [1.05, 1], x: [xOffset, 0] },
+              {
+                type: "spring",
+                bounce: 0.3,
+                duration: 0.9,
+                delay: 0.1,
+              },
+            );
+          }
+        },
+        { amount: 0.2 },
+      );
+    });
+  });
+</script>

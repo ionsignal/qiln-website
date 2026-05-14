@@ -1,9 +1,18 @@
+/* src/styles/globals.css */
 @import "tailwindcss";
 @import "./theme.css";
 
-/* Preline UI */
-@source "../../node_modules/preline/dist/*.js";
-@import "preline/variants.css";
+/* Modular Preline Sources */
+@source "../../node_modules/@preline/accordion/*.js";
+@source "../../node_modules/@preline/collapse/*.js";
+@source "../../node_modules/@preline/overlay/*.js";
+@source "../../node_modules/@preline/tabs/*.js";
+
+/* Modular Preline Variants */
+@import "../../node_modules/@preline/accordion/variants.css";
+@import "../../node_modules/@preline/collapse/variants.css";
+@import "../../node_modules/@preline/overlay/variants.css";
+@import "../../node_modules/@preline/tabs/variants.css";
 
 /* Tailwind */
 @plugin "@tailwindcss/forms";

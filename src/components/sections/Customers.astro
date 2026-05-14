@@ -4,25 +4,21 @@ import { fetchEntry } from "@/utils/content";
 import Image from "@/components/helpers/Image.astro";
 import { overrideObjects } from "@/utils/core";
 import { markdownify } from "@/utils/text";
-import type { customersSectionType } from "@/types";
+import type { CollectionEntry } from "astro:content";
 
+type SectionData = CollectionEntry<"sections">["data"];
 type Props = {
-  content?: customersSectionType;
+  content?: SectionData | any;
   class?: string;
   width?: "sm" | "md";
 };
-let defaultContent = (await fetchEntry("sections", "customers"))
-  ?.data as customersSectionType;
+
+let defaultContent = (await fetchEntry("sections", "customers"))?.data;
 let actualContent = overrideObjects(
   { ...defaultContent },
   Astro.props.content,
-) as customersSectionType;
-let {
-  enable = true,
-  description,
-  marquee,
-  list,
-} = actualContent as customersSectionType;
+) as any;
+let { enable = true, description, marquee = {}, list = [] } = actualContent;
 const { class: className, width = "sm", ...rest } = Astro.props;
 let duplicatedList = list;
 if (list.length <= 3) {
@@ -58,7 +54,7 @@ if (list.length <= 3) {
               marqueeElementWidthResponsive={
                 marquee.elementWidthInSmallDevices
               }>
-              {duplicatedList.map((item) => (
+              {duplicatedList.map((item: any) => (
                 <div
                   class:list={[
                     "px-4",
@@ -78,7 +74,7 @@ if (list.length <= 3) {
                   />
                 </div>
               ))}
-              {duplicatedList.map((item) => (
+              {duplicatedList.map((item: any) => (
                 <div
                   class:list={[
                     "px-4",

@@ -3,17 +3,17 @@
 ---
 
 <script>
-  import "preline";
+  import HSAccordion from "@preline/accordion/non-auto";
+  import HSCollapse from "@preline/collapse/non-auto";
+  import HSOverlay from "@preline/overlay/non-auto";
+  import HSTabs from "@preline/tabs/non-auto";
 
   document.addEventListener("DOMContentLoaded", async () => {
-    // Manually initialize Preline plugins (Collapse, Overlay)
-    // Required in Astro SPAs to ensure DOM elements exist before binding.
-    if (
-      window.HSStaticMethods &&
-      typeof window.HSStaticMethods.autoInit === "function"
-    ) {
-      window.HSStaticMethods.autoInit();
-    }
+    // Manually initialize Preline plugins
+    HSAccordion.autoInit();
+    HSCollapse.autoInit();
+    HSOverlay.autoInit();
+    HSTabs.autoInit();
     // AOS - https://github.com/michalsnik/aos
     const AOS = await import("aos");
     AOS.init({
@@ -24,6 +24,7 @@
     });
     initHorizontalScroll();
   });
+
   function initHorizontalScroll() {
     document.querySelectorAll("*").forEach((el) => {
       if (el.scrollWidth > el.clientWidth) {

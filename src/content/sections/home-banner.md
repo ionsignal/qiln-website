@@ -5,7 +5,15 @@ description: "**Qiln (kiln) turns your GPU servers into a managed cloud.** Decla
 image: "../../assets/images/product-demo.png"
 subscription:
   enable: true
+buttons:
+  - enable: true
+    label: "Join Discord"
+    url: "https://discord.gg/CVBHpfE8Pw"
+    target: "_blank"
+    rel: "noopener noreferrer"
+    icon: "discord"
+    variant: "secondary"
 customers:
-  enable: true
+  enable: false
   description: "Built for studios, labs, and infra teams running their own hardware"
 ---

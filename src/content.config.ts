@@ -13,9 +13,9 @@ export const collections = {
         badge: z.string().optional(),
         subtitle: z.string().optional(),
         description: z.string().optional(),
-        // Safe Image Fallback: Accepts Astro ImageMetadata or a raw string URL
         image: z.union([image(), z.string()]).optional(),
         ratingContent: z.string().optional(),
+        limit: z.union([z.boolean(), z.number()]).optional(),
         features: z.array(z.string()).optional(),
         subscription: z
           .object({
@@ -32,6 +32,8 @@ export const collections = {
               type: z.string().optional(),
               rel: z.string().optional(),
               target: z.string().optional(),
+              icon: z.string().optional(),
+              variant: z.string().optional(),
               video: z
                 .object({
                   src: z.string(),

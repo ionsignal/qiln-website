@@ -10,25 +10,17 @@ import { plainify } from "@/utils/text";
 import { overrideObjects } from "@/utils/core";
 import { markdownify } from "@/utils/text";
 import { fetchEntry } from "@/utils/content";
-import type { Button, Section } from "@/types";
-import type { customersSectionType } from "@/types";
+import type { CollectionEntry } from "astro:content";
 
-type homeBannerSectionType = Section & {
-  buttons: Button[];
-  customers: customersSectionType;
-  subscription?: { enable?: boolean };
-};
+type SectionData = CollectionEntry<"sections">["data"];
 type Props = {
-  content?: homeBannerSectionType;
+  content?: SectionData;
 };
-let defaultContent = (await fetchEntry("sections", "home-banner"))
-  ?.data as homeBannerSectionType;
-let actualContent = overrideObjects(
-  { ...defaultContent },
-  Astro.props.content,
-) as homeBannerSectionType;
+
+let defaultContent = (await fetchEntry("sections", "home-banner"))?.data;
+let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
 let { title, badge, customers, description, image, buttons, subscription } =
-  actualContent as homeBannerSectionType;
+  actualContent;
 ---
 
 <section id="home">
@@ -95,13 +87,18 @@ let { title, badge, customers, description, image, buttons, subscription } =
           }
           {
             buttons &&
-              buttons.map((button: Button) => (
+              buttons.map((button) => (
                 <ButtonLink
                   content={button}
-                  class="btn-md btn-primary btn-has-icon group relative z-0 flex w-full items-center justify-center gap-4 sm:w-auto [&>.label]:z-20">
+                  class:list={[
+                    "btn-md btn-has-icon group relative z-0 flex w-full items-center justify-center gap-4 sm:w-auto [&>.label]:z-20",
+                    button.variant === "secondary"
+                      ? "btn-outline-secondary"
+                      : "btn-solid-primary",
+                  ]}>
                   <span class="flex h-6 w-12 items-center justify-center rounded-full bg-white/15">
                     <SvgIcon
-                      icon="star"
+                      icon={button.icon || "star"}
                       class="h-5 w-5 transition-all duration-300 group-hover:rotate-180"
                     />
                   </span>

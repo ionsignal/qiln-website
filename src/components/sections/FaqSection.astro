@@ -4,47 +4,28 @@ import { overrideObjects } from "@/utils/core";
 import Subtitle from "@/components/widgets/Subtitle.astro";
 import { markdownify } from "@/utils/text";
 import AccordionList from "@/components/widgets/AccordionList.astro";
-import type { Section } from "@/types";
+import type { CollectionEntry } from "astro:content";
 
+type SectionData = CollectionEntry<"sections">["data"];
 type FAQItem = {
   active?: boolean;
   title: string;
   content: string;
 };
-
 type FAQCategory = {
   label: string;
   list: FAQItem[];
 };
-
-type faqSectionType = Section & {
-  list?: FAQCategory[];
-  showCategories?: boolean;
-};
-
 type Props = {
-  content?: faqSectionType;
+  content?: SectionData;
 };
 
-let defaultContent = (await fetchEntry("sections", "faq"))
-  ?.data as faqSectionType;
+let defaultContent = (await fetchEntry("sections", "faq"))?.data;
+let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
+let { enable = true, title, subtitle, limit, showCategories } = actualContent;
 
-let actualContent = overrideObjects(
-  { ...defaultContent },
-  Astro.props.content,
-) as faqSectionType;
-
-let {
-  enable = true,
-  title,
-  subtitle,
-  list,
-  limit,
-  showCategories,
-} = actualContent as faqSectionType;
-
+let list = actualContent.list as FAQCategory[];
 list = limit && list ? list.slice(0, limit as number) : list;
-
 if (!showCategories) {
   list = list?.slice(0, 1);
 }
@@ -100,7 +81,7 @@ if (!showCategories) {
                           aria-controls={"tab-" + (index + 1)}
                           aria-selected={index === 0 ? "true" : "false"}
                           class:list={[
-                            "px-6 py-2.5 text-start text-lg max-lg:min-w-full [&.active]:text-white [&.active]:max-lg:bg-white/5",
+                            "hs-accordion-outside-active:text-white hs-accordion-outside-active:max-lg:bg-white/5 px-6 py-2.5 text-start text-lg max-lg:min-w-full",
                             { active: index === 0 },
                           ]}
                         />

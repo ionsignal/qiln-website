@@ -11,7 +11,7 @@ export const ui = {
     "common.emailPlaceholder": "Email Address",
     "common.paginationNext": "Next",
     "common.paginationPrevious": "Previous",
-    "navigation.buttonLabel": "Live Demo",
+    "navigation.buttonLabel": "Join Early Testers",
     "subscription.label": "Subscribe to our newsletter",
     "integration.relatedIntegrationSectionTitle":
       "Vivamus sit amet **varius felis**",

@@ -125,7 +125,7 @@ export async function initVisualization(containerSelector: string) {
     if (isVisible && mesh.uniforms.params) {
       // This correctly triggers gpu-curtains' internal setter to update the GPU buffer
       mesh.uniforms.params.time.value =
-        (mesh.uniforms.params.time.value as number) + 0.01;
+        (mesh.uniforms.params.time.value as number) + 0.005;
     }
   });
 }

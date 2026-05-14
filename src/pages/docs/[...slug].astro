@@ -2,7 +2,8 @@
 import { render } from "astro:content";
 import { getAllDocs } from "@/utils/docs";
 import Documentation from "@/layouts/Documentation.astro";
-import { FileTree, Callout } from "@/components/shortcodes";
+import FileTree from "@/components/shortcodes/FileTree.astro";
+import Callout from "@/components/shortcodes/Callout.astro";
 import type { DocEntry } from "@/types/docs";
 
 export async function getStaticPaths() {

@@ -3,29 +3,20 @@ import Subtitle from "@/components/widgets/Subtitle.astro";
 import { fetchEntry } from "@/utils/content";
 import { overrideObjects } from "@/utils/core";
 import { markdownify } from "@/utils/text";
-import type { Section } from "@/types";
+import type { CollectionEntry } from "astro:content";
 
-type featuresSectionType = Section & {
-  list: {
-    title: string;
-    description: string;
-  }[];
-};
+type SectionData = CollectionEntry<"sections">["data"];
 type Props = {
-  content?: featuresSectionType;
+  content?: SectionData;
 };
-let defaultContent = (await fetchEntry("sections", "features-section"))
-  ?.data as featuresSectionType;
-let actualContent = overrideObjects(
-  { ...defaultContent },
-  Astro.props.content,
-) as featuresSectionType;
-let {
-  enable = true,
-  title,
-  subtitle,
-  list,
-} = actualContent as featuresSectionType;
+
+let defaultContent = (await fetchEntry("sections", "features-section"))?.data;
+let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
+let { enable = true, title, subtitle } = actualContent;
+let list = actualContent.list as Extract<
+  SectionData["list"],
+  { title: string }[]
+>;
 ---
 
 {

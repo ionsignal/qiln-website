@@ -1,5 +1,4 @@
 /* Button Style */
-/* ========================================== */
 @utility btn {
   @apply inline-block overflow-hidden rounded-full px-5 py-2 font-normal whitespace-nowrap duration-[.35s] disabled:cursor-not-allowed md:px-7;
 }
@@ -39,6 +38,11 @@
   @apply hover:bg-primary hover:border-primary hover:shadow-[0_0_25px_--theme(--color-primary/50%)] hover:brightness-110;
 }
 
+@utility btn-outline-secondary {
+  @apply text-light bg-secondary/10 border-secondary/80 shadow-[0_0_15px_--theme(--color-secondary/20%)] border backdrop-blur-md transition-all duration-300;
+  @apply hover:bg-secondary/25 hover:border-secondary hover:shadow-[0_0_25px_--theme(--color-secondary/40%)];
+}
+
 .btn-outline {
   & ~ .icon {
     @apply bg-body text-dark flex h-12 w-12 items-center justify-center rounded-full;
@@ -52,9 +56,6 @@
     @apply h-14 w-14;
   }
 }
-
-/* Button Animation */
-/* ========================================== */
 
 /* Button Animation */
 .has-text-flip-animation:not([disabled="true"]) {

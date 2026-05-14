@@ -7,28 +7,16 @@ import Image from "@/components/helpers/Image.astro";
 import { fetchEntry } from "@/utils/content";
 import { markdownify } from "@/utils/text";
 import { overrideObjects } from "@/utils/core";
-import type { Section } from "@/types";
+import type { CollectionEntry } from "astro:content";
 
-type ctaSectionType = Section & {
-  features: string[];
-};
+type SectionData = CollectionEntry<"sections">["data"];
 type Props = {
-  content?: ctaSectionType;
+  content?: SectionData;
 };
-let defaultContent = (await fetchEntry("sections", "call-to-action"))
-  ?.data as ctaSectionType;
-let actualContent = overrideObjects(
-  { ...defaultContent },
-  Astro.props.content,
-) as ctaSectionType;
 
-let {
-  enable = true,
-  title,
-  features,
-  ctaBtn,
-  image,
-} = actualContent as ctaSectionType;
+let defaultContent = (await fetchEntry("sections", "call-to-action"))?.data;
+let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
+let { enable = true, title, features, ctaBtn, image } = actualContent;
 ---
 
 {
@@ -136,7 +124,7 @@ let {
           video={{
             id: ctaBtn.video.id,
             src: ctaBtn.video.src,
-            provider: ctaBtn.video.provider,
+            provider: ctaBtn.video.provider as any,
           }}
         />
       )}
