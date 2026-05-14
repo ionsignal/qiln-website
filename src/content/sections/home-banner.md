@@ -8,7 +8,7 @@ subscription:
 buttons:
   - enable: true
     label: "Join Discord"
-    url: "https://discord.gg/CVBHpfE8Pw"
+    url: "https://discord.gg/eNaxauuyZ6"
     target: "_blank"
     rel: "noopener noreferrer"
     icon: "discord"
