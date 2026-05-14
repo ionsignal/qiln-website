@@ -72,4 +72,89 @@
   .prose-styles .callout-content > *:last-child {
     @apply mb-0;
   }
+
+  /* Stepper */
+  .prose-styles .stepper {
+    counter-reset: stepper-counter !important;
+    list-style: none;
+    @apply my-6 p-0;
+  }
+
+  .prose-styles .stepper__step {
+    counter-increment: stepper-counter !important;
+    @apply relative pl-12;
+    padding-bottom: 1.5rem;
+  }
+
+  .prose-styles .stepper__step:last-child {
+    padding-bottom: 0;
+  }
+
+  .prose-styles ol.stepper > li.stepper__step::before {
+    content: counter(stepper-counter) !important;
+    @apply absolute left-0 top-0 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 font-mono text-sm text-light;
+    z-index: 1;
+  }
+
+  .prose-styles .stepper__step::after {
+    content: "";
+    @apply absolute bg-white/10;
+    left: 1rem;
+    top: 2.25rem;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-1px);
+  }
+
+  .prose-styles .stepper__step:last-child::after {
+    display: none;
+  }
+
+  .prose-styles .stepper__title {
+    @apply font-medium text-light;
+    font-size: 1rem;
+    line-height: 2rem;
+  }
+
+  .prose-styles .stepper__body {
+    @apply text-text-default;
+    margin-top: 0.25rem;
+  }
+
+  .prose-styles .stepper__body > *:first-child {
+    @apply mt-0;
+  }
+
+  .prose-styles .stepper__body > *:last-child {
+    @apply mb-0;
+  }
+
+  /* Stepper — horizontal at md: and above */
+  @media (min-width: 768px) {
+    .prose-styles .stepper[data-orientation="horizontal"] {
+      @apply flex;
+      gap: 0;
+    }
+
+    .prose-styles .stepper[data-orientation="horizontal"] .stepper__step {
+      @apply flex-1 pl-0 pt-12 text-center;
+      padding-bottom: 0;
+    }
+
+    .prose-styles .stepper[data-orientation="horizontal"] .stepper__step::before {
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+    }
+
+    .prose-styles .stepper[data-orientation="horizontal"] .stepper__step::after {
+      left: calc(50% + 1rem);
+      top: 1rem;
+      right: calc(-50% + 1rem);
+      bottom: auto;
+      width: auto;
+      height: 2px;
+      transform: none;
+    }
+  }
 }
