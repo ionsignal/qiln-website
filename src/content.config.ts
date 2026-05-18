@@ -128,6 +128,23 @@ export const collections = {
               .optional(),
           })
           .optional(),
+        yaml: z.string().optional(),
+        callouts: z
+          .array(
+            z.object({
+              title: z.string(),
+              description: z.string(),
+              icon: z.string().optional(),
+              lines: z.array(z.number()),
+            }),
+          )
+          .optional(),
+        infoBox: z
+          .object({
+            title: z.string(),
+            description: z.string(),
+          })
+          .optional(),
       }),
   }),
 

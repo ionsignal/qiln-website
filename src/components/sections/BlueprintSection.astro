@@ -1,0 +1,249 @@
+---
+import { Code } from "astro:components";
+import Subtitle from "@/components/widgets/Subtitle.astro";
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+import { markdownify } from "@/utils/text";
+import { fetchEntry } from "@/utils/content";
+import { overrideObjects } from "@/utils/core";
+import type { CollectionEntry } from "astro:content";
+
+type SectionData = CollectionEntry<"sections">["data"];
+
+interface Props {
+  content?: SectionData;
+  class?: string;
+}
+
+let defaultContent = (await fetchEntry("sections", "blueprint"))?.data;
+let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
+let {
+  enable = true,
+  title,
+  subtitle,
+  yaml,
+  callouts: spotlights = [],
+  infoBox,
+} = actualContent;
+const { class: className } = Astro.props;
+---
+
+{
+  enable && yaml && (
+    <section
+      id="blueprint-section"
+      class:list={[
+        "blueprint-section relative w-full overflow-clip",
+        className,
+      ]}>
+      <div class="container py-16 lg:py-24">
+        <div class="motion-header mx-auto mb-16 max-w-2xl text-center opacity-0 will-change-transform">
+          {subtitle && <Subtitle content={subtitle} />}
+          {title && (
+            <h2
+              class="has-italic-text text-white capitalize"
+              set:html={markdownify(title)}
+            />
+          )}
+        </div>
+        <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-12">
+          <div class="motion-left opacity-0 will-change-transform lg:col-span-7">
+            <div class="border-border-light bg-accent overflow-hidden rounded-xl border shadow-2xl">
+              <div class="border-border-light flex items-center border-b bg-white/5 px-4 py-3">
+                <div class="flex space-x-2">
+                  <div class="h-3 w-3 rounded-full bg-red-500/80" />
+                  <div class="h-3 w-3 rounded-full bg-yellow-500/80" />
+                  <div class="h-3 w-3 rounded-full bg-green-500/80" />
+                </div>
+                <div class="ml-4 font-mono text-xs text-white/50">
+                  papermc-edge.yaml
+                </div>
+              </div>
+              <div class="code-wrapper overflow-x-auto p-4 pb-12 font-mono text-sm">
+                <Code
+                  code={yaml}
+                  lang="yaml"
+                  theme="github-dark"
+                  wrap={false}
+                />
+              </div>
+            </div>
+          </div>
+          <div class="motion-right opacity-0 will-change-transform lg:col-span-5">
+            <div class="sticky top-32 flex flex-col gap-6">
+              <div class="flex flex-col gap-4">
+                {spotlights.map((spotlight) => (
+                  <div
+                    class="spotlight-card group border-border-light bg-primary/5 cursor-pointer rounded-xl border p-5 transition-colors duration-300"
+                    data-target-lines={JSON.stringify(spotlight.lines)}>
+                    <div class="flex items-start gap-4">
+                      <div class="mt-1 shrink-0">
+                        <LucideIcon
+                          icon={spotlight.icon || "Terminal"}
+                          class="text-primary h-6 w-6 transition-transform duration-300 group-hover:scale-110"
+                        />
+                      </div>
+                      <div>
+                        <h3
+                          class="h6 mb-1 text-white"
+                          set:html={markdownify(spotlight.title)}
+                        />
+                        <p
+                          class="text-text-default text-sm leading-relaxed"
+                          set:html={markdownify(spotlight.description)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {infoBox && (
+                <div class="border-primary/5 bg-primary/1 rounded-r-lg border-l-2 px-5 py-4">
+                  <div
+                    class="text-light/50 text-base font-medium"
+                    set:html={markdownify(infoBox.title)}
+                  />
+                  <p
+                    class="text-text-default/50 mt-2 text-sm leading-relaxed"
+                    set:html={markdownify(infoBox.description)}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  /* 
+   * Scoped Shiki Overrides 
+   * Shiki sets inline styles for background. We force transparency to use our container.
+   * We also structure `.line` for the hover interaction state machine.
+   */
+  .code-wrapper :global(.astro-code) {
+    background-color: transparent !important;
+    margin: 0;
+  }
+
+  .code-wrapper :global(.line) {
+    display: inline-block;
+    width: 100%;
+    padding: 0 0.5rem;
+    border-left: 2px solid transparent;
+    transition:
+      opacity 0.3s ease,
+      background-color 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  .code-wrapper.is-interacting :global(.line:not(.highlighted)) {
+    opacity: 0.3;
+  }
+
+  .code-wrapper.is-interacting :global(.line.highlighted) {
+    background-color: color-mix(
+      in srgb,
+      var(--color-primary) 15%,
+      transparent
+    ) !important;
+    border-left-color: var(--color-primary) !important;
+    opacity: 1;
+    filter: none;
+  }
+</style>
+
+<script>
+  import { animate, inView } from "motion";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const sections = document.querySelectorAll(".blueprint-section");
+    sections.forEach((section) => {
+      const cards = section.querySelectorAll(".spotlight-card");
+      const codeWrapper = section.querySelector(".code-wrapper");
+      const lines = codeWrapper?.querySelectorAll(".line");
+      let autopilotTimer: ReturnType<typeof setInterval> | null = null;
+      let currentIndex = 0;
+      let isManual = false;
+      const activateCard = (index: number) => {
+        if (!codeWrapper || !lines || lines.length === 0) return;
+        cards.forEach((c) => {
+          c.classList.remove("border-primary/50", "bg-primary/20");
+        });
+        lines.forEach((l) => l.classList.remove("highlighted"));
+        const targetCard = cards[index];
+        if (targetCard) {
+          targetCard.classList.add("border-primary/50", "bg-primary/20");
+          codeWrapper.classList.add("is-interacting");
+          try {
+            const targetLines = JSON.parse(
+              targetCard.getAttribute("data-target-lines") || "[]",
+            );
+            targetLines.forEach((lineNum: number) => {
+              const lineNode = lines[lineNum - 1];
+              if (lineNode) {
+                lineNode.classList.add("highlighted");
+              }
+            });
+          } catch (e) {
+            if (import.meta.env.DEV) {
+              console.warn(
+                "[BlueprintSection] Invalid data-target-lines attribute",
+                e,
+              );
+            }
+          }
+        }
+      };
+      const startAutopilot = () => {
+        if (isManual || cards.length === 0) return;
+        activateCard(0); // Instantly activate the first item
+        autopilotTimer = setInterval(() => {
+          currentIndex = (currentIndex + 1) % cards.length;
+          activateCard(currentIndex);
+        }, 4000); // 4 seconds per card
+      };
+      const stopAutopilot = () => {
+        if (autopilotTimer) {
+          clearInterval(autopilotTimer);
+          autopilotTimer = null;
+        }
+        isManual = true;
+      };
+      cards.forEach((card, index) => {
+        const triggerManual = () => {
+          stopAutopilot();
+          activateCard(index);
+        };
+        card.addEventListener("mouseenter", triggerManual);
+        card.addEventListener("click", triggerManual);
+      });
+      // Entry Animations & Autopilot Trigger
+      const header = section.querySelector(".motion-header");
+      const leftCol = section.querySelector(".motion-left");
+      const rightCol = section.querySelector(".motion-right");
+      inView(
+        section,
+        () => {
+          if (header)
+            animate(header, { opacity: [0, 1], y: [30, 0] }, { duration: 0.6 });
+          if (leftCol)
+            animate(
+              leftCol,
+              { opacity: [0, 1], x: [-30, 0] },
+              { duration: 0.6, delay: 0.2 },
+            );
+          if (rightCol)
+            animate(
+              rightCol,
+              { opacity: [0, 1], x: [30, 0] },
+              { duration: 0.6, delay: 0.4 },
+            );
+          startAutopilot();
+        },
+        { amount: 0.2 },
+      );
+    });
+  });
+</script>
