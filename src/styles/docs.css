@@ -12,7 +12,7 @@ main.docs-layout {
 
 /* Page header (above MDX body) */
 .docs-page-header {
-  @apply border-border-light mb-8 border-b pb-6;
+  @apply mb-8 border-b pb-6;
 }
 
 .docs-page-lead {
@@ -69,7 +69,7 @@ main.docs-layout {
 
 /* mobile toggle */
 .docs-sidebar-mobile-toggle {
-  @apply text-text-default hover:text-light border-border-light bg-primary/5 mb-3 flex w-full items-center justify-between rounded-md border px-4 py-2.5 text-sm font-medium transition-colors duration-200;
+  @apply text-text-default hover:text-light bg-primary/5 mb-3 flex w-full items-center justify-between rounded-md border px-4 py-2.5 text-sm font-medium transition-colors duration-200;
 }
 
 .docs-sidebar-mobile-toggle-chevron {
@@ -113,7 +113,7 @@ main.docs-layout {
 }
 
 .docs-pagination {
-  @apply border-border-light border-t pt-8;
+  @apply border-t pt-8;
 }
 
 .docs-pagination-grid {
@@ -121,7 +121,7 @@ main.docs-layout {
 }
 
 .docs-pagination-link {
-  @apply text-text-default hover:border-primary/40 hover:bg-primary/5 hover:text-light border-border-light flex items-center gap-3 rounded-lg border p-4 transition-colors duration-200;
+  @apply text-text-default hover:border-primary/40 hover:bg-primary/5 hover:text-light flex items-center gap-3 rounded-lg border p-4 transition-colors duration-200;
 }
 
 .docs-pagination-prev {
@@ -149,7 +149,7 @@ main.docs-layout {
 }
 
 .docs-footer {
-  @apply border-border-light mt-12 border-t;
+  @apply mt-12 border-t;
 }
 
 .docs-footer-inner {

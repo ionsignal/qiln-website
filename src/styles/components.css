@@ -15,18 +15,17 @@
   @apply prose-a:text-secondary prose-a:underline prose-a:transition prose-a:duration-300 prose-a:font-normal [&_a:hover]:no-underline;
   @apply prose-p:text-text-default prose-p:mt-2 prose-p:mb-3;
 
-  @apply prose-hr:mt-0 prose-hr:mb-[1em] prose-hr:border-border-light;
+  @apply prose-hr:mt-0 prose-hr:mb-[1em];
   @apply prose-code:px-1 prose-code:text-secondary;
 
   /* Image */
   @apply prose-img:mt-2.5 prose-img:max-w-full;
 
   /* Table */
-  @apply prose-thead:border-border-light prose-thead:bg-white/5;
-  @apply prose-tr:border-border-light;
+  @apply prose-thead:bg-white/5;
   @apply prose-td:relative prose-td:z-10 prose-td:px-3 prose-td:py-4.5;
   @apply prose-th:relative prose-th:z-10 prose-th:px-4 prose-th:py-4.5 prose-th:text-light;
-  @apply prose-table:relative prose-table:overflow-hidden prose-table:before:absolute prose-table:before:left-0 prose-table:before:top-0 prose-table:before:h-full prose-table:before:w-full prose-table:before:border-border-light prose-table:before:rounded-[inherit] prose-table:before:border prose-table:before:content-[""];
+  @apply prose-table:relative prose-table:overflow-hidden prose-table:before:absolute prose-table:before:left-0 prose-table:before:top-0 prose-table:before:h-full prose-table:before:w-full prose-table:before:rounded-[inherit] prose-table:before:border prose-table:before:content-[""];
 
   /* Blockquote */
   @apply prose-blockquote:prose-p:first-of-type:before:hidden prose-blockquote:prose-p:last-of-type:after:hidden prose-blockquote:space-y-4! prose-blockquote:font-normal prose-blockquote:border-l prose-blockquote:bg-secondary/5 prose-blockquote:border-secondary! prose-blockquote:px-8 prose-blockquote:py-4 prose-blockquote:not-italic;

@@ -12,7 +12,7 @@
   --color-secondary: #34d399; /* Amber 400 — Warm gold counterpoint */
   --color-accent: #0b1221; /* Slightly elevated deep blue for cards/sections */
   --color-body: #060913; /* Deep Abyss Blue */
-  --color-border-light: #1a233a; /* Subtle structural borders */
+  --color-divider: #1a233a; /* Subtle structural borders */
   --color-theme-dark: #080d1a; /* Navbars / Overlays */
 
   --color-text-default: #a0abc0; /* Ice/Slate Grey for readable body text */

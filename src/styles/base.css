@@ -22,13 +22,6 @@ body {
 .has-customized-scrollbar {
   @apply [&::-webkit-scrollbar]:w-3! [&::-webkit-scrollbar-thumb]:bg-white/5! [&::-webkit-scrollbar-track]:bg-white/5!;
 }
-main.has-section-spacing-md section {
-  @apply pt-12 md:pt-16;
-}
-
-main.has-section-spacing-lg > section {
-  @apply pt-16 md:pt-24 lg:pt-32;
-}
 
 h1,
 h2,
@@ -97,8 +90,10 @@ button:not(:disabled),
   cursor: pointer;
 }
 
-* {
-  @apply border-border-light;
+*,
+::before,
+::after {
+  @apply border-divider;
 }
 
 @font-face {

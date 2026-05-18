@@ -12,7 +12,7 @@ export const ui = {
     "common.paginationNext": "Next",
     "common.paginationPrevious": "Previous",
     "navigation.buttonLabel": "Join Early Testers",
-    "subscription.label": "Subscribe to our newsletter",
+    "subscription.label": "Join our early testers group",
     "integration.relatedIntegrationSectionTitle":
       "Vivamus sit amet **varius felis**",
     "integration.backToIntegration": "Browse",

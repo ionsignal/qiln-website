@@ -33,7 +33,7 @@ const seoProps = {
 };
 ---
 
-<App {...seoProps} sectionSpacing="md" class="docs-layout">
+<App {...seoProps} class="docs-layout">
   <DocsHeader />
   <div class="w-full pt-(--docs-header-h)">
     <Sidebar tree={tree} activeTrail={activeTrail} />
@@ -65,7 +65,7 @@ const seoProps = {
       <DocsFooter />
     </div>
     <aside
-      class="border-border-light has-customized-scrollbar fixed inset-e-0 top-(--docs-header-h) z-40 hidden h-[calc(100vh-var(--docs-header-h))] w-(--docs-toc-w) overflow-y-auto border-l py-8 pr-4 pl-6 xl:block">
+      class="has-customized-scrollbar fixed inset-e-0 top-(--docs-header-h) z-40 hidden h-[calc(100vh-var(--docs-header-h))] w-(--docs-toc-w) overflow-y-auto border-l py-8 pr-4 pl-6 xl:block">
       <Toc headings={headings} entry={entry} />
     </aside>
   </div>

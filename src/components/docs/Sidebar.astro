@@ -15,12 +15,11 @@ const { tree, activeTrail } = Astro.props;
 <nav
   id="docs-sidebar"
   style="--auto-close: 1024;"
-  class="hs-overlay hs-overlay-open:translate-x-0 border-border-light bg-body fixed inset-s-0 top-0 z-60 hidden h-full w-(--docs-sidebar-w) -translate-x-full transform border-r transition-all duration-300 lg:top-(--docs-header-h) lg:z-40 lg:block lg:h-[calc(100vh-var(--docs-header-h))] lg:translate-x-0 lg:bg-transparent"
+  class="hs-overlay hs-overlay-open:translate-x-0 bg-body fixed inset-s-0 top-0 z-60 hidden h-full w-(--docs-sidebar-w) -translate-x-full transform border-r transition-all duration-300 lg:top-(--docs-header-h) lg:z-40 lg:block lg:h-[calc(100vh-var(--docs-header-h))] lg:translate-x-0 lg:bg-transparent"
   aria-label="Documentation navigation"
   tabindex="-1">
   <!-- Added: Mobile close button -->
-  <div
-    class="border-border-light flex items-center justify-between border-b px-4 py-3 lg:hidden">
+  <div class="flex items-center justify-between border-b px-4 py-3 lg:hidden">
     <span class="text-light font-medium">Navigation</span>
     <button
       type="button"

@@ -28,9 +28,7 @@ type Props = JSONLDProps & {
   sectionSpacing?: "md" | "lg";
 };
 
-let { sectionSpacing = "lg", structuredData, class: className } = Astro.props;
-const sectionSpacingClass =
-  sectionSpacing === "md" ? "has-section-spacing-md" : "has-section-spacing-lg";
+let { structuredData, class: className } = Astro.props;
 ---
 
 <!doctype html>
@@ -39,7 +37,7 @@ const sectionSpacingClass =
   <body>
     {!Astro.props.homepage && <PageLoader />}
     <Header {...Astro.props} />
-    <main class:list={[sectionSpacingClass, className]}>
+    <main class:list={[className]}>
       <slot />
     </main>
     <Footer />

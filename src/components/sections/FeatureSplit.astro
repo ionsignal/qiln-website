@@ -38,7 +38,11 @@ const imageAlignClass =
 {
   enable && (
     <section
-      class:list={["feature-split relative w-full overflow-hidden", className]}
+      class:list={[
+        "feature-split relative w-full overflow-hidden",
+        "scroll-mt-24 lg:scroll-mt-32",
+        className,
+      ]}
       data-direction={imagePosition}>
       <div
         class:list={["flex w-full flex-col lg:items-stretch", flexOrderClass]}>
@@ -52,7 +56,7 @@ const imageAlignClass =
               "motion-text flex w-full max-w-2xl flex-col gap-6 px-4 opacity-0 will-change-transform lg:px-8",
               textPaddingClass,
             ]}>
-            {subtitle && <Subtitle content={subtitle} class="mr-auto! ml-0!" />}
+            {subtitle && <Subtitle content={subtitle} />}
             {title && (
               <h2
                 class="has-italic-text capitalize"
