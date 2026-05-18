@@ -39,4 +39,12 @@ import { Font } from "astro:assets";
   />
   <Font cssVariable="--astro-font-secondary" preload />
   <Font cssVariable="--astro-font-tertiary" preload />
+  <noscript>
+    <style>
+      [data-aos] {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
+  </noscript>
 </head>

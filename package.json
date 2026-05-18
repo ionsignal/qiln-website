@@ -37,7 +37,8 @@
   "overrides": {
     "yaml": "^2.8.3",
     "postcss": "^8.5.12",
-    "fast-uri": "^3.1.1"
+    "fast-uri": "^3.1.1",
+    "devalue": "^5.8.0"
   },
   "dependencies": {
     "@floating-ui/dom": "1.7.6",
@@ -46,11 +47,10 @@
     "@preline/collapse": "4.2.0",
     "@preline/overlay": "4.2.0",
     "@preline/tabs": "4.2.0",
-    "aos": "2.3.4",
-    "astro": "6.3.3",
+    "astro": "6.3.5",
     "gpu-curtains": "0.16.3",
     "marked": "18.0.3",
-    "motion": "12.38.0",
+    "motion": "12.39.0",
     "plyr": "3.8.4"
   },
   "devDependencies": {

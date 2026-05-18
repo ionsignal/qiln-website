@@ -7,6 +7,7 @@
   import HSCollapse from "@preline/collapse/non-auto";
   import HSOverlay from "@preline/overlay/non-auto";
   import HSTabs from "@preline/tabs/non-auto";
+  import { animate, inView } from "motion";
 
   document.addEventListener("DOMContentLoaded", async () => {
     // Manually initialize Preline plugins
@@ -14,16 +15,43 @@
     HSCollapse.autoInit();
     HSOverlay.autoInit();
     HSTabs.autoInit();
-    // AOS - https://github.com/michalsnik/aos
-    const AOS = await import("aos");
-    AOS.init({
-      duration: 700,
-      easing: "ease-out",
-      disable: "mobile",
-      once: true,
-    });
+    // Initialize custom Motion engine (replaces AOS)
+    initMotionAnimations();
     initHorizontalScroll();
   });
+
+  function initMotionAnimations() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+    const elements = document.querySelectorAll("[data-aos]");
+    const animationMap: Record<string, any> = {
+      "fade-up-sm": { opacity: [0, 1], y: [30, 0] },
+      "fade-down-sm": { opacity: [0, 1], y: [-30, 0] },
+      "fade-right-sm": { opacity: [0, 1], x: [-30, 0] },
+      "fade-left-sm": { opacity: [0, 1], x: [30, 0] },
+      "fade-in": { opacity: [0, 1] },
+    };
+    elements.forEach((el) => {
+      const animationType = el.getAttribute("data-aos") || "fade-in";
+      const keyframes = animationMap[animationType] || animationMap["fade-in"];
+      const durationMs = parseFloat(
+        el.getAttribute("data-aos-duration") || "700",
+      );
+      const delayMs = parseFloat(el.getAttribute("data-aos-delay") || "0");
+      inView(
+        el,
+        () => {
+          animate(el, keyframes, {
+            duration: durationMs / 1000,
+            delay: delayMs / 1000,
+            ease: "easeOut",
+          });
+        },
+        { amount: 0.2 },
+      );
+    });
+  }
 
   function initHorizontalScroll() {
     document.querySelectorAll("*").forEach((el) => {

@@ -70,58 +70,16 @@ const isLocalHostedVideo = src?.includes("/videos/") && provider === "html5";
 
 <script>
   // @ts-nocheck
-  import AOS from "aos";
   const videoButtons = document.querySelectorAll(
     "[data-hs-overlay].video-modal-toggle",
   );
-
-  /**
-   * Observes when the "aos-animate" class is added to an element and removes
-   * the `data-aos` and `data-aos-delay` attributes after a 500ms delay.
-   *
-   * Use case: This function is useful when you want to remove certain AOS-specific
-   * attributes after the element has finished its animation, triggered by the `aos-animate` class. Currently, fixing an issue with preline overlay (video modal) not working if * any nearest parent of it has aos animation. This is a temporary solution until the issue is fixed in preline.
-   */
-  function removeAosAttributesAfterAnimation() {
-    // Function to handle mutations and remove AOS attributes
-    const handleAosAnimateClass = (mutationsList: MutationRecord[]) => {
-      mutationsList.forEach((mutation: MutationRecord) => {
-        // Check if the "aos-animate" class was added to the element
-        if (
-          mutation.type === "attributes" &&
-          mutation.target.classList.contains("aos-animate")
-        ) {
-          // Set a timeout to remove the AOS attributes after 500ms
-          setTimeout(() => {
-            mutation.target.removeAttribute("data-aos");
-            mutation.target.removeAttribute("data-aos-delay");
-          }, 1000); // Delay before removing the attributes
-        }
-      });
-    };
-    // Select the element to observe
-    const content = document.querySelector(".has-video-modal");
-    if (content) {
-      // Create a MutationObserver to detect class changes
-      const observer = new MutationObserver(handleAosAnimateClass);
-      // Configure the observer to watch for class attribute changes
-      observer.observe(content, {
-        attributes: true, // Observe attribute changes (for class changes)
-        attributeFilter: ["class"], // Only monitor the 'class' attribute
-      });
-    }
-  }
-  // Call the function when you need to monitor the element with the "content" class.
-  removeAosAttributesAfterAnimation();
   videoButtons.forEach((button) => {
     button.addEventListener("click", async () => {
       try {
         // Dynamically import Plyr and its css
         const { default: Plyr } = await import("plyr");
         await import("plyr/dist/plyr.css");
-
         const players = Plyr.setup(".video-player") as Plyr[];
-
         players?.forEach((player) => {
           let videoElem = player.elements.original as HTMLVideoElement;
           const autoplayAttr = videoElem?.getAttribute("data-autoplay");
