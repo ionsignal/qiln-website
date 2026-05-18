@@ -153,9 +153,9 @@ const copyrightParts = splitProtectedText(copyrightText);
           </ul>
           {
             config.settings.copyright && config.settings.copyright.enable && (
-              <ul class="has-list has-list-slash prose-a:text-inherit flex flex-wrap gap-y-4 text-white">
+              <ul class="has-list has-list-slash flex flex-wrap gap-y-4 text-white [&_a]:text-inherit">
                 {copyrightParts.map((value: string) => (
-                  <li class="prose-a:transition-colors prose-a:duration-300 prose-a:text-secondary prose-a:underline-offset-2 prose-a:underline inline-block opacity-90 [&_a:hover]:text-white">
+                  <li class="[&_a]:text-secondary inline-block opacity-90 [&_a]:underline [&_a]:underline-offset-2 [&_a]:transition-colors [&_a]:duration-300 [&_a:hover]:text-white">
                     <span set:html={markdownify(value)} />
                   </li>
                 ))}

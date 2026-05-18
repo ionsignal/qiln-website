@@ -98,13 +98,9 @@ const { class: className } = Astro.props;
                 ))}
               </div>
               {infoBox && (
-                <div class="border-primary/25 bg-primary/2 rounded-r-lg border-l-2 px-5 py-4">
-                  <div
-                    class="text-light/80 text-base font-medium"
-                    set:html={markdownify(infoBox.title)}
-                  />
+                <div class="border-primary/25 bg-primary/2 rounded-r-lg border-l-2 px-4 py-3">
                   <p
-                    class="text-text-default/75 mt-2 text-sm leading-relaxed"
+                    class="text-text-default/50 text-sm leading-relaxed"
                     set:html={markdownify(infoBox.description)}
                   />
                 </div>

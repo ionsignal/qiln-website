@@ -42,6 +42,5 @@ callouts:
     icon: "ShieldCheck"
     lines: [18, 19, 20, 21, 22, 23, 24, 25]
 infoBox:
-  title: "Decoupled by Designe"
-  description: "Compute is ephemeral; data is permanent. Qiln dynamically wires ZFS datasets into immutable containers at runtime."
+  description: "Qiln dynamically wires ZFS datasets into immutable containers at runtime."
 ---

@@ -1,4 +1,3 @@
-/* src/styles/globals.css */
 @import "tailwindcss";
 @import "./theme.css";
 
@@ -16,7 +15,6 @@
 
 /* Tailwind */
 @plugin "@tailwindcss/forms";
-@plugin "@tailwindcss/typography";
 @import "./safe.css";
 
 @layer base {

@@ -141,7 +141,6 @@ export const collections = {
           .optional(),
         infoBox: z
           .object({
-            title: z.string(),
             description: z.string(),
           })
           .optional(),
