@@ -11,6 +11,7 @@ type Props = {
   content?: SectionData;
   imagePosition?: "left" | "right";
   class?: string;
+  id?: string;
 };
 
 let defaultContent = (await fetchEntry("sections", "feature-gpu"))?.data;
@@ -24,12 +25,13 @@ let {
   features,
   image,
 } = actualContent;
-const { imagePosition = "right", class: className } = Astro.props;
+const { imagePosition = "right", class: className, id } = Astro.props;
 ---
 
 {
   enable && (
     <section
+      id={id}
       class:list={[
         "feature-split relative w-full overflow-hidden",
         "scroll-mt-24 lg:scroll-mt-32",
@@ -37,17 +39,21 @@ const { imagePosition = "right", class: className } = Astro.props;
       ]}
       data-direction={imagePosition}>
       <div class="container py-16 lg:py-24">
-        <div class="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
+        <div class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center lg:gap-16 xl:gap-20">
           <div
             class:list={[
               "motion-text opacity-0 will-change-transform",
               imagePosition === "left" ? "lg:order-2" : "lg:order-1",
+              "lg:col-span-5",
             ]}>
             <div class="mx-auto flex max-w-xl flex-col gap-6">
               {subtitle && <Subtitle content={subtitle} />}
               {title && (
                 <h2
-                  class="has-italic-text capitalize"
+                  class:list={[
+                    "has-italic-text capitalize",
+                    "lg:text-(length:--text-h3) xl:text-(length:--text-h2)",
+                  ]}
                   set:html={markdownify(title)}
                 />
               )}
@@ -79,6 +85,7 @@ const { imagePosition = "right", class: className } = Astro.props;
             class:list={[
               "motion-image relative opacity-0 will-change-transform",
               imagePosition === "left" ? "lg:order-1" : "lg:order-2",
+              "lg:col-span-7",
             ]}>
             {image && (
               <>

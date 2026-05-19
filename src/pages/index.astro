@@ -18,16 +18,20 @@ const blueprint = await fetchEntry("sections", "blueprint");
   <HomeBanner />
   {
     featureGpu && (
-      <FeatureSplit content={featureGpu.data} imagePosition="right" />
+      <FeatureSplit id="gpu" content={featureGpu.data} imagePosition="right" />
     )
   }
   {
     featureStorage && (
-      <FeatureSplit content={featureStorage.data} imagePosition="left" />
+      <FeatureSplit
+        id="storage"
+        content={featureStorage.data}
+        imagePosition="left"
+      />
     )
   }
   {blueprint && <BlueprintSection content={blueprint.data} />}
   <Features />
   <FaqSection />
-  <CallToAction />
+  <!-- <CallToAction /> -->
 </Base>

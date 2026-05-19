@@ -3,7 +3,6 @@ import type { NavigationLink } from "@/types";
 export const defaultLang = "en";
 export const ui = {
   en: {
-    // Flattened Strings (from en.json)
     "common.readMore": "Read More",
     "common.category": "Category",
     "common.publishedOn": "Published On",
@@ -16,23 +15,43 @@ export const ui = {
     "integration.relatedIntegrationSectionTitle":
       "Vivamus sit amet **varius felis**",
     "integration.backToIntegration": "Browse",
-    "footer.quickLinks": "Nullam Lacus",
-    "footer.legal": "Vestibulum",
-    "footer.resources": "Praesent",
+    "footer.quickLinks": "Community",
+    "footer.legal": "Legal",
+    "footer.resources": "Resources",
     "footer.description":
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc scelerisque erat non vehicula cursus. Pellentesque sit amet tempus dui, ut posuere elit. Etiam volutpat rhoncus mollis.",
+      "Qiln turns your bare-metal GPU servers into managed, multi-tenant workspaces.",
     "footer.copyright":
       "Copyright {{ year }} / All Rights Reserved By IonSignal, Inc.",
     main: [
       { enable: true, name: "Home", weight: 1, url: "/#home" },
-      { enable: true, name: "Features", weight: 2, url: "/#features" },
-      { enable: true, name: "FAQ", weight: 3, url: "/#faq" },
-      { enable: true, name: "Get Started", weight: 4, url: "/#cta" },
-      { enable: true, name: "Documentation", weight: 5, url: "/docs/" },
+      { enable: true, name: "Shared GPUs", weight: 3, url: "/#gpu" },
+      { enable: true, name: "Vault Storage", weight: 4, url: "/#storage" },
+      { enable: true, name: "Use Cases", weight: 5, url: "/#features" },
+      { enable: true, name: "FAQ", weight: 6, url: "/#faq" },
     ] as NavigationLink[],
     footerMenu: [] as NavigationLink[],
-    footerMenuQuickLink: [] as NavigationLink[],
-    footerMenuResources: [] as NavigationLink[],
-    footerMenuLegal: [] as NavigationLink[],
+    footerMenuQuickLink: [
+      {
+        enable: true,
+        name: "GitHub",
+        url: "https://github.com/IonSignal",
+        rel: "noopener noreferrer",
+        target: "_blank",
+      },
+      {
+        enable: true,
+        name: "Discord",
+        url: "https://discord.gg/eNaxauuyZ6",
+        rel: "noopener noreferrer",
+        target: "_blank",
+      },
+    ] as NavigationLink[],
+    footerMenuResources: [
+      { enable: true, name: "Documentation", url: "#" },
+    ] as NavigationLink[],
+    footerMenuLegal: [
+      { enable: true, name: "Privacy Policy", url: "#" },
+      { enable: true, name: "Terms of Service", url: "#" },
+    ] as NavigationLink[],
   },
 };

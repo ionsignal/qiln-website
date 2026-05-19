@@ -1,7 +1,7 @@
 ---
 enable: true
 subtitle: "the blueprint"
-title: "Stateless Compute. Persistent Data."
+title: "Stateless Compute. **Persistent Data.**"
 yaml: |
   name: papermc-edge
   display_name: PaperMC Edge Server
