@@ -25,14 +25,6 @@ let {
   image,
 } = actualContent;
 const { imagePosition = "right", class: className } = Astro.props;
-const flexOrderClass =
-  imagePosition === "left" ? "lg:flex-row-reverse" : "lg:flex-row";
-const textJustifyClass =
-  imagePosition === "left" ? "lg:justify-start" : "lg:justify-end";
-const textPaddingClass =
-  imagePosition === "left" ? "lg:pl-10 xl:pl-16" : "lg:pr-10 xl:pr-16";
-const imageAlignClass =
-  imagePosition === "left" ? "justify-start" : "justify-end";
 ---
 
 {
@@ -44,61 +36,69 @@ const imageAlignClass =
         className,
       ]}
       data-direction={imagePosition}>
-      <div
-        class:list={["flex w-full flex-col lg:items-stretch", flexOrderClass]}>
-        <div
-          class:list={[
-            "flex w-full items-center py-16 lg:w-1/2 lg:py-24",
-            textJustifyClass,
-          ]}>
+      <div class="container py-16 lg:py-24">
+        <div class="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center lg:gap-16 xl:gap-20">
           <div
             class:list={[
-              "motion-text flex w-full max-w-2xl flex-col gap-6 px-4 opacity-0 will-change-transform lg:px-8",
-              textPaddingClass,
+              "motion-text opacity-0 will-change-transform",
+              imagePosition === "left" ? "lg:order-2" : "lg:order-1",
             ]}>
-            {subtitle && <Subtitle content={subtitle} />}
-            {title && (
-              <h2
-                class="has-italic-text capitalize"
-                set:html={markdownify(title)}
-              />
-            )}
-            {description && (
-              <p
-                class="text-text-default text-lg leading-relaxed opacity-80"
-                set:html={markdownify(description)}
-              />
-            )}
-            {features && features.length > 0 && (
-              <ul class="mt-2 flex flex-col gap-3">
-                {features.map((feature) => (
-                  <li class="flex items-start gap-3">
-                    <LucideIcon
-                      icon="CheckCircle2"
-                      class="text-primary mt-0.5 h-5 w-5 shrink-0"
-                    />
-                    <span
-                      class="text-sm text-white/70"
-                      set:html={markdownify(feature)}
-                    />
-                  </li>
-                ))}
-              </ul>
-            )}
+            <div class="mx-auto flex max-w-xl flex-col gap-6">
+              {subtitle && <Subtitle content={subtitle} />}
+              {title && (
+                <h2
+                  class="has-italic-text capitalize"
+                  set:html={markdownify(title)}
+                />
+              )}
+              {description && (
+                <p
+                  class="text-text-default text-lg leading-relaxed opacity-80"
+                  set:html={markdownify(description)}
+                />
+              )}
+              {features && features.length > 0 && (
+                <ul class="mt-2 flex flex-col gap-3">
+                  {features.map((feature) => (
+                    <li class="flex items-start gap-3">
+                      <LucideIcon
+                        icon="CheckCircle2"
+                        class="text-primary mt-0.5 h-5 w-5 shrink-0"
+                      />
+                      <span
+                        class="text-sm text-white/70"
+                        set:html={markdownify(feature)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
-        </div>
-        <div
-          class:list={[
-            "relative flex min-h-75 w-full items-center lg:min-h-125 lg:w-1/2",
-            imageAlignClass,
-          ]}>
-          <div class="motion-image relative w-full shrink-0 opacity-0 will-change-transform lg:w-[115%]">
+          <div
+            class:list={[
+              "motion-image relative opacity-0 will-change-transform",
+              imagePosition === "left" ? "lg:order-1" : "lg:order-2",
+            ]}>
             {image && (
-              <Image
-                src={image}
-                alt="Feature screenshot"
-                class="h-auto w-full"
-              />
+              <>
+                <div
+                  aria-hidden="true"
+                  class:list={[
+                    "bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-primary/20%)_0%,transparent_100%)] pointer-events-none absolute inset-0 -z-10 scale-110",
+                    imagePosition === "right"
+                      ? "translate-x-8 translate-y-10 lg:translate-x-16 lg:translate-y-16"
+                      : "-translate-x-8 translate-y-10 lg:-translate-x-16 lg:translate-y-16",
+                  ]}
+                />
+                <div class="relative overflow-hidden rounded-2xl bg-white/2 shadow-2xl ring-1 ring-white/10">
+                  <Image
+                    src={image}
+                    alt="Feature screenshot"
+                    class="h-auto w-full"
+                  />
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -111,6 +111,7 @@ const imageAlignClass =
   import { animate, inView } from "motion";
 
   document.addEventListener("DOMContentLoaded", () => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const sections = document.querySelectorAll(".feature-split");
     sections.forEach((section) => {
       const textEl = section.querySelector(".motion-text");
@@ -127,10 +128,10 @@ const imageAlignClass =
             );
           }
           if (imageEl) {
-            const xOffset = direction === "left" ? -100 : 100;
+            const xOffset = direction === "left" ? -40 : 40;
             animate(
               imageEl,
-              { opacity: [0, 1], scale: [1.05, 1], x: [xOffset, 0] },
+              { opacity: [0, 1], scale: [1.04, 1], x: [xOffset, 0] },
               {
                 type: "spring",
                 bounce: 0.3,
