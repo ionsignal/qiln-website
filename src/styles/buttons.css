@@ -39,7 +39,7 @@
 }
 
 @utility btn-solid-secondary {
-  @apply text-dark bg-secondary border-secondary shadow-[0_0_15px_--theme(--color-secondary/30%)] border transition-all duration-300;
+  @apply text-dark bg-secondary border-secondary shadow-[0_0_15px_--theme(--color-secondary/30%)] border font-bold transition-all duration-300;
   @apply hover:bg-secondary hover:border-secondary hover:shadow-[0_0_25px_--theme(--color-secondary/50%)] hover:brightness-110;
 }
 

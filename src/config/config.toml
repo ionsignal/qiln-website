@@ -1,7 +1,7 @@
 # Site Configuration
 [site]
   title              = "Qiln" # Shared title for SEO and OpenGraph
-  description        = "Qiln is the only open-source, GPU-aware, ZFS-native workspace orchestration engine on the market" # Shared description for SEO and OpenGraph
+  description        = "Qiln (kiln) turns your GPU servers into a managed cloud. Declare a blueprint — and Qiln handles isolation, storage, networking, and HTTP" # Shared description for SEO and OpenGraph
   tagline            = "Orchestrate GPUs"
   taglineSeparator   = "" # default is " - " 
   baseUrl            = "https://qiln.com" # Base URL for the site and used in OpenGraph meta tags.
@@ -10,16 +10,13 @@
   logoText           = "Qiln" # Text displayed next to the logo
   logoWidth          = "32px" # Width of the logo
   logoHeight         = "32px" # Height of the logo
-
   # Add a trailing slash at the end of URLs (e.g., https://example.com/, https://example.com/contact/)
   # Note: Manually restart your server when you change this value
   trailingSlash = true
-
   # Add your site logo in image path below and open your terminal and run "npm run generate-favicons" to generate favicons for different devices and platform (https://realfavicongenerator.net/checker)
   [site.favicon]
     path  = "/images/favicons" # favicon images path (No need to change it)
     image = "/images/logo.svg" # Add your site logo path here and follow upper instruction
-
 
 # SEO Metadata
 # Specific SEO configurations that complement the general site settings.
@@ -32,18 +29,15 @@
     "workspace orchestration",
   ] # SEO keywords
   robots = "index, follow" # Instructs search engines on how to crawl and index the pages.
-
   [seo.robotsTxt]
     enable = true # Enables or disables robots.txt file generation on site build
     disallow = [
       "/cdn-cgi/",
     ] # Disallow specific paths (e.g., "/_astro/", "/cdn-cgi/")
-
   [seo.sitemap]
     enable = true # Enables or disables sitemap generation on site build
     exclude = [
     ] # exclude all pages that include these folder names (e.g., "blog", "services")
-
 
 # Different theme settings
 # -----------------------------------------------------------------------------------------------------------------------------------
@@ -61,7 +55,7 @@
 
   # documentation - https://formspree.io/ | https://formsubmit.co/ | https://docs.netlify.com/forms/setup/
   # Form action URL for the contact form (For more settings related to form see "src/content/sections/contact-section.md")
-  contactFormAction = "https://formsubmit.co/your_form_submission_receive_email" # https://formspree.io/f/your_form_id | https://formsubmit.co/your_form_submission_receive_email | "/"
+  contactFormAction = "" # https://formspree.io/f/your_form_id | https://formsubmit.co/your_form_submission_receive_email | "/"
 
   # formspree | formsubmit.co | netlify (default is formsubmit.co) 
   contactFormProvider = "formsubmit.co"
@@ -78,7 +72,7 @@
   [settings.subscription]
     enable     = false # Enables or disable the subscription form
     title      = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the title in different languages
-    formAction = "https://gmail.us11.list-manage.com/subscribe/post?u=d870b06d86c16269e4b1f9b39&amp;id=12cf0c6ac2&amp;f_id=007e61e1f0"
+    formAction = ""
 
   # Multilingual settings (check src/config/language.json for changing the languages)
   # NOTE: Manually restart your server when you change the following multilingual table values
