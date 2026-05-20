@@ -3,31 +3,31 @@ enable: true
 subtitle: "the blueprint"
 title: "Stateless Compute. **Persistent Data.**"
 yaml: |
-  name: papermc-edge
-  display_name: PaperMC Edge Server
-  image_alias: ubuntu:24.04
+  name: comfyui-gpu-node
+  display_name: ComfyUI Inference Node
+  image_alias: ubuntu:24.04-cuda
 
   # data wiring
   provisioning:
     volumes:
-      - name: world-data
+      - name: model-vault
         type: clone
         pool: is-nvme-pool
-        source_vault: mc-base-vault
-        mount_path: /opt/minecraft/world
+        source_vault: comfy-base-models
+        mount_path: /opt/comfyui/models
 
     files:
-      - path: /opt/minecraft/jvm.env
+      - path: /opt/comfyui/gpu.env
         content: |
-          ION_JVM_ARGS="-Xmx{{ limits.memory }}"
+          CUDA_VISIBLE_DEVICES="{{ gpu.id }}"
 
   # incus profile
   instance_template: 
     devices:
-      eth0:
-        type: nic
-        network: incusbr0
-        security.mac_filtering: 'true'
+      gpu0:
+        type: gpu
+        pci: "{{ limits.gpu.pci }}"
+        nvidia.runtime: 'true'
 callouts:
   - title: "Instant ZFS CoW Clones"
     description: "Bypasses slow container pulls. Provisions a zero-copy clone from a base vault in milliseconds."

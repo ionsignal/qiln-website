@@ -144,6 +144,35 @@ export const collections = {
             description: z.string(),
           })
           .optional(),
+        // Comparison Section Matrix
+        tabs: z
+          .array(
+            z.object({
+              id: z.string(),
+              label: z.string(),
+              tagline: z.string().optional(),
+              mobileCompetitor: z.string(),
+              competitors: z.array(
+                z.object({
+                  id: z.string(),
+                  name: z.string(),
+                  highlight: z.boolean().optional(),
+                  badge: z.string().optional(),
+                  mobileHide: z.boolean().optional(),
+                }),
+              ),
+              rows: z.array(
+                z.object({
+                  label: z.string(),
+                  isPrice: z.boolean().optional(),
+                  isBestFor: z.boolean().optional(),
+                  cells: z.record(z.string(), z.string()),
+                }),
+              ),
+              footnotes: z.array(z.string()).optional(),
+            }),
+          )
+          .optional(),
       }),
   }),
 

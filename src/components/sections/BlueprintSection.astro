@@ -56,7 +56,7 @@ const { class: className } = Astro.props;
                   <div class="h-3 w-3 rounded-full bg-green-500/80" />
                 </div>
                 <div class="ml-4 font-mono text-xs text-white/50">
-                  papermc-edge.yaml
+                  comfyui-gpu-node.yaml
                 </div>
               </div>
               <div class="code-wrapper overflow-x-auto p-4 font-mono text-sm">
@@ -72,10 +72,13 @@ const { class: className } = Astro.props;
           <div class="motion-right opacity-0 will-change-transform lg:col-span-5">
             <div class="sticky top-32 flex flex-col gap-6">
               <div class="flex flex-col gap-4">
-                {spotlights.map((spotlight) => (
+                {spotlights.map((spotlight, index) => (
                   <div
-                    class="spotlight-card group bg-primary/5 cursor-pointer rounded-xl border p-5 transition-colors duration-300"
-                    data-target-lines={JSON.stringify(spotlight.lines)}>
+                    class="spotlight-card group bg-primary/5 cursor-pointer rounded-xl border p-5 text-left transition-colors duration-300"
+                    data-target-lines={JSON.stringify(spotlight.lines)}
+                    role="button"
+                    tabindex="0"
+                    aria-current={index === 0 ? "true" : "false"}>
                     <div class="flex items-start gap-4">
                       <div class="mt-1 shrink-0">
                         <LucideIcon
@@ -154,9 +157,12 @@ const { class: className } = Astro.props;
 <script>
   import { animate, inView } from "motion";
 
-  document.addEventListener("DOMContentLoaded", () => {
+  const cleanupCallbacks: Array<() => void> = [];
+  function initBlueprintSection() {
     const sections = document.querySelectorAll(".blueprint-section");
     sections.forEach((section) => {
+      if (section.hasAttribute("data-initialized")) return;
+      section.setAttribute("data-initialized", "true");
       const cards = section.querySelectorAll(".spotlight-card");
       const codeWrapper = section.querySelector(".code-wrapper");
       const lines = codeWrapper?.querySelectorAll(".line");
@@ -167,11 +173,13 @@ const { class: className } = Astro.props;
         if (!codeWrapper || !lines || lines.length === 0) return;
         cards.forEach((c) => {
           c.classList.remove("border-primary/50", "bg-primary/20");
+          c.setAttribute("aria-current", "false");
         });
         lines.forEach((l) => l.classList.remove("highlighted"));
         const targetCard = cards[index];
         if (targetCard) {
           targetCard.classList.add("border-primary/50", "bg-primary/20");
+          targetCard.setAttribute("aria-current", "true");
           codeWrapper.classList.add("is-interacting");
           try {
             const targetLines = JSON.parse(
@@ -193,14 +201,17 @@ const { class: className } = Astro.props;
           }
         }
       };
+
       const startAutopilot = () => {
         if (isManual || cards.length === 0) return;
-        activateCard(0); // Instantly activate the first item
+        if (autopilotTimer) clearInterval(autopilotTimer);
+        activateCard(0);
         autopilotTimer = setInterval(() => {
           currentIndex = (currentIndex + 1) % cards.length;
           activateCard(currentIndex);
-        }, 4000); // 4 seconds per card
+        }, 4000);
       };
+
       const stopAutopilot = () => {
         if (autopilotTimer) {
           clearInterval(autopilotTimer);
@@ -208,6 +219,10 @@ const { class: className } = Astro.props;
         }
         isManual = true;
       };
+
+      cleanupCallbacks.push(() => {
+        if (autopilotTimer) clearInterval(autopilotTimer);
+      });
       cards.forEach((card, index) => {
         const triggerManual = () => {
           stopAutopilot();
@@ -215,12 +230,19 @@ const { class: className } = Astro.props;
         };
         card.addEventListener("mouseenter", triggerManual);
         card.addEventListener("click", triggerManual);
+        card.addEventListener("keydown", (e: Event) => {
+          const keyEvent = e as KeyboardEvent;
+          if (keyEvent.key === "Enter" || keyEvent.key === " ") {
+            keyEvent.preventDefault();
+            triggerManual();
+          }
+        });
       });
-      // Entry Animations & Autopilot Trigger
+
       const header = section.querySelector(".motion-header");
       const leftCol = section.querySelector(".motion-left");
       const rightCol = section.querySelector(".motion-right");
-      inView(
+      const stopInView = inView(
         section,
         () => {
           if (header)
@@ -241,6 +263,23 @@ const { class: className } = Astro.props;
         },
         { amount: 0.2 },
       );
+      cleanupCallbacks.push(stopInView);
     });
-  });
+  }
+
+  function teardownBlueprintSection() {
+    cleanupCallbacks.forEach((cb) => cb());
+    cleanupCallbacks.length = 0; // Empty the array
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initBlueprintSection);
+  } else {
+    initBlueprintSection();
+  }
+
+  document.addEventListener("astro:page-load", initBlueprintSection);
+  document.addEventListener("astro:before-swap", teardownBlueprintSection);
+
+  window.addEventListener("pagehide", teardownBlueprintSection);
 </script>

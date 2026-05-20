@@ -1,4 +1,5 @@
 ---
+import config from ".astro/config.generated.json";
 import Image from "@/components/helpers/Image.astro";
 import SvgIcon from "@/components/helpers/SvgIcon.astro";
 import Customers from "@/components/sections/Customers.astro";
@@ -80,7 +81,7 @@ let { title, badge, customers, description, image, buttons, subscription } =
           data-aos-duration="900"
           class="flex flex-col items-center justify-center gap-5 sm:flex-row">
           {
-            subscription?.enable && (
+            subscription?.enable && config.settings.navigationButton.enable && (
               <SubscriptionForm layout="hero" idSuffix="hero" />
             )
           }
@@ -90,17 +91,19 @@ let { title, badge, customers, description, image, buttons, subscription } =
                 <ButtonLink
                   content={button}
                   class:list={[
-                    "btn-md btn-has-icon group relative z-0 flex w-full items-center justify-center gap-4 sm:w-auto [&>.label]:z-20",
-                    button.variant === "secondary"
-                      ? "btn-outline-secondary"
-                      : "btn-solid-primary",
+                    // "btn-md btn-has-icon group relative z-0 flex w-full items-center justify-center gap-4 sm:w-auto [&>.label]:z-20",
+                    // button.variant === "secondary"
+                    //   ? "btn-outline-secondary"
+                    //   : "btn-solid-primary",
+                    "btn-md btn-has-icon group relative z-0 flex w-full items-center justify-center gap-4 sm:w-72 [&>.label]:z-20",
+                    "btn-solid-secondary",
                   ]}>
-                  <span class="flex h-6 w-12 items-center justify-center rounded-full bg-white/15">
+                  {/* <span class="flex h-6 w-12 items-center justify-center rounded-full bg-white/15">
                     <SvgIcon
                       icon={button.icon || "star"}
                       class="h-5 w-5 transition-all duration-300 group-hover:rotate-180"
                     />
-                  </span>
+                  </span> */}
                 </ButtonLink>
               ))
           }

@@ -1,0 +1,255 @@
+---
+import Subtitle from "@/components/widgets/Subtitle.astro";
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+import { fetchEntry } from "@/utils/content";
+import { overrideObjects } from "@/utils/core";
+import { markdownify } from "@/utils/text";
+import type { CollectionEntry } from "astro:content";
+
+type SectionData = CollectionEntry<"sections">["data"];
+type TabData = NonNullable<SectionData["tabs"]>[number];
+type CompetitorData = TabData["competitors"][number];
+type RowData = TabData["rows"][number];
+
+interface Props {
+  content?: SectionData;
+  class?: string;
+}
+
+type StatusInfo = {
+  status: "native" | "possible" | "none" | "roadmap" | null;
+  text: string;
+};
+
+function parseCell(raw: string): StatusInfo {
+  const match = raw.match(/^\[(native|possible|none|roadmap)\]\s*/);
+  if (match) {
+    return {
+      status: match[1] as StatusInfo["status"],
+      text: raw.slice(match[0].length),
+    };
+  }
+  return { status: null, text: raw };
+}
+
+const statusIconMap: Record<string, string> = {
+  native: "CircleCheck",
+  possible: "CircleDot",
+  none: "CircleX",
+  roadmap: "Clock",
+};
+
+const statusColorMap: Record<string, string> = {
+  native: "text-emerald-400",
+  possible: "text-amber-400",
+  none: "text-red-400/60",
+  roadmap: "text-primary",
+};
+
+let defaultContent = (await fetchEntry("sections", "comparison"))?.data;
+let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
+let { enable = true, title, subtitle, tabs = [] } = actualContent;
+const { class: className } = Astro.props;
+---
+
+{
+  enable && tabs.length > 0 && (
+    <section
+      id="compare"
+      class:list={[
+        "comparison-section scroll-mt-24 lg:scroll-mt-32",
+        className,
+      ]}>
+      <div class="container py-16 lg:py-24">
+        <div
+          class="mx-auto mb-12 max-w-2xl text-center md:mb-16"
+          data-aos="fade-up-sm">
+          {subtitle && <Subtitle content={subtitle} />}
+          {title && (
+            <h2
+              class="has-italic-text text-white capitalize"
+              set:html={markdownify(title)}
+            />
+          )}
+        </div>
+        <div data-aos="fade-up-sm" data-aos-delay="200">
+          <nav
+            role="tablist"
+            aria-label="Comparison categories"
+            class="mb-8 flex flex-wrap justify-center gap-2 md:mb-10">
+            {tabs.map((tab: TabData, i: number) => (
+              <button
+                type="button"
+                role="tab"
+                id={`compare-tab-${tab.id}`}
+                data-hs-tab={`#compare-panel-${tab.id}`}
+                aria-controls={`compare-panel-${tab.id}`}
+                aria-selected={i === 0 ? "true" : "false"}
+                class:list={[
+                  "hs-tab-active:bg-primary/20 hs-tab-active:border-primary/60 hs-tab-active:text-white",
+                  "rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-white/70 transition-colors duration-200",
+                  "hover:bg-white/10 hover:text-white",
+                  i === 0 && "active",
+                ]}>
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+          {tabs.map((tab: TabData, i: number) => {
+            const mobileCompetitors = tab.competitors.filter(
+              (comp: CompetitorData) =>
+                (comp.highlight && !comp.mobileHide) ||
+                comp.id === tab.mobileCompetitor,
+            );
+            return (
+              <div
+                id={`compare-panel-${tab.id}`}
+                role="tabpanel"
+                aria-labelledby={`compare-tab-${tab.id}`}
+                class:list={[
+                  "transition-opacity duration-300",
+                  i === 0 ? "block" : "hidden",
+                ]}>
+                {tab.tagline && (
+                  <p class="text-text-default mx-auto mb-8 max-w-2xl text-center text-sm opacity-70">
+                    {tab.tagline}
+                  </p>
+                )}
+                <div class="comparison-table-wrapper hidden overflow-x-auto md:block">
+                  <table class="comparison-table w-full border-collapse text-sm">
+                    <thead>
+                      <tr>
+                        <th class="comparison-th-label" />
+                        {tab.competitors.map((comp: CompetitorData) => (
+                          <th
+                            class:list={[
+                              "comparison-th",
+                              comp.highlight && "comparison-th-highlight",
+                            ]}
+                            data-competitor-id={comp.id}>
+                            <span class="comparison-th-name">{comp.name}</span>
+                            {comp.badge && (
+                              <span class="comparison-th-badge">
+                                {comp.badge}
+                              </span>
+                            )}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tab.rows.map((row: RowData) => (
+                        <tr
+                          class:list={[
+                            row.isBestFor && "comparison-row-bestfor",
+                            row.isPrice && "comparison-row-price",
+                          ]}>
+                          <td class="comparison-td-label">{row.label}</td>
+                          {tab.competitors.map((comp: CompetitorData) => {
+                            const parsed = parseCell(row.cells[comp.id] || "—");
+                            return (
+                              <td
+                                class:list={[
+                                  "comparison-td",
+                                  comp.highlight && "comparison-td-highlight",
+                                ]}
+                                data-competitor-id={comp.id}>
+                                <div class="comparison-cell-inner">
+                                  {parsed.status && (
+                                    <LucideIcon
+                                      icon={statusIconMap[parsed.status]}
+                                      class:list={[
+                                        "mt-0.5 h-4 w-4 shrink-0",
+                                        statusColorMap[parsed.status],
+                                      ]}
+                                    />
+                                  )}
+                                  <span set:html={markdownify(parsed.text)} />
+                                </div>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div class="comparison-table-wrapper overflow-x-auto md:hidden">
+                  <table class="comparison-table w-full border-collapse text-sm">
+                    <thead>
+                      <tr>
+                        <th class="comparison-th-label" />
+                        {mobileCompetitors.map((comp: CompetitorData) => (
+                          <th
+                            class:list={[
+                              "comparison-th",
+                              comp.highlight && "comparison-th-highlight",
+                            ]}
+                            data-competitor-id={comp.id}>
+                            <span class="comparison-th-name">{comp.name}</span>
+                            {comp.badge && (
+                              <span class="comparison-th-badge">
+                                {comp.badge}
+                              </span>
+                            )}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tab.rows.map((row: RowData) => (
+                        <tr
+                          class:list={[
+                            row.isBestFor && "comparison-row-bestfor",
+                            row.isPrice && "comparison-row-price",
+                          ]}>
+                          <td class="comparison-td-label">{row.label}</td>
+                          {mobileCompetitors.map((comp: CompetitorData) => {
+                            const parsed = parseCell(row.cells[comp.id] || "—");
+                            return (
+                              <td
+                                class:list={[
+                                  "comparison-td",
+                                  comp.highlight && "comparison-td-highlight",
+                                ]}
+                                data-competitor-id={comp.id}>
+                                <div class="comparison-cell-inner">
+                                  {parsed.status && (
+                                    <LucideIcon
+                                      icon={statusIconMap[parsed.status]}
+                                      class:list={[
+                                        "mt-0.5 h-4 w-4 shrink-0",
+                                        statusColorMap[parsed.status],
+                                      ]}
+                                    />
+                                  )}
+                                  <span set:html={markdownify(parsed.text)} />
+                                </div>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {tab.footnotes && tab.footnotes.length > 0 && (
+                  <div class="comparison-footnotes mt-6 space-y-1.5 px-2">
+                    {tab.footnotes.map((fn: string, idx: number) => (
+                      <p class="text-text-default/60 text-xs leading-relaxed">
+                        <span class="text-text-default/40 mr-1.5">
+                          [{idx + 1}]
+                        </span>
+                        <span set:html={markdownify(fn)} />
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}

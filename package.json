@@ -1,10 +1,10 @@
 {
+  "private": true,
   "name": "qiln-website",
-  "description": "Marketing and documentation site for Qiln, IonSignal's open-source GPU-aware workspace orchestration engine.",
+  "description": "Marketing and documentation website for Qiln.",
   "type": "module",
   "version": "0.5.0",
   "license": "UNLICENSED",
-  "private": true,
   "author": "IonSignal, Inc.",
   "homepage": "https://qiln.com",
   "repository": {

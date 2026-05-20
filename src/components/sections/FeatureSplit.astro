@@ -12,6 +12,7 @@ type Props = {
   imagePosition?: "left" | "right";
   class?: string;
   id?: string;
+  hasBackground?: boolean;
 };
 
 let defaultContent = (await fetchEntry("sections", "feature-gpu"))?.data;
@@ -25,7 +26,12 @@ let {
   features,
   image,
 } = actualContent;
-const { imagePosition = "right", class: className, id } = Astro.props;
+const {
+  imagePosition = "right",
+  class: className,
+  id,
+  hasBackground = false,
+} = Astro.props;
 ---
 
 {
@@ -35,6 +41,7 @@ const { imagePosition = "right", class: className, id } = Astro.props;
       class:list={[
         "feature-split relative w-full overflow-hidden",
         "scroll-mt-24 lg:scroll-mt-32",
+        { "bg-accent/50": hasBackground },
         className,
       ]}
       data-direction={imagePosition}>
@@ -52,7 +59,7 @@ const { imagePosition = "right", class: className, id } = Astro.props;
                 <h2
                   class:list={[
                     "has-italic-text capitalize",
-                    "lg:text-(length:--text-h3) xl:text-(length:--text-h2)",
+                    "lg:text-(length:--text-h4) xl:text-(length:--text-h2)",
                   ]}
                   set:html={markdownify(title)}
                 />
