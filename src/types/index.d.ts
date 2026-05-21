@@ -1,9 +1,6 @@
 import type { ImageMetadata } from "astro";
 
 export type MarqueeConfig = {
-  elementWidth: string;
-  elementWidthAuto?: boolean;
-  elementWidthInSmallDevices: string;
   pauseOnHover: boolean;
   reverse?: "reverse" | "" | undefined;
   duration: string;

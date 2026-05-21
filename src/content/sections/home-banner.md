@@ -1,7 +1,7 @@
 ---
-title: "Orchestrate GPUs."
+title: "ComfyUI *wasn't* built for teams. Qiln is."
 badge: "qiln --license apache-2.0 --target bare-metal"
-description: "**Qiln (kiln) turns your GPU servers into a managed cloud.** Declare a blueprint — and Qiln handles isolation, storage, networking, and HTTP"
+description: "**Qiln (kiln) gives every artist their own isolated ComfyUI workspace** — everyone gets their own GPU, own outputs, own custom nodes — all sharing a single model library on hardware you *already* own."
 image: "../../assets/images/product-demo.png"
 subscription:
   enable: true
@@ -14,6 +14,19 @@ buttons:
     icon: "discord"
     variant: "secondary"
 customers:
-  enable: false
-  description: "Built for studios, labs, and infra teams running their own hardware"
+  enable: true
+  description: "Native blueprints for:"
+  list:
+    - src: "../../assets/images/customers/1.png"
+      alt: "ComfyUI"
+    - src: "../../assets/images/customers/2.png"
+      alt: "InvokeAI"
+    - src: "../../assets/images/customers/3.png"
+      alt: "Automatic1111"
+    - src: "../../assets/images/customers/4.png"
+      alt: "vLLM"
+    - src: "../../assets/images/customers/5.png"
+      alt: "Jupyter Notebook"
+    - src: "../../assets/images/customers/6.png"
+      alt: "Fooocus"
 ---

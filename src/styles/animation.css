@@ -27,6 +27,8 @@
 
 @theme {
   --animate-blink: blink 1s step-end infinite;
+  --animate-marquee: marquee var(--marquee-duration, 50s) linear infinite
+    var(--marquee-direction, normal);
 
   @keyframes blink {
     0%,
@@ -35,6 +37,15 @@
     }
     50% {
       opacity: 0;
+    }
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
     }
   }
 }

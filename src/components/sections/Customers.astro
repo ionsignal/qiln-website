@@ -1,5 +1,4 @@
 ---
-import Marquee from "@/components/widgets/Marquee.astro";
 import { fetchEntry } from "@/utils/content";
 import Image from "@/components/helpers/Image.astro";
 import { overrideObjects } from "@/utils/core";
@@ -20,11 +19,11 @@ let actualContent = overrideObjects(
 ) as any;
 let { enable = true, description, marquee = {}, list = [] } = actualContent;
 const { class: className, width = "sm", ...rest } = Astro.props;
-let duplicatedList = list;
-if (list.length <= 3) {
-  Array.from({ length: 3 }, () => [...list]).flat();
-} else if (list.length > 3) {
-  Array.from({ length: 2 }, () => [...list]).flat();
+let baseList = [...list];
+if (baseList.length > 0) {
+  while (baseList.length < 16) {
+    baseList = [...baseList, ...list];
+  }
 }
 ---
 
@@ -44,57 +43,43 @@ if (list.length <= 3) {
             />
           )}
           <div class="relative mt-4 flex items-center overflow-hidden mask-[linear-gradient(to_right,rgba(0,0,0,0)_0%,rgb(0,0,0)_10%,rgb(0,0,0)_90%,rgba(0,0,0,0)_100%)]">
-            <Marquee
-              marqueeElements={duplicatedList.length}
-              marqueePauseOnHover={marquee.pauseOnHover}
-              marqueeReverse={marquee.reverse}
-              marqueeDuration={marquee.duration}
-              marqueeElementWidth={marquee.elementWidth}
-              marqueeElementWidthAuto={marquee.elementWidthAuto}
-              marqueeElementWidthResponsive={
-                marquee.elementWidthInSmallDevices
-              }>
-              {duplicatedList.map((item: any) => (
-                <div
-                  class:list={[
-                    "px-4",
-                    {
-                      "min-w-(--marquee-element-width-responsive) md:min-w-(--marquee-element-width)":
-                        !marquee.elementWidthAuto,
-                    },
-                    {
-                      "min-w-fit": marquee.elementWidthAuto,
-                    },
-                  ]}>
-                  <Image
-                    src={item.src}
-                    alt={item.alt || ""}
-                    class="h-8 min-h-8 min-w-fit"
-                    loading="eager"
-                  />
-                </div>
-              ))}
-              {duplicatedList.map((item: any) => (
-                <div
-                  class:list={[
-                    "px-4",
-                    {
-                      "min-w-(--marquee-element-width-responsive) md:min-w-(--marquee-element-width)":
-                        !marquee.elementWidthAuto,
-                    },
-                    {
-                      "min-w-fit": marquee.elementWidthAuto,
-                    },
-                  ]}>
-                  <Image
-                    src={item.src}
-                    alt={item.alt || ""}
-                    class="h-8 min-h-8 min-w-fit"
-                    loading="eager"
-                  />
-                </div>
-              ))}
-            </Marquee>
+            <div
+              class:list={[
+                "animate-marquee flex w-max",
+                { "hover:[animation-play-state:paused]": marquee.pauseOnHover },
+              ]}
+              style={{
+                "--marquee-duration": marquee.duration || "50s",
+                "--marquee-direction":
+                  marquee.reverse === "reverse" ? "reverse" : "normal",
+              }}>
+              <div class="flex items-center justify-around gap-8 pr-8">
+                {baseList.map((item: any) => (
+                  <div class="flex h-5 w-max shrink-0 items-center justify-center md:h-6">
+                    <Image
+                      src={item.src}
+                      alt={item.alt || ""}
+                      class="h-full w-auto object-contain"
+                      loading="eager"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div
+                class="flex items-center justify-around gap-8 pr-8"
+                aria-hidden="true">
+                {baseList.map((item: any) => (
+                  <div class="flex h-5 w-max shrink-0 items-center justify-center md:h-6">
+                    <Image
+                      src={item.src}
+                      alt={item.alt || ""}
+                      class="h-full w-auto object-contain"
+                      loading="eager"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

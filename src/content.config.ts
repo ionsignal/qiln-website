@@ -71,10 +71,6 @@ export const collections = {
         // Marquee configuration (from customers)
         marquee: z
           .object({
-            elementWidthAuto: z.boolean().optional(),
-            elementWidth: z.string().optional(),
-            elementHeight: z.string().optional(),
-            elementWidthInSmallDevices: z.string().optional(),
             pauseOnHover: z.boolean().optional(),
             reverse: z.string().optional(),
             duration: z.string().optional(),
