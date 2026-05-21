@@ -23,7 +23,8 @@
     "astro-check": "npm run toml:build && astro check",
     "typecheck": "tsc && astro-check",
     "generate-favicons": "node ./scripts/generate-favicons.mjs",
-    "format": "prettier -w ./src"
+    "format": "prettier -w ./src",
+    "release": "npm run build && tar -czvf qiln-website-v$npm_package_version.tar.gz -C dist ."
   },
   "engines": {
     "node": ">=22.12.0",

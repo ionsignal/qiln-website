@@ -38,6 +38,9 @@
       const durationMs = parseFloat(
         el.getAttribute("data-aos-duration") || "700",
       );
+      const overlapVal = parseFloat(
+        el.getAttribute("data-aos-overlap") || "0.1",
+      );
       const delayMs = parseFloat(el.getAttribute("data-aos-delay") || "0");
       inView(
         el,
@@ -48,7 +51,7 @@
             ease: "easeOut",
           });
         },
-        { amount: 0.2 },
+        { amount: overlapVal },
       );
     });
   }
