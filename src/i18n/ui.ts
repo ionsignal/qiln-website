@@ -56,8 +56,8 @@ export const ui = {
       { enable: true, name: "Documentation", url: "#" },
     ] as NavigationLink[],
     footerMenuLegal: [
-      { enable: true, name: "Privacy Policy", url: "#" },
-      { enable: true, name: "Terms of Service", url: "#" },
+      { enable: true, name: "Privacy Policy", url: "/privacy-policy" },
+      { enable: true, name: "Terms of Service", url: "/terms-of-service" },
     ] as NavigationLink[],
   },
 };

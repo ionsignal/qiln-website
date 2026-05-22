@@ -1,0 +1,271 @@
+---
+title: "Terms of Service"
+description: "The terms and conditions governing the use of Qiln's platform and services."
+---
+
+# Terms of Service
+
+These Terms of Service ("**Terms**") form a binding legal agreement between you ("**you**," "**User**," or "**Customer**") and **IonSignal, Inc.**, a Delaware corporation registered as a foreign entity in California with its principal place of business in San Francisco, California ("**IonSignal**," "**we**," "**us**," or "**our**"), governing your access to and use of the **Qiln** orchestration engine, the websites located at `qiln.ionsignal.com`, `qiln.com`, and `qiln.ai` related APIs, documentation, dashboards, and any associated services (collectively, the "**Services**").
+
+**PLEASE READ THESE TERMS CAREFULLY. THEY INCLUDE A MANDATORY BINDING ARBITRATION CLAUSE AND CLASS ACTION WAIVER (SECTION 16), AN EARLY ALPHA DISCLAIMER (SECTION 3), AND LIMITATIONS ON OUR LIABILITY (SECTION 14).**
+
+By accessing, downloading, installing, or using the Services, you agree to be bound by these Terms. If you do not agree, you must not use the Services.
+
+---
+
+## 1. Definitions
+
+- **"Qiln Engine"** — the open-source orchestration software components made available under their respective OSI-approved licenses.
+- **"Proprietary Components"** — the visual interfaces, dashboards, control-plane web applications, IonSignal trademarks, logos, brand assets, and any closed-source modules.
+- **"Blueprint"** — a declarative YAML configuration consumed by Qiln to provision workloads.
+- **"Workload"** — any application, model, container, or compute task that you deploy or orchestrate through Qiln.
+- **"Alpha"** or **"Early Alpha"** — the current pre-release development phase of the Services.
+
+---
+
+## 2. Eligibility & Account Registration
+
+To use the Services, you must:
+
+- Be at least 18 years of age and able to form a legally binding contract;
+- Not be barred from using the Services under U.S. or other applicable law;
+- Not be located in, ordinarily resident in, or organized under the laws of any country or territory subject to U.S. comprehensive sanctions (see **Section 6**);
+- Provide accurate, current, and complete registration information and keep it updated.
+
+You are responsible for safeguarding your credentials and for all activity that occurs under your account.
+
+---
+
+## 3. Early Alpha; "AS IS"; No SLA
+
+**THE SERVICES ARE PROVIDED IN AN EARLY ALPHA, PRE-RELEASE STATE.** You expressly acknowledge and agree that:
+
+- The Services are provided **"AS IS" and "AS AVAILABLE"** without warranty of any kind.
+- **There are no Service Level Agreements (SLAs)**, no guarantees of uptime, latency, throughput, durability, or availability.
+- **High risk of data loss, corruption, instability, and bugs exists.** Workloads, ZFS snapshots, persistent volumes, model weights, configuration files, and account data may be lost, destroyed, or rendered inaccessible at any time, with or without notice.
+- Features may be added, modified, deprecated, or removed at any time without notice.
+- The Services may be suspended, throttled, or terminated at our sole discretion during the Alpha period.
+- You should not use the Services for production workloads, mission-critical operations, regulated data (e.g., HIPAA-covered PHI, PCI-DSS payment card data, classified or export-restricted technical data beyond what is permitted), or any use case where failure could result in personal injury, financial loss, or legal liability.
+
+**You assume all risk** of using the Services during the Alpha period and are solely responsible for maintaining independent backups of any data you consider important.
+
+---
+
+## 4. License Grants & Intellectual Property
+
+### 4.1 Open-Source Components
+
+Certain core engine components of Qiln are released as open-source under the **MIT License** and/or the **Apache License, Version 2.0**, as identified in the applicable source-code repositories and `LICENSE` files. Your use of those components is governed solely by the terms of the applicable OSI-approved license, not by these Terms.
+
+### 4.2 Proprietary Components
+
+The Proprietary Components — including, without limitation, the Qiln Admin UI, dashboards, visual designs, Lottie animations, marketing assets, "Qiln" and "IonSignal" word marks and logos, the `qiln.ionsignal.com`, `qiln.com`, and `qiln.ai` web properties, and any closed-source plugins or modules distributed by IonSignal — are the exclusive property of IonSignal and are protected by U.S. and international copyright, trademark, trade-dress, patent, and trade-secret laws.
+
+Subject to your compliance with these Terms, IonSignal grants you a **limited, revocable, non-exclusive, non-transferable, non-sublicensable license** to access and use the Proprietary Components solely to use the Services for their intended purpose. You may not:
+
+- Copy, modify, fork, redistribute, sublicense, or create derivative works of the Proprietary Components;
+- Reverse engineer, decompile, or disassemble the Proprietary Components except to the extent expressly permitted by law;
+- Use IonSignal trademarks or trade dress without our prior written consent;
+- Remove or alter any copyright, trademark, or proprietary notice;
+- Represent any fork, derivative, or competing product as being affiliated with, endorsed by, or "powered by" IonSignal without express written permission.
+
+### 4.3 User Content & Feedback
+
+You retain all rights in Blueprints, configurations, code, model weights, prompts, and other materials you provide ("**User Content**"). You grant IonSignal a worldwide, royalty-free, non-exclusive license to host, process, and transmit User Content solely as necessary to provide the Services.
+
+Any feedback, suggestions, bug reports, or feature requests you provide ("**Feedback**") may be used by IonSignal without restriction or compensation to you.
+
+---
+
+## 5. Acceptable Use Policy
+
+You agree **not** to use, and not to permit any third party to use, the Services to engage in any of the following prohibited activities. Violation may result in immediate suspension or termination without refund, forfeiture of access, and referral to law enforcement.
+
+### 5.1 Compute & Resource Abuse
+
+- **Unauthorized cryptocurrency mining**, including any "proof-of-work" hashing, coin minting, or token-issuance computation, regardless of currency or protocol. This prohibition is absolute and not waivable under the Alpha program.
+- **Distributed cracking, brute-force, password-recovery, or hash-collision** workloads.
+- **Botnets, DDoS infrastructure, traffic amplification, or reflection attacks.**
+- Circumventing GPU quotas, hardware leases, container isolation, or fair-use throttles, including by exploiting bugs in the orchestrator.
+
+### 5.2 AI, Models & Generated Content
+
+- **Generating non-consensual intimate imagery, including non-consensual deepfakes** of any identifiable person, whether real, deceased, fictional-but-recognizable, or composite.
+- **Generating Child Sexual Abuse Material (CSAM)** or content that sexualizes minors, in any form.
+- **Training, fine-tuning, or inferencing models on copyrighted works, trademarks, publicity rights, or personal data** without all necessary licenses, consents, and rights, in a manner that violates third-party intellectual-property or privacy rights.
+- **Generating content designed to defraud, impersonate, harass, defame, or incite violence** against individuals or protected groups.
+- **Operating models intended to evade content-moderation, KYC, sanctions screening, or election-integrity safeguards.**
+
+### 5.3 Security & Integrity
+
+- Hosting, distributing, or executing **malware, ransomware, spyware, rootkits, command-and-control servers, phishing kits, or exploit toolchains**.
+- Probing, scanning, or testing the vulnerability of the Services or any IonSignal infrastructure without prior written authorization.
+- Attempting to escape Incus containers, breach the Zero-Trust DMZ, access other tenants' data, or interfere with ZFS isolation.
+- Falsifying telemetry, tampering with NATS messages, or forging mTLS certificates.
+
+### 5.4 Legal & Content Compliance
+
+- Violating any applicable U.S. federal, state, local, or foreign law, including export-control, sanctions, anti-money-laundering, securities, and consumer-protection laws.
+- Infringing third-party intellectual-property, privacy, publicity, or contractual rights.
+- Transmitting unlawful, harassing, defamatory, obscene, or harmful content.
+
+IonSignal reserves the right (but has no obligation) to investigate, suspend, or terminate accounts engaged in suspected violations and to cooperate with law-enforcement authorities.
+
+---
+
+## 6. Export Controls & Sanctions
+
+The Services, the Qiln Engine, and associated technical data are subject to U.S. export-control and sanctions laws, including the **Export Administration Regulations (EAR)** administered by the U.S. Bureau of Industry and Security and the economic-sanctions programs administered by the U.S. Treasury Department's **Office of Foreign Assets Control (OFAC)**.
+
+You represent, warrant, and covenant that:
+
+- You are not located in, ordinarily resident in, organized under the laws of, or accessing the Services from any country or region subject to comprehensive U.S. sanctions, including but not limited to **Cuba, Iran, North Korea, Syria, the Crimea, Donetsk, Luhansk, and Zaporizhzhia regions of Ukraine**, and any other jurisdiction designated by OFAC.
+- You are not identified on any U.S. government restricted-party list, including the OFAC **Specially Designated Nationals (SDN) List**, the BIS **Entity List**, the BIS **Denied Persons List**, or the State Department **Debarred List**.
+- You will not export, re-export, transfer, or make available the Services, the Qiln Engine, or any technical data derived therefrom to any prohibited destination, end user, or end use, including any use related to **nuclear, chemical, or biological weapons, missile technology, or military-intelligence end uses** as defined under the EAR.
+- Because Qiln orchestrates **GPU passthrough and large-scale AI inference**, you specifically acknowledge that high-performance computing and advanced AI capabilities may be subject to enhanced export controls (including the BIS October 2023 and subsequent advanced-computing rules). You will not use the Services to develop or train models, or to provide compute resources, in a manner that violates such controls.
+
+Violation of this Section constitutes a material breach and may result in immediate termination and reporting to U.S. authorities.
+
+---
+
+## 7. Waitlist & Alpha Access
+
+Submitting waitlist information does not guarantee access to the Services. IonSignal selects participants in its sole discretion and may revoke access at any time. Alpha participants may be subject to additional terms (e.g., NDAs, feedback obligations), which will be presented at the time of invitation.
+
+---
+
+## 8. Fees
+
+The Services are currently provided without charge during the Early Alpha period. IonSignal reserves the right to introduce paid tiers in the future, with notice to affected users. No price expectations or grandfather rights are conferred by these Terms.
+
+---
+
+## 9. Third-Party Services
+
+The Services integrate with or depend on third-party software and infrastructure, including Incus, ZFS, NATS, Caddy, NVIDIA drivers and CUDA, AWS, LaunchList, and various open-source projects. IonSignal makes no representations regarding third-party components and disclaims all liability for their performance, availability, or security. Your use of third-party services is governed by their respective terms.
+
+---
+
+## 10. User Responsibilities & Indemnification
+
+You are solely responsible for:
+
+- All Workloads you deploy and all data you process;
+- Obtaining all necessary licenses, consents, and rights for any models, datasets, or content used with the Services;
+- Maintaining independent backups;
+- Compliance with all laws applicable to your use case (including GDPR, HIPAA, CCPA, COPPA, DMCA, and sector-specific regulations).
+
+You agree to **defend, indemnify, and hold harmless** IonSignal, its officers, directors, employees, contractors, affiliates, and agents from and against any and all claims, damages, liabilities, costs, and expenses (including reasonable attorneys' fees) arising out of or related to:
+
+- Your Workloads, Blueprints, or User Content;
+- Your violation of these Terms or the Acceptable Use Policy;
+- Your violation of any law or third-party right (including IP, privacy, and publicity rights);
+- Any model output, deepfake, or generated content produced via your use of the Services;
+- Any export-control or sanctions violation arising from your conduct.
+
+IonSignal reserves the right to assume the exclusive defense and control of any matter subject to indemnification, in which case you agree to cooperate with our defense.
+
+---
+
+## 11. Suspension & Termination
+
+We may suspend or terminate your access to the Services, in whole or in part, at any time, with or without notice, for any reason, including but not limited to:
+
+- Suspected violation of these Terms or the Acceptable Use Policy;
+- Risk to the security, integrity, or availability of the Services;
+- Legal, regulatory, or law-enforcement requirement;
+- Discontinuation of the Services or the Alpha program.
+
+Upon termination, your right to access the Services ceases immediately. ZFS volumes, container state, and account data may be deleted without further notice. Sections that by their nature should survive termination (including Sections 3, 4, 5, 6, 10, 13, 14, 15, 16, 17, and 18) will survive.
+
+---
+
+## 12. Modifications to the Terms
+
+We may modify these Terms at any time by posting the revised version at `qiln.com` and updating the "Last Updated" date. Material changes will be communicated by reasonable means (e.g., email or in-product notice). Continued use after the effective date constitutes acceptance. If you do not agree to a modification, your sole remedy is to stop using the Services.
+
+---
+
+## 13. Disclaimer of Warranties
+
+**TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, THE SERVICES, INCLUDING THE QILN ENGINE AND ALL PROPRIETARY COMPONENTS, ARE PROVIDED "AS IS" AND "AS AVAILABLE," WITH ALL FAULTS, AND IONSIGNAL EXPRESSLY DISCLAIMS ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING WITHOUT LIMITATION ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT, ACCURACY, OR THAT THE SERVICES WILL BE UNINTERRUPTED, SECURE, ERROR-FREE, OR FREE OF HARMFUL COMPONENTS.**
+
+No advice or information, whether oral or written, obtained from IonSignal or through the Services, creates any warranty not expressly stated herein. Some jurisdictions do not allow exclusion of certain warranties; in such jurisdictions, the foregoing exclusions apply only to the maximum extent permitted by law.
+
+---
+
+## 14. Limitation of Liability
+
+**TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW:**
+
+- **IN NO EVENT SHALL IONSIGNAL, ITS AFFILIATES, OFFICERS, DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES, INCLUDING WITHOUT LIMITATION DAMAGES FOR LOST PROFITS, LOST REVENUE, LOST DATA, LOST GOODWILL, BUSINESS INTERRUPTION, OR COST OF SUBSTITUTE SERVICES, ARISING OUT OF OR IN CONNECTION WITH THESE TERMS OR THE SERVICES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.**
+
+- **IONSIGNAL'S TOTAL CUMULATIVE LIABILITY ARISING OUT OF OR RELATED TO THESE TERMS OR THE SERVICES, WHETHER IN CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY, OR OTHERWISE, SHALL NOT EXCEED THE GREATER OF (A) THE AMOUNTS YOU PAID TO IONSIGNAL FOR THE SERVICES IN THE TWELVE (12) MONTHS IMMEDIATELY PRECEDING THE EVENT GIVING RISE TO THE CLAIM, OR (B) ONE HUNDRED U.S. DOLLARS (US $100.00).**
+
+The foregoing limitations apply notwithstanding the failure of essential purpose of any limited remedy. Some jurisdictions do not allow the exclusion or limitation of certain damages; in such jurisdictions, our liability is limited to the maximum extent permitted by law.
+
+---
+
+## 15. Governing Law
+
+These Terms are governed by and construed in accordance with the laws of the **State of California**, without regard to its conflict-of-laws principles. The United Nations Convention on Contracts for the International Sale of Goods does not apply.
+
+---
+
+## 16. Mandatory Binding Arbitration & Class Action Waiver
+
+**PLEASE READ THIS SECTION CAREFULLY. IT REQUIRES YOU TO ARBITRATE DISPUTES WITH IONSIGNAL AND LIMITS YOUR ABILITY TO SEEK RELIEF IN COURT OR THROUGH A CLASS ACTION.**
+
+### 16.1 Agreement to Arbitrate
+
+Except as provided in Section 16.5, any dispute, claim, or controversy arising out of or relating to these Terms or the Services ("**Dispute**") shall be resolved exclusively by **final and binding arbitration** administered by **JAMS** under its **Streamlined Arbitration Rules and Procedures** (or, for claims exceeding $250,000, its Comprehensive Arbitration Rules), as modified by these Terms.
+
+### 16.2 Seat & Venue
+
+The arbitration shall be conducted in **San Francisco, California**, before a single arbitrator selected in accordance with JAMS rules. Hearings may be conducted remotely at the arbitrator's discretion. Judgment on the award may be entered in any court of competent jurisdiction.
+
+### 16.3 Class Action Waiver
+
+**YOU AND IONSIGNAL AGREE THAT EACH MAY BRING CLAIMS AGAINST THE OTHER ONLY IN YOUR OR ITS INDIVIDUAL CAPACITY, AND NOT AS A PLAINTIFF OR CLASS MEMBER IN ANY PURPORTED CLASS, COLLECTIVE, CONSOLIDATED, REPRESENTATIVE, OR PRIVATE ATTORNEY GENERAL ACTION.** The arbitrator may not consolidate the claims of more than one person and may not preside over any form of representative proceeding. If a court determines that this class-action waiver is unenforceable as to any claim, that specific claim shall be severed and proceed in court, while all other claims shall remain in arbitration.
+
+### 16.4 Opt-Out
+
+You may opt out of this arbitration agreement by sending written notice to `legal@ionsignal.com` with the subject line "**Arbitration Opt-Out**" within **30 days** of first accepting these Terms. Your notice must include your name, account email, and a clear statement of intent to opt out.
+
+### 16.5 Exceptions
+
+Notwithstanding the foregoing, either party may bring an action in court for: (a) injunctive or equitable relief to protect intellectual-property rights, trade secrets, or to enforce the Acceptable Use Policy or export-control provisions; (b) small-claims-court actions within the court's jurisdictional limits; or (c) enforcement of an arbitration award.
+
+### 16.6 Federal Arbitration Act
+
+This arbitration agreement is governed by the **Federal Arbitration Act, 9 U.S.C. § 1 et seq.**
+
+---
+
+## 17. Notices
+
+We may provide notices to you via the email address associated with your account or by posting on the Services. You must send legal notices to:
+
+**IonSignal, Inc.**
+Attn: Legal
+San Francisco, California, USA
+Email: `legal@ionsignal.com`
+
+---
+
+## 18. General
+
+- **Entire Agreement.** These Terms, together with the Privacy Policy and any additional terms presented at the time of feature access, constitute the entire agreement between you and IonSignal.
+- **Severability.** If any provision is held invalid or unenforceable, the remaining provisions shall continue in full force.
+- **No Waiver.** Failure to enforce any right is not a waiver of that right.
+- **Assignment.** You may not assign these Terms without our prior written consent. IonSignal may assign these Terms freely.
+- **No Agency.** Nothing in these Terms creates an agency, partnership, joint venture, employment, or franchise relationship.
+- **Force Majeure.** Neither party is liable for delays or failures caused by events beyond reasonable control, including natural disasters, war, terrorism, civil unrest, government action, network or power outages, or supply-chain disruptions.
+- **U.S. Government Rights.** The Services are "Commercial Items" as defined in 48 C.F.R. § 2.101. U.S. Government users acquire only those rights set forth in these Terms.
+- **Language.** These Terms are drafted in English; any translation is for convenience only and the English version controls.
+
+---
+
+**By using the Services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.**
+
+---

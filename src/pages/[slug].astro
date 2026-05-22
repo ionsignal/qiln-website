@@ -1,0 +1,41 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "@/layouts/Base.astro";
+import Callout from "@/components/shortcodes/Callout.astro";
+import FileTree from "@/components/shortcodes/FileTree.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"pages">;
+}
+
+export async function getStaticPaths() {
+  const pages = await getCollection("pages");
+  const reservedSlugs = ["index", "404", "docs"];
+  const filteredPages = pages.filter((page) => {
+    if (import.meta.env.PROD && page.data.draft) {
+      return false;
+    }
+    if (reservedSlugs.includes(page.id)) {
+      console.warn(
+        `[slug].astro: Ignored reserved slug '${page.id}' from pages collection to prevent route collision.`,
+      );
+      return false;
+    }
+    return true;
+  });
+  return filteredPages.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Base {...entry.data}>
+  <article class="prose-styles container mx-auto max-w-4xl py-16 md:py-24">
+    <Content components={{ Callout, FileTree }} />
+  </article>
+</Base>

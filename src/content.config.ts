@@ -194,6 +194,25 @@ export const collections = {
       }),
   }),
 
+  // Generic top-level pages collection
+  pages: defineCollection({
+    loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/pages" }),
+    schema: ({ image }) =>
+      z.object({
+        title: z.string(),
+        description: z.string().optional(),
+        metaTitle: z.string().optional(),
+        metaDescription: z.string().optional(),
+        image: z.union([image(), z.string()]).optional(),
+        draft: z.boolean().default(false),
+        // Global SEO / Meta Fields
+        canonical: z.string().optional(),
+        keywords: z.array(z.string()).optional(),
+        robots: z.string().optional(),
+        disableTagline: z.boolean().optional(),
+      }),
+  }),
+
   // Documentation pages collection.
   docs: defineCollection({
     loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/docs" }),
