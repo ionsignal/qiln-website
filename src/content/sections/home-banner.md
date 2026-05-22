@@ -1,7 +1,8 @@
 ---
-title: "ComfyUI *wasn't* built for teams. Qiln is."
-badge: "qiln --license apache-2.0 --target bare-metal"
-description: "**Qiln (kiln) gives every creator their own isolated ComfyUI workspace** — including their own GPU, own outputs, own custom nodes — all sharing a single model library on hardware you *already* own."
+title: "One ComfyUI per user."
+subtitle: "**Zero compromises.**"
+badge: "Open Source • Self-Hosted"
+description: "Every user gets their own GPU. Their own custom nodes. Their own subdomain. All sharing one model vault and one gpu pool on hardware you already own."
 image: "../../assets/images/product-demo.png"
 subscription:
   enable: true

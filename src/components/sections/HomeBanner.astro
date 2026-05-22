@@ -20,8 +20,16 @@ type Props = {
 
 let defaultContent = (await fetchEntry("sections", "home-banner"))?.data;
 let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
-let { title, badge, customers, description, image, buttons, subscription } =
-  actualContent;
+let {
+  title,
+  subtitle,
+  badge,
+  customers,
+  description,
+  image,
+  buttons,
+  subscription,
+} = actualContent;
 ---
 
 <section id="home" class="scroll-mt-24 lg:scroll-mt-32">
@@ -38,37 +46,30 @@ let { title, badge, customers, description, image, buttons, subscription } =
                 data-duration="0.6"
                 data-delay="0.2"
                 data-stagger="0.1">
-                <div
-                  class="word inline-flex items-center gap-2 rounded-md border border-white/10 bg-black/50 px-4 py-2 font-mono text-sm shadow-lg backdrop-blur-sm md:text-base"
-                  style="will-change: transform; transform: translateY(10px); opacity: 0; filter: blur(10px);">
-                  <span class="sr-only">Tag: {badge}</span>
-                  <span aria-hidden="true" class="text-secondary">
-                    $
-                  </span>
-                  <span aria-hidden="true" class="text-white/90 lowercase">
+                <div class="word inline-flex items-center rounded-lg border border-white/10 px-3.5 py-1.5">
+                  <span
+                    aria-hidden="true"
+                    class="text-center text-xs tracking-wider text-white/75 uppercase sm:text-sm">
                     {badge}
-                  </span>
-                  <span aria-hidden="true" class="text-secondary animate-blink">
-                    _
                   </span>
                 </div>
               </div>
             )
           }
-          <div class="relative inline-block">
+          <div class="relative inline-block w-full">
             {
-              title && (
-                <AnimatedText
-                  class="has-italic-text font-secondary text-center text-5xl text-white capitalize md:text-6xl/tight"
-                  content={markdownify(title)}
-                />
+              (title || subtitle) && (
+                <h1 class="has-italic-text font-secondary mx-auto flex max-w-2xl flex-col gap-y-2 text-center text-3xl text-white md:gap-y-4 md:text-6xl/tight">
+                  {title && <span set:html={markdownify(title)} />}
+                  {subtitle && <span set:html={markdownify(subtitle)} />}
+                </h1>
               )
             }
           </div>
           {
             description && (
               <AnimatedText
-                class="[&_strong]:text-secondary [&_b]:text-secondary mx-auto max-w-2xl text-center text-lg/normal text-white/90 [&_strong]:font-bold"
+                class="[&_strong]:text-secondary [&_b]:text-secondary mx-auto max-w-3xl text-center text-lg/normal text-white/90 [&_strong]:font-bold"
                 stagger={0.03}
                 delay={0.4}
                 content={markdownify(description)}

@@ -1,7 +1,7 @@
 ---
 enable: true
 title: "GPUs on Demand. <span class='block'>**Release When Idle.**</span>"
-subtitle: "GPU Orchestration"
+subtitle: "Dynamic Leasing"
 description: "**Don't lock expensive hardware with static assignments.** Qiln dynamically hot-plugs bare-metal GPUs into isolated containers when creators need them, and reclaims them when they're done."
 features:
   - "Bare-metal PCIe passthrough"
