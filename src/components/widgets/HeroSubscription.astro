@@ -24,6 +24,7 @@ const msgs = {
   data-msg-success={msgs.success}
   data-msg-error={msgs.error}
   data-msg-network={msgs.network}
+  data-status="idle"
   class="group relative mx-auto block h-14 w-full max-w-72 transition-[max-width,width] duration-500 ease-out aria-expanded:max-w-full aria-expanded:sm:w-95 lg:mx-0">
   <button
     type="button"
@@ -40,7 +41,7 @@ const msgs = {
       id="email-hero"
       aria-required="true"
       placeholder={t("common.emailPlaceholder")}
-      class="border-primary/80 focus:ring-primary/15 size-full rounded-full border-2 bg-white/10 py-4 pr-40 pl-5 text-white shadow-none outline-0 backdrop-blur-sm transition-all duration-300 placeholder:text-white/80 focus:ring-4 disabled:opacity-50"
+      class="border-primary/80 focus:ring-primary/15 size-full rounded-full border-2 bg-white/10 py-4 pr-40 pl-5 text-white shadow-none outline-0 backdrop-blur-sm transition-all duration-300 group-data-[status=error]:border-red-500 group-data-[status=error]:text-red-100 placeholder:text-white/80 focus:ring-4 group-data-[status=error]:focus:ring-red-500/20 disabled:opacity-50 disabled:group-data-[status=success]:cursor-default disabled:group-data-[status=success]:border-teal-500 disabled:group-data-[status=success]:bg-teal-500/10 disabled:group-data-[status=success]:text-teal-400 disabled:group-data-[status=success]:opacity-100"
     />
     <div
       class="absolute top-1 right-1 flex h-[calc(100%-0.5rem)] items-center gap-1 sm:gap-2">
@@ -52,7 +53,7 @@ const msgs = {
       </button>
       <button
         type="submit"
-        class="btn-solid-primary has-icon-moving-animation flex h-full w-24 items-center justify-center rounded-full disabled:cursor-not-allowed disabled:opacity-70">
+        class="btn-solid-primary has-icon-moving-animation flex h-full w-24 items-center justify-center rounded-full disabled:cursor-not-allowed disabled:opacity-70 disabled:group-data-[status=success]:cursor-default disabled:group-data-[status=success]:bg-teal-600 disabled:group-data-[status=success]:opacity-100">
         <span class="sr-only">Subscribe</span>
         <span
           class="icons-wrapper inline-flex h-10 w-10 items-center justify-center">
@@ -67,7 +68,10 @@ const msgs = {
     </div>
     <div
       class="messages-container absolute top-full left-0 w-full text-sm opacity-90">
-      <div class="message-feedback hidden" aria-live="polite"></div>
+      <div
+        class="message-feedback hidden group-data-[status=error]:text-red-400 group-data-[status=success]:text-teal-400"
+        aria-live="polite">
+      </div>
     </div>
   </form>
 </qiln-subscribe>

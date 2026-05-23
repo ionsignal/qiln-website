@@ -36,8 +36,17 @@ export class QilnSubscribe extends HTMLElement {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.expand = this.expand.bind(this);
     this.collapse = this.collapse.bind(this);
+    this.dataset.status = "idle";
     if (this.form) {
       this.form.addEventListener("submit", this.handleSubmit);
+    }
+    if (this.input) {
+      this.input.addEventListener("input", () => {
+        if (this.dataset.status === "error") {
+          this.dataset.status = "idle";
+          this.hideMessage();
+        }
+      });
     }
     if (this.triggerBtn) {
       this.triggerBtn.addEventListener("click", this.expand);
@@ -74,11 +83,12 @@ export class QilnSubscribe extends HTMLElement {
   collapse() {
     this.setAttribute("aria-expanded", "false");
     this.hideMessage();
+    this.dataset.status = "idle";
+    this.setLoading(false);
     if (this.input) {
       this.input.value = "";
       this.input.blur();
     }
-    // Clean up the URL hash if it was the trigger
     if (window.location.hash === "#early-testers") {
       history.replaceState(
         null,
@@ -96,39 +106,44 @@ export class QilnSubscribe extends HTMLElement {
     try {
       const formData = new FormData(this.form);
       const urlEncodedData = new URLSearchParams(formData as any).toString();
-      //   const response = await fetch(this.actionUrl, {
-      //     method: "POST",
-      //     body: urlEncodedData,
-      //     headers: {
-      //       Accept: "application/json",
-      //       "Content-Type": "application/x-www-form-urlencoded",
-      //     },
-      //   });
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      const response = {
-        ok: true, // CHANGE THIS to `false` to test the error state
-        json: async () => ({
-          message: "Thank you for joining our early testers!",
-        }),
-      };
+      const response = await fetch(this.actionUrl, {
+        method: "POST",
+        body: urlEncodedData,
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
+      //   await new Promise((resolve) => setTimeout(resolve, 800));
+      //   const response = {
+      //     ok: false,
+      //     json: async () => ({
+      //       message: "Thank you for joining our early testers!",
+      //     }),
+      //   };
       if (response.ok) {
         let msg = this.msgSuccess;
         try {
           const data = await response.json();
           if (data.message) msg = data.message;
         } catch (err) {
-          /* Ignore JSON parse errors if endpoint returns plain text */
+          // ignore JSON parse errors
         }
-        this.showMessage(msg, "success");
+        this.dataset.status = "success";
+        this.showMessage(msg);
         this.form.reset();
       } else {
-        this.showMessage(this.msgError, "error");
+        this.dataset.status = "error";
+        this.showMessage(this.msgError);
       }
     } catch (error) {
       console.error("[QilnSubscribe] Error:", error);
-      this.showMessage(this.msgNetwork, "error");
+      this.dataset.status = "error";
+      this.showMessage(this.msgNetwork);
     } finally {
-      this.setLoading(false);
+      if (this.dataset.status !== "success") {
+        this.setLoading(false);
+      }
     }
   }
 
@@ -137,12 +152,10 @@ export class QilnSubscribe extends HTMLElement {
     if (this.submitBtn) this.submitBtn.disabled = isLoading;
   }
 
-  showMessage(msg: string, type: "success" | "error") {
+  showMessage(msg: string) {
     if (!this.feedback) return;
     this.feedback.textContent = msg;
-    this.feedback.className = `message-feedback block mt-2 ${
-      type === "success" ? "text-green-400" : "text-red-400"
-    }`;
+    this.feedback.className = "message-feedback block mt-2";
   }
 
   hideMessage() {
