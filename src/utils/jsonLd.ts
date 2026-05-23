@@ -4,7 +4,6 @@
  * Generates JSON-LD data that search engines like Google, Bing, and DuckDuckGo can use to better understand the content of the page.
  * This can improve the page's visibility in search engine results and provide users with additional information about the page.
  */
-import social from "@/config/social.json";
 import type { ImageMetadata } from "astro";
 
 // This component dynamically generates appropriate JSON-LD data based on the page type
@@ -60,7 +59,9 @@ export default function generateJsonLd(content: JSONLDProps, Astro: any) {
     "@type": "Organization",
     name: config.seo.author,
     url: new URL("/", Astro.url.origin).href,
-    sameAs: social.main.filter((item) => item.enable).map((item) => item.url),
+    sameAs: (config.social?.main || [])
+      .filter((item: any) => item.enable)
+      .map((item: any) => item.url),
     logo: {
       "@type": "ImageObject",
       url: new URL(config.site.logo, Astro.site ?? Astro.url.origin).href,

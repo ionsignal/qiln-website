@@ -1,7 +1,7 @@
 # Site Configuration
 [site]
-  title              = "Qiln" # Shared title for SEO and OpenGraph
-  description        = "Qiln (kiln) turns your GPU servers into a managed cloud. Declare a blueprint — and Qiln handles isolation, storage, networking, and HTTP" # Shared description for SEO and OpenGraph
+  title              = "Qiln"
+  description        = "Qiln the container manager where every user gets their own GPU. Their own custom nodes. Their own subdomain. All sharing one model vault and one gpu pool on hardware you already own."
   tagline            = "Orchestrate GPUs"
   taglineSeparator   = "" # default is " - " 
   baseUrl            = "https://qiln.com" # Base URL for the site and used in OpenGraph meta tags.
@@ -10,10 +10,11 @@
   logoText           = "Qiln" # Text displayed next to the logo
   logoWidth          = "32px" # Width of the logo
   logoHeight         = "32px" # Height of the logo
+
   # Add a trailing slash at the end of URLs (e.g., https://example.com/, https://example.com/contact/)
   # Note: Manually restart your server when you change this value
   trailingSlash = true
-  # Add your site logo in image path below and open your terminal and run "npm run generate-favicons" to generate favicons for different devices and platform (https://realfavicongenerator.net/checker)
+  # Add your site logo in image path below and open your terminal and run "npm run generate-favicons" to generate favicons
   [site.favicon]
     path  = "/images/favicons" # favicon images path (No need to change it)
     image = "/images/logo.svg" # Add your site logo path here and follow upper instruction
@@ -23,58 +24,36 @@
 # -----------------------------------------------------------------------------------------------------------------------------------
 [seo]
   author = "ionsignal"
-  keywords = [
-    "gpu orchestration",
-    "paas orchestration",
-    "workspace orchestration",
-  ] # SEO keywords
+  keywords = ["gpu orchestration", "paas orchestration", "workspace orchestration"] # SEO keywords
   robots = "index, follow" # Instructs search engines on how to crawl and index the pages.
   [seo.robotsTxt]
     enable = true # Enables or disables robots.txt file generation on site build
-    disallow = [
-      "/cdn-cgi/",
-    ] # Disallow specific paths (e.g., "/_astro/", "/cdn-cgi/")
+    disallow = ["/cdn-cgi/"] # Disallow specific paths (e.g., "/_astro/", "/cdn-cgi/")
   [seo.sitemap]
     enable = true # Enables or disables sitemap generation on site build
-    exclude = [
-    ] # exclude all pages that include these folder names (e.g., "blog", "services")
+    exclude = [] # exclude all pages that include these folder names (e.g., "blog", "services")
 
-# Different theme settings
-# -----------------------------------------------------------------------------------------------------------------------------------
 [settings]
   # If you change value of the following content folder, make sure to change the folder name also from
   # note: restart your server when you change this value
   # - "src/content" folder
   # - "src/[...lang]/pages" folder
   # - "src/content.config.ts" collections object
-  blogFolder        = "blog" # Folder where blog posts are stored
-  integrationFolder = "integration" # Folder where services are stored
-
+  blogFolder   = "blog" # Folder where blog posts are stored
   pagination   = 6 # Number of posts displayed on each page blog list page
   stickyHeader = true # Enables or disable sticky feature of header
-
-  # documentation - https://formspree.io/ | https://formsubmit.co/ | https://docs.netlify.com/forms/setup/
-  # Form action URL for the contact form (For more settings related to form see "src/content/sections/contact-section.md")
-  contactFormAction = "" # https://formspree.io/f/your_form_id | https://formsubmit.co/your_form_submission_receive_email | "/"
-
-  # formspree | formsubmit.co | netlify (default is formsubmit.co) 
-  contactFormProvider = "formsubmit.co"
-
-  footerDescription = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the footer description in different languages
 
   # For changing footer description and footer copyright in different languages see src/i18n/en.json and src/i18n/fr.json
   # We kindly appreciate it if you retain the theme copyright. Thank you for supporting Getastrothemes!
   [settings.copyright]
     enable = true
-    text   = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the copyright text in different languages
 
   # Mailchimp Subscription Form located in footer
   [settings.subscription]
-    enable     = false # Enables or disable the subscription form
-    title      = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the title in different languages
+    enable     = true # Enables or disable the subscription form
     formAction = ""
 
-  # Multilingual settings (check src/config/language.json for changing the languages)
+  # Multilingual settings
   # NOTE: Manually restart your server when you change the following multilingual table values
   [settings.multilingual]
     # Set `enable` to `true` for enabling the multilingual feature or `false` for disabling it.
@@ -84,22 +63,19 @@
     disableLanguages     = [] # List of languages to disable (eg: ["fr", "es"])
     showDefaultLangInUrl = false # Show default language in URL (eg: https://getastrothemes.com/en/)
 
+    [[settings.multilingual.languages]]
+      languageName = "En"
+      languageCode = "en"
+      contentDir = "english"
+      weight = 1
+
   # Navigation Button In Header
   [settings.navigationButton]
-    enable = false
-    label  = "" # Check src/i18n/en.json and src/i18n/fr.json for changing the navigation button label in different languages
+    enable = true
     url = "#early-testers"
-
-  [settings.markup.tableOfContents]
-    enable     = true
-    expanded   = true # whether to expand the table of contents by default
-    endLevel   = 5
-    ordered    = false
-    startLevel = 1
 
 # OpenGraph Metadata
 # Specific OpenGraph settings, using values from the [site] section where possible.
-# -----------------------------------------------------------------------------------------------------------------------------------
 [opengraph]
   image       = "/images/og-image.jpg" # Image used in OpenGraph previews
   ogLocale    = "en_US" # Locale setting for OpenGraph
@@ -107,8 +83,33 @@
   twitter     = "" # Twitter handle for Twitter Card meta tags
   twitterCard = "summary_large_image" # Type of Twitter Card to use in social sharing
 
-# [head] (Add custom scripts, stylesheets, and meta tags to be rendered in the <head> section of the page)
-# -----------------------------------------------------------------------------------------------------------------------------------
+# Social Links
+[[social.main]]
+  enable = true
+  label = "twitter"
+  icon = "twitter"
+  url = "#social"
+
+[[social.main]]
+  enable = true
+  label = "linkedin"
+  icon = "linkedin"
+  url = "#social"
+
+[[social.main]]
+  enable = true
+  label = "github"
+  icon = "github"
+  url = "https://github.com/IonSignal"
+
+[[social.main]]
+  enable = true
+  label = "discord"
+  icon = "discord"
+  url = "https://discord.gg/eNaxauuyZ6"
+
+# [head]
+# Custom scripts, stylesheets, and meta tags to be rendered in the <head> section of the page
 [head]
   content = """
   <!-- You can easily add this type of tracking code by updating the `config.toml` file -->

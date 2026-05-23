@@ -1,5 +1,4 @@
 ---
-import social from "@/config/social.json";
 import Logo from "@/components/global/Logo.astro";
 import config from ".astro/config.generated.json";
 import { markdownify } from "@/utils/text";
@@ -9,10 +8,11 @@ import { splitProtectedText, useTranslations, formatUrl } from "@/utils/core";
 import type { NavigationLink } from "@/types";
 
 const t = useTranslations();
-let { copyright, footerDescription, subscription } = config.settings;
-footerDescription = footerDescription || t("footer.description");
-const copyrightText = copyright.text || t("footer.copyright");
+const footerDescription = t("footer.description");
+const copyrightText = t("footer.copyright");
 const copyrightParts = splitProtectedText(copyrightText);
+
+let { copyright, subscription } = config.settings;
 ---
 
 <footer class="to-primary/20 lg:to-primary/5 bg-linear-to-b from-transparent">
@@ -33,7 +33,9 @@ const copyrightParts = splitProtectedText(copyrightText);
             linkType="follow"
             class="mt-5 gap-1"
             size="sm"
-            list={social.main.filter((social) => social.enable)}
+            list={(config.social?.main || []).filter(
+              (social: any) => social.enable,
+            )}
           />
         </div>
         <!-- Quick Links, Resources, Legal and Subscription -->
@@ -117,14 +119,10 @@ const copyrightParts = splitProtectedText(copyrightText);
             {
               subscription && subscription.enable && (
                 <div class="mt-8 border-t pt-5">
-                  {(config.settings.subscription.title ||
-                    t("subscription.label")) && (
+                  {t("subscription.label") && (
                     <p
                       class="mb-2.5"
-                      set:html={
-                        config.settings.subscription.title ||
-                        markdownify(t("subscription.label"))
-                      }
+                      set:html={markdownify(t("subscription.label"))}
                     />
                   )}
                   <SubscriptionForm {...subscription} />

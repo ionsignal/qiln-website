@@ -1,4 +1,4 @@
-import socialData from "@/config/social.json";
+import config from ".astro/config.generated.json" with { type: "json" };
 import type { SocialLink } from "@/types";
 
 /**
@@ -15,10 +15,11 @@ const HEADER_PLATFORMS = ["github", "discord"] as const;
 /**
  * Curated list of social links to render in the header chip slot.
  * Filters by enabled state and platform whitelist; preserves the order
- * defined in `social.json`.
+ * defined in `config.toml`.
  */
-export const headerSocials: SocialLink[] = socialData.main.filter(
-  (link) =>
+// Modified: Replaced social.json import with generated config and added fallback array
+export const headerSocials: SocialLink[] = (config.social?.main || []).filter(
+  (link: any) =>
     link.enable &&
     (HEADER_PLATFORMS as readonly string[]).includes(link.label.toLowerCase()),
 ) as SocialLink[];
