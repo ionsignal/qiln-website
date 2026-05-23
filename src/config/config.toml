@@ -48,10 +48,10 @@
   [settings.copyright]
     enable = true
 
-  # Mailchimp Subscription Form located in footer
+  # Subscription Form located in footer
   [settings.subscription]
     enable     = true # Enables or disable the subscription form
-    formAction = ""
+    formAction = "https://getlaunchlist.com/s/z0EOXt"
 
   # Multilingual settings
   # NOTE: Manually restart your server when you change the following multilingual table values

@@ -1,0 +1,63 @@
+---
+import { useTranslations } from "@/utils/core";
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+import config from ".astro/config.generated.json" with { type: "json" };
+
+interface Props {
+  formAction?: string;
+}
+
+const { formAction } = Astro.props;
+const t = useTranslations();
+const actionUrl = formAction || config.settings.subscription.formAction;
+const msgs = {
+  success: "Thank you for joining our early testers!",
+  error: "An error occurred. Please try again.",
+  network: "Network error. Please try again later.",
+};
+---
+
+<qiln-subscribe
+  data-action={actionUrl}
+  data-msg-success={msgs.success}
+  data-msg-error={msgs.error}
+  data-msg-network={msgs.network}
+  class="block w-full">
+  <form class="relative">
+    <label for="email-footer" class="sr-only">Email</label>
+    <input
+      required
+      type="email"
+      name="email"
+      id="email-footer"
+      aria-required="true"
+      placeholder={t("common.emailPlaceholder")}
+      class="border-primary/80 focus:ring-primary/15 size-full rounded-full bg-white/5 py-4 pr-28 pl-5 shadow-none outline-0 transition-all duration-300 placeholder:text-white placeholder:opacity-90 focus:ring-4 disabled:opacity-50"
+    />
+    <button
+      type="submit"
+      class="btn-solid-primary has-icon-moving-animation absolute top-1 right-1 flex h-[calc(100%-0.5rem)] w-24 items-center justify-center rounded-full disabled:cursor-not-allowed disabled:opacity-70">
+      <span class="sr-only">Subscribe</span>
+      <span
+        class="icons-wrapper inline-flex h-10 w-10 items-center justify-center">
+        <span class="icon icon-before flex items-center justify-center">
+          <LucideIcon icon="ArrowUpRight" class="h-6 w-6 text-white" />
+        </span>
+        <span class="icon icon-after flex items-center justify-center">
+          <LucideIcon icon="ArrowUpRight" class="h-6 w-6 text-white" />
+        </span>
+      </span>
+    </button>
+    <div
+      class="messages-container absolute top-full left-0 w-full text-sm opacity-90">
+      <div class="message-feedback hidden" aria-live="polite"></div>
+    </div>
+  </form>
+</qiln-subscribe>
+
+<script>
+  import { QilnSubscribe } from "@/utils/subscribe";
+  if (!customElements.get("qiln-subscribe")) {
+    customElements.define("qiln-subscribe", QilnSubscribe);
+  }
+</script>

@@ -2,17 +2,16 @@
 import Logo from "@/components/global/Logo.astro";
 import config from ".astro/config.generated.json";
 import { markdownify } from "@/utils/text";
-import SocialComponent from "@/components/social/Social.astro";
-import SubscriptionForm from "@/components/widgets/SubscriptionForm.astro";
 import { splitProtectedText, useTranslations, formatUrl } from "@/utils/core";
+import SocialComponent from "@/components/social/Social.astro";
+import FooterSubscription from "@/components/widgets/FooterSubscription.astro";
 import type { NavigationLink } from "@/types";
 
 const t = useTranslations();
 const footerDescription = t("footer.description");
 const copyrightText = t("footer.copyright");
 const copyrightParts = splitProtectedText(copyrightText);
-
-let { copyright, subscription } = config.settings;
+let { subscription } = config.settings;
 ---
 
 <footer class="to-primary/20 lg:to-primary/5 bg-linear-to-b from-transparent">
@@ -20,7 +19,6 @@ let { copyright, subscription } = config.settings;
     class="lg:bg-[radial-gradient(55%_55%_at_50%_130%,--theme(--color-primary/15%)_40%,transparent_120%)] xl:bg-[radial-gradient(55%_55%_at_50%_100%,--theme(--color-primary/10%)_0%,transparent_100%)]">
     <div class="container space-y-16 lg:space-y-28">
       <div class="grid pt-16 lg:grid-cols-2 xl:grid-cols-3">
-        <!-- Logo, Description and Social -->
         <div class="flex flex-col gap-y-5 lg:pe-10">
           <Logo />
           {
@@ -38,10 +36,8 @@ let { copyright, subscription } = config.settings;
             )}
           />
         </div>
-        <!-- Quick Links, Resources, Legal and Subscription -->
         <div
           class="col-span-2 mt-10 grid gap-y-10 md:grid-cols-3 xl:mt-0 xl:ml-5">
-          <!-- Quick Links -->
           <div class="md:border-l md:px-8 lg:px-8 xl:px-14">
             {
               t("footer.quickLinks") && (
@@ -66,7 +62,6 @@ let { copyright, subscription } = config.settings;
               }
             </ul>
           </div>
-          <!-- Resources, Legal and Subscription -->
           <div class="col-span-2 md:border-l md:pl-8 lg:pl-8 xl:pl-14">
             <div class="grid gap-y-10 md:grid-cols-2">
               <div>
@@ -125,14 +120,13 @@ let { copyright, subscription } = config.settings;
                       set:html={markdownify(t("subscription.label"))}
                     />
                   )}
-                  <SubscriptionForm {...subscription} />
+                  <FooterSubscription {...subscription} />
                 </div>
               )
             }
           </div>
         </div>
       </div>
-      <!-- Footer Menu & Copyright -->
       <div class="py-7 text-sm md:text-base">
         <div class="flex flex-wrap justify-between gap-x-8 gap-y-6">
           <ul

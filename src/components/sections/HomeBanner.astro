@@ -5,7 +5,7 @@ import SvgIcon from "@/components/helpers/SvgIcon.astro";
 import Customers from "@/components/sections/Customers.astro";
 import ButtonLink from "@/components/buttons/ButtonLink.astro";
 import AnimatedText from "@/components/widgets/AnimatedText.astro";
-import SubscriptionForm from "@/components/widgets/SubscriptionForm.astro";
+import HeroSubscription from "@/components/widgets/HeroSubscription.astro";
 import Visualization from "@/components/widgets/Visualization.astro";
 import { plainify } from "@/utils/text";
 import { overrideObjects } from "@/utils/core";
@@ -84,7 +84,7 @@ let {
           class="flex flex-col items-center justify-center gap-4 sm:flex-row">
           {
             subscription?.enable && config.settings.navigationButton.enable && (
-              <SubscriptionForm layout="hero" idSuffix="hero" />
+              <HeroSubscription />
             )
           }
           {
