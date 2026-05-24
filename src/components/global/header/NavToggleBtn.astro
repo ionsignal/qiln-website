@@ -1,68 +1,19 @@
 ---
-const { isDarkHeader } = Astro.props;
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
 ---
 
 <button
+  type="button"
   aria-label="Toggle navigation"
   data-hs-collapse="#nav-menu"
   aria-controls="nav-menu"
-  class:list={[
-    "nav-toggler hs-collapse-toggle group relative lg:hidden",
-    isDarkHeader && "nav-toggler-dark",
-  ]}>
-  <div
-    class:list={[
-      "hs-collapse-open:ring-4 ring-opacity-30 relative flex h-10 w-10 transform flex-col items-center justify-center overflow-hidden rounded-full ring-1 duration-200 hover:ring-4",
-      isDarkHeader ? "bg-white ring-white/25" : "ring-primary/25 bg-primary",
-    ]}>
-    <div
-      class="hs-collapse-open:translate-y-2 hs-collapse-open:rotate-0 translate-y-[-105%] rotate-45 transform overflow-hidden transition-transform duration-300">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        class="group-[&.nav-toggler-dark]:text-dark group-[&:not(.nav-toggler-dark)]:text-white"
-        width="24px"
-        height="24px"
-        viewBox="0 0 24 24"
-        version="1.1"
-        xml:space="preserve"
-        fill="currentColor">
-        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-        <g
-          id="SVGRepo_tracerCarrier"
-          stroke-linecap="round"
-          stroke-linejoin="round">
-        </g>
-        <g id="SVGRepo_iconCarrier">
-          <style type="text/css">
-            .st0 {
-              opacity: 0.2;
-              fill: none;
-              stroke-width: 5e-2;
-              stroke-miterlimit: 10;
-            }
-          </style>
-          <g id="grid_system"></g>
-          <g id="_icons">
-            <path
-              d="M5.3,18.7C5.5,18.9,5.7,19,6,19s0.5-0.1,0.7-0.3l5.3-5.3l5.3,5.3c0.2,0.2,0.5,0.3,0.7,0.3s0.5-0.1,0.7-0.3 c0.4-0.4,0.4-1,0-1.4L13.4,12l5.3-5.3c0.4-0.4,0.4-1,0-1.4s-1-0.4-1.4,0L12,10.6L6.7,5.3c-0.4-0.4-1-0.4-1.4,0s-0.4,1,0,1.4 l5.3,5.3l-5.3,5.3C4.9,17.7,4.9,18.3,5.3,18.7z">
-            </path>
-          </g>
-        </g>
-      </svg>
-    </div>
-
-    <div
-      class="flex h-4.5 w-4.5 origin-center -translate-y-3 transform flex-col justify-between overflow-hidden transition-transform duration-300">
-      <div
-        class="group-[&.nav-toggler-dark]:bg-theme-dark hs-collapse-open:translate-y-6 mb-1.5 h-px w-6 origin-left transform transition-transform duration-300 group-[&:not(.nav-toggler-dark)]:bg-white">
-      </div>
-      <div
-        class="group-[&.nav-toggler-dark]:bg-theme-dark hs-collapse-open:translate-y-6 mb-1.5 h-px w-6 transform rounded transition-transform delay-75 duration-300 group-[&:not(.nav-toggler-dark)]:bg-white">
-      </div>
-      <div
-        class="group-[&.nav-toggler-dark]:bg-theme-dark hs-collapse-open:translate-y-6 h-px w-6 origin-left transform transition-transform delay-100 duration-300 group-[&:not(.nav-toggler-dark)]:bg-white">
-      </div>
-    </div>
-  </div>
+  class="nav-toggler hs-collapse-toggle group relative flex h-10 w-10 items-center justify-center rounded-full bg-white ring-1 ring-white/25 transition-all duration-200 hover:ring-4 focus:outline-none lg:hidden">
+  <LucideIcon
+    icon="Menu"
+    class="text-theme-dark hs-collapse-open:rotate-90 hs-collapse-open:scale-75 hs-collapse-open:opacity-0 absolute h-5 w-5 transition-all duration-300"
+  />
+  <LucideIcon
+    icon="X"
+    class="text-theme-dark hs-collapse-open:rotate-0 hs-collapse-open:scale-100 hs-collapse-open:opacity-100 absolute h-5 w-5 scale-75 -rotate-90 opacity-0 transition-all duration-300"
+  />
 </button>

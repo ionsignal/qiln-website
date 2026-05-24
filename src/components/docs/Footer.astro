@@ -8,10 +8,15 @@ interface Props {
   class?: string;
 }
 
+type CopyrightConfig = {
+  enable?: boolean;
+  text?: string;
+};
+
 const { class: className } = Astro.props;
 const t = useTranslations();
-const { copyright } = config.settings;
 
+const copyright = config.settings.copyright as CopyrightConfig;
 const copyrightEnabled = copyright?.enable !== false;
 const copyrightText = copyright?.text || t("footer.copyright");
 const copyrightLine = copyrightEnabled

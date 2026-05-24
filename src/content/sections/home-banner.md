@@ -1,8 +1,8 @@
 ---
-title: "One ComfyUI per user."
-subtitle: "**Zero compromises.**"
-badge: "Open Source • Self-Hosted"
-description: "Every user gets their own GPU. Their own custom nodes. Their own subdomain. All sharing one model vault and one gpu pool on hardware you already own."
+title: "One [ComfyUI|vLLM|PyTorch] per user."
+subtitle: "*Zero compromises.*"
+badge: "Now in alpha • Read the announcement →"
+description: "Every user gets their own GPU lease. Their own extensions. Their own subdomains. All sharing one model vault and one GPU pool on hardware you already own."
 image: "../../assets/images/product-demo.png"
 subscription:
   enable: true

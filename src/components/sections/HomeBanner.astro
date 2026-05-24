@@ -30,6 +30,37 @@ let {
   buttons,
   subscription,
 } = actualContent;
+
+function parseTickerString(rawTitle: string | undefined) {
+  if (!rawTitle) return { isTicker: false };
+  const match = rawTitle.match(/^(.*?)\[(.*?)\](.*)$/);
+  if (match) {
+    const prefix = match[1].trim();
+    const options = match[2]
+      .split("|")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const suffix = match[3].trim();
+    if (options.length > 1) {
+      const longestOption = options.reduce(
+        (a, b) => (a.length > b.length ? a : b),
+        "",
+      );
+      const fallbackTitle = `${prefix} ${options[0]} ${suffix}`.trim();
+      return {
+        isTicker: true,
+        prefix,
+        options,
+        suffix,
+        longestOption,
+        fallbackTitle,
+      };
+    }
+  }
+  return { isTicker: false };
+}
+
+const tickerData = parseTickerString(title);
 ---
 
 <section id="home" class="scroll-mt-24 lg:scroll-mt-32">
@@ -59,9 +90,47 @@ let {
           <div class="relative inline-block w-full">
             {
               (title || subtitle) && (
-                <h1 class="has-italic-text font-secondary mx-auto flex max-w-2xl flex-col gap-y-2 text-center text-3xl text-white md:gap-y-4 md:text-6xl/tight">
-                  {title && <span set:html={markdownify(title)} />}
-                  {subtitle && <span set:html={markdownify(subtitle)} />}
+                <h1 class="has-italic-text font-secondary mx-auto flex flex-col gap-y-2 text-center text-3xl text-white md:gap-y-4 md:text-5xl/tight lg:text-6xl/tight">
+                  {tickerData.isTicker ? (
+                    <>
+                      <span
+                        class="sr-only"
+                        set:html={markdownify(tickerData.fallbackTitle)}
+                      />
+                      <qiln-ticker aria-hidden="true" class="inline">
+                        {tickerData.prefix && (
+                          <span set:html={markdownify(tickerData.prefix)} />
+                        )}
+                        <span class="bg-primary/4.5 text-primary shadow-[0_0_50px_--theme(--color-primary/12.5%)] inline-flex items-baseline gap-0 rounded-lg px-0 py-0 align-baseline whitespace-nowrap">
+                          <span class="ticker-container inline-grid items-baseline justify-items-center overflow-hidden">
+                            <span class="invisible col-start-1 row-start-1">
+                              {tickerData.longestOption}
+                            </span>
+                            {tickerData.options?.map((opt, i) => (
+                              <span
+                                class:list={[
+                                  "ticker-item col-start-1 row-start-1 will-change-[transform,filter,opacity]",
+                                  i === 0 ? "opacity-100" : "opacity-0",
+                                ]}>
+                                {opt}
+                              </span>
+                            ))}
+                          </span>
+                        </span>
+                        {tickerData.suffix && (
+                          <span set:html={markdownify(tickerData.suffix)} />
+                        )}
+                      </qiln-ticker>
+                    </>
+                  ) : (
+                    title && <span set:html={markdownify(title)} />
+                  )}
+                  {subtitle && (
+                    <span
+                      class="text-2xl font-bold text-white/80 md:text-4xl/tight lg:text-5xl/tight"
+                      set:html={markdownify(subtitle)}
+                    />
+                  )}
                 </h1>
               )
             }
@@ -146,3 +215,82 @@ let {
     }
   </div>
 </section>
+
+<script>
+  import { animate } from "motion";
+
+  class QilnTicker extends HTMLElement {
+    private interval: ReturnType<typeof setInterval> | null = null;
+    private observer: IntersectionObserver | null = null;
+    private currentIndex = 0;
+    private items: HTMLElement[] = [];
+
+    connectedCallback() {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      this.items = Array.from(this.querySelectorAll(".ticker-item"));
+      if (this.items.length < 2) return;
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              this.startInterval();
+            } else {
+              this.stopInterval();
+            }
+          });
+        },
+        { threshold: 0 },
+      );
+      this.observer.observe(this);
+    }
+
+    disconnectedCallback() {
+      this.stopInterval();
+      if (this.observer) {
+        this.observer.disconnect();
+        this.observer = null;
+      }
+    }
+
+    private startInterval() {
+      if (!this.interval) {
+        this.interval = setInterval(() => this.runAnimation(), 3000);
+      }
+    }
+
+    private stopInterval() {
+      if (this.interval) {
+        clearInterval(this.interval);
+        this.interval = null;
+      }
+    }
+
+    private runAnimation() {
+      const outgoing = this.items[this.currentIndex];
+      this.currentIndex = (this.currentIndex + 1) % this.items.length;
+      const incoming = this.items[this.currentIndex];
+      animate(
+        outgoing,
+        {
+          y: ["0%", "-100%"],
+          opacity: [1, 0],
+          filter: ["blur(0px)", "blur(4px)"],
+        },
+        { type: "spring", stiffness: 400, damping: 30 },
+      );
+      animate(
+        incoming,
+        {
+          y: ["100%", "0%"],
+          opacity: [0, 1],
+          filter: ["blur(4px)", "blur(0px)"],
+        },
+        { type: "spring", stiffness: 400, damping: 30 },
+      );
+    }
+  }
+
+  if (!customElements.get("qiln-ticker")) {
+    customElements.define("qiln-ticker", QilnTicker);
+  }
+</script>
