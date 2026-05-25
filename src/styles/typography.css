@@ -1,0 +1,264 @@
+/* 
+ * Qiln Typography Engine (Tailwind v4 Utility)
+ * 
+ * - Uses :where() to maintain zero-specificity, allowing standard Tailwind utilities (e.g. `mt-0`) to override.
+ * - Protects shortcodes via strict :not(:where([class~='not-prose'])) exclusions.
+ * - Scales rhythm and bespoke UI elements (glowing lists) using `em` units.
+ */
+@utility prose-styles {
+  max-width: none;
+  color: var(--color-text-default);
+  line-height: var(--leading-body);
+
+  /* Typography: Headings */
+  &
+    :where(h1, h2, h3, h4, h5, h6):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    scroll-margin-top: calc(var(--docs-header-h) + 2rem);
+    font-weight: 500;
+    margin-bottom: 0.6em;
+    margin-top: 2.5em; /* Converted from rem to em for fluid rhythm */
+    color: var(--color-light);
+  }
+  & :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: var(--text-h1-sm);
+  }
+  & :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: var(--text-h2-sm);
+  }
+  & :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: var(--text-h3-sm);
+  }
+  & :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: var(--text-h4-sm);
+  }
+  & :where(h5):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: var(--text-h5-sm);
+  }
+  & :where(h6):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    font-size: var(--text-h6);
+  }
+
+  /* Paragraphs */
+  & :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+  }
+
+  /* Typography: Inline Elements */
+  &
+    :where(strong, b):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    color: var(--color-secondary);
+    font-weight: 400;
+  }
+
+  /* Protect embedded buttons from link styling */
+  & :where(a):not(:where(.btn, [class~="not-prose"], [class~="not-prose"] *)) {
+    color: var(--color-secondary);
+    text-decoration: underline;
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 400;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  &
+    :where(code):not(
+      :where(pre code, [class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+    color: var(--color-secondary);
+  }
+
+  /* Dividers */
+  & :where(hr):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 3em;
+    margin-bottom: 3em;
+    border: 0;
+    border-top: 1px solid var(--color-divider);
+  }
+
+  /* Media */
+  & :where(img):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    max-width: 100%;
+  }
+
+  /* Structural Elements: Tables */
+  & :where(table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid var(--color-divider);
+      pointer-events: none;
+    }
+  }
+  & :where(thead):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  & :where(td):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    position: relative;
+    z-index: 10;
+    padding: 1.125em 0.75em; /* Converted to em */
+  }
+  & :where(th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    position: relative;
+    z-index: 10;
+    padding: 1.125em 1em; /* Converted to em */
+    color: var(--color-light);
+    text-align: left;
+  }
+
+  /* Structural Elements: Blockquotes */
+  &
+    :where(blockquote):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    font-weight: 400;
+    border-left: 1px solid var(--color-secondary) !important;
+    background-color: color-mix(
+      in srgb,
+      var(--color-secondary) 5%,
+      transparent
+    );
+    padding: 1em 2em;
+    font-style: normal;
+    margin-top: 1.6em;
+    margin-bottom: 1.6em;
+    & > * + * {
+      margin-top: 1em !important;
+    }
+    & p {
+      margin: 0;
+    }
+    & p:first-of-type::before,
+    & p:last-of-type::after {
+      display: none;
+    }
+  }
+
+  /* Structural Elements: Lists */
+  & :where(ul, ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+  }
+  &
+    :where(li > ul, li > ol):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+  & :where(li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: var(--color-text-default);
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+  }
+
+  /* Custom Bioluminescent Unordered List */
+  &
+    :where(ul):not(
+      :where(.list-unstyled, [class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    list-style-type: none;
+    padding-left: 0;
+    & p {
+      margin-bottom: 0;
+    }
+    & > li {
+      position: relative;
+      padding-left: 1.8em;
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.35em; /* Converted from rem to em */
+        width: 1em; /* Converted from rem to em */
+        height: 1em; /* Converted from rem to em */
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 9999px;
+      }
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0.3125em; /* Converted from rem to em */
+        top: 0.6875em; /* Converted from rem to em */
+        width: 0.375em; /* Converted from rem to em */
+        height: 0.375em; /* Converted from rem to em */
+        background-color: #fff;
+        border-radius: 9999px;
+        z-index: 1;
+      }
+    }
+  }
+
+  /* Custom Numbered Ordered List */
+  & :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    list-style-type: none;
+    padding-inline-start: 0;
+    counter-reset: list-counter;
+    & ol {
+      counter-reset: list-counter;
+    }
+    & > li {
+      color: var(--color-secondary);
+      position: relative;
+      counter-increment: list-counter;
+      &::before {
+        content: counters(list-counter, ".") ". ";
+        position: absolute;
+        right: 101%;
+        opacity: 0.7;
+      }
+    }
+  }
+
+  /* Structural Elements: Code Blocks (Shiki Safe) */
+  & :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 1.7em;
+    margin-bottom: 1.7em;
+    border-radius: 0 !important;
+
+    /* Fallback if Shiki fails - purposely no !important to allow Shiki to override */
+    background-color: rgba(255, 255, 255, 0.05);
+
+    &::-webkit-scrollbar {
+      height: 0.5em;
+      width: 0.5em;
+    }
+    & > code {
+      display: block;
+    }
+  }
+
+  /* Layout Rhythm Overrides */
+  & > :first-child:not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 0;
+  }
+  & > :last-child:not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-bottom: 0;
+  }
+  &
+    > :where(img):not(:last-child):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    ),
+  &
+    > :where(pre):not(:last-child):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    ) {
+    margin-bottom: 2.5em !important;
+  }
+}

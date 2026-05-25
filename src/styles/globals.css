@@ -17,6 +17,9 @@
 @plugin "@tailwindcss/forms";
 @import "./safe.css";
 
+/* Custom Utilities */
+@import "./typography.css";
+
 @layer base {
   @import "./base.css";
 }
