@@ -10,6 +10,7 @@ export class QilnSubscribe extends HTMLElement {
   msgSuccess: string = "";
   msgError: string = "";
   msgNetwork: string = "";
+  expandTimeout: ReturnType<typeof setTimeout> | null = null;
 
   connectedCallback() {
     this.form = this.querySelector("form") as HTMLFormElement | null;
@@ -36,6 +37,7 @@ export class QilnSubscribe extends HTMLElement {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.expand = this.expand.bind(this);
     this.collapse = this.collapse.bind(this);
+    this.handleGlobalClick = this.handleGlobalClick.bind(this);
     this.dataset.status = "idle";
     if (this.form) {
       this.form.addEventListener("submit", this.handleSubmit);
@@ -58,12 +60,24 @@ export class QilnSubscribe extends HTMLElement {
       }
       this.handleHashChange();
       window.addEventListener("hashchange", this.handleHashChange);
+      document.addEventListener("click", this.handleGlobalClick);
     }
   }
 
   disconnectedCallback() {
     if (this.triggerBtn) {
       window.removeEventListener("hashchange", this.handleHashChange);
+      document.removeEventListener("click", this.handleGlobalClick);
+    }
+    if (this.expandTimeout) clearTimeout(this.expandTimeout);
+  }
+
+  handleGlobalClick(e: MouseEvent) {
+    const target = (e.target as Element).closest("a");
+    if (target && target.getAttribute("href") === "#early-testers") {
+      e.preventDefault();
+      history.pushState(null, "", "#early-testers");
+      this.expand();
     }
   }
 
@@ -74,13 +88,30 @@ export class QilnSubscribe extends HTMLElement {
   }
 
   expand() {
+    if (this.expandTimeout) clearTimeout(this.expandTimeout);
     this.setAttribute("aria-expanded", "true");
-    setTimeout(() => {
-      if (this.input) this.input.focus();
-    }, 500);
+    const isReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    this.scrollIntoView({
+      behavior: isReducedMotion ? "auto" : "smooth",
+      block: "center",
+    });
+    const isTouchDevice = window.matchMedia(
+      "(hover: none) and (pointer: coarse)",
+    ).matches;
+    if (!isTouchDevice) {
+      this.expandTimeout = setTimeout(() => {
+        if (this.input) {
+          this.input.focus({ preventScroll: true });
+        }
+        this.expandTimeout = null;
+      }, 500);
+    }
   }
 
   collapse() {
+    if (this.expandTimeout) clearTimeout(this.expandTimeout);
     this.setAttribute("aria-expanded", "false");
     this.hideMessage();
     this.dataset.status = "idle";

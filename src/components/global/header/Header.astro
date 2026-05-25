@@ -97,13 +97,14 @@ const {
       ".nav-toggler",
     ) as HTMLElement | null;
     if (navMenu && navMenu.classList.contains("open")) {
-      const target = event.target as Node;
-      if (
-        !navMenu.contains(target) &&
-        navToggler &&
-        !navToggler.contains(target)
-      ) {
-        navToggler.click();
+      const target = event.target as Element;
+      const clickedLink = target.closest("a");
+      const isOutsideClick =
+        !navMenu.contains(target) && navToggler && !navToggler.contains(target);
+      const isInsideLinkClick =
+        navMenu.contains(target) && clickedLink !== null;
+      if (isOutsideClick || isInsideLinkClick) {
+        navToggler?.click();
       }
     }
   });
