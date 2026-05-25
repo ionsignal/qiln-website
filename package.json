@@ -58,8 +58,6 @@
     "@astrojs/check": "0.9.9",
     "@astrojs/mdx": "5.0.6",
     "@astrojs/sitemap": "3.7.2",
-    "@realfavicongenerator/generate-favicon": "0.8.3",
-    "@realfavicongenerator/image-adapter-node": "0.8.3",
     "@tailwindcss/forms": "0.5.11",
     "@tailwindcss/vite": "4.3.0",
     "prettier": "3.8.3",
