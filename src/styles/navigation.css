@@ -30,11 +30,11 @@
 
   .nav-item {
     > .nav-link {
-      @apply relative flex items-center rounded-full px-4 py-1.5 text-white transition-all duration-300 lg:py-2 lg:hover:bg-white/5 xl:px-6;
+      @apply lg:hover:bg-primary/5 relative flex items-center rounded-full px-4 py-1.5 text-white transition-all duration-300 lg:py-2 xl:px-6;
       /* Active Menu Style */
       &.nav-link-active,
       .hs-collapse-toggle.active {
-        @apply bg-white/5 text-white;
+        @apply bg-primary/10 text-white;
       }
     }
   }

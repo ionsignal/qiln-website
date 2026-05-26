@@ -77,71 +77,11 @@ const treeHtml = shouldRender ? renderTree(tree, false) : "";
   shouldRender && (
     <nav
       class="docs-toc has-customized-scrollbar"
-      data-docs-toc
+      data-hs-scrollspy="#docs-content"
+      style="--scrollspy-offset: 120;"
       aria-label="On this page">
       <p class="docs-toc-title">On this page</p>
       <Fragment set:html={treeHtml} />
     </nav>
   )
 }
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const tocRoot = document.querySelector<HTMLElement>("[data-docs-toc]");
-    if (!tocRoot) return;
-    const links = Array.from(
-      tocRoot.querySelectorAll<HTMLAnchorElement>("[data-docs-toc-link]"),
-    );
-    if (!links.length) return;
-    if (typeof IntersectionObserver === "undefined") return;
-    const linkMap = new Map<string, HTMLAnchorElement>();
-    const headingEls: HTMLElement[] = [];
-    links.forEach((link) => {
-      const slug = link.dataset.docsTocLink;
-      if (!slug) return;
-      const heading = document.getElementById(slug);
-      if (heading) {
-        linkMap.set(slug, link);
-        headingEls.push(heading);
-      } else if (import.meta.env.DEV) {
-        console.warn(`[DocsToc] No heading element found for slug: "${slug}"`);
-      }
-    });
-    if (!headingEls.length) return;
-    const intersecting = new Map<string, IntersectionObserverEntry>();
-    let activeSlug: string | null = null;
-    const setActive = (slug: string | null) => {
-      if (slug === activeSlug) return;
-      if (activeSlug) {
-        linkMap.get(activeSlug)?.classList.remove("docs-toc-link-active");
-      }
-      if (slug) {
-        linkMap.get(slug)?.classList.add("docs-toc-link-active");
-      }
-      activeSlug = slug;
-    };
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const id = entry.target.id;
-          if (entry.isIntersecting) intersecting.set(id, entry);
-          else intersecting.delete(id);
-        }
-        if (intersecting.size > 0) {
-          let bestSlug: string | null = null;
-          let bestTop = Infinity;
-          for (const [slug, entry] of intersecting) {
-            const top = entry.boundingClientRect.top;
-            if (top < bestTop) {
-              bestTop = top;
-              bestSlug = slug;
-            }
-          }
-          if (bestSlug) setActive(bestSlug);
-        }
-      },
-      { rootMargin: "-64px 0px -70% 0px", threshold: 0 },
-    );
-    headingEls.forEach((el) => observer.observe(el));
-  });
-</script>

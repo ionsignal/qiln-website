@@ -27,3 +27,8 @@ declare module "@preline/tabs/non-auto" {
   const HSTabs: { autoInit: () => void };
   export default HSTabs;
 }
+
+declare module "@preline/scrollspy/non-auto" {
+  const HSScrollspy: { autoInit: () => void };
+  export default HSScrollspy;
+}

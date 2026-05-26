@@ -16,7 +16,7 @@
 
 /* Logo */
 .logo-wrapper {
-  @apply flex items-center gap-0.5;
+  @apply flex items-center gap-1.5;
 
   .logo {
     @apply w-10!;

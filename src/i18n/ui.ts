@@ -28,7 +28,7 @@ export const ui = {
       { enable: true, name: "Vault Storage", weight: 4, url: "/#storage" },
       {
         enable: true,
-        name: "Blueprints",
+        name: "Blueprints (Molds)",
         weight: 5,
         url: "/#blueprint-section",
       },

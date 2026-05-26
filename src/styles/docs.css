@@ -103,7 +103,7 @@ main.docs-layout {
   scroll-margin-block: calc(var(--docs-header-h) + 2rem);
 }
 
-.docs-toc-link-active {
+.docs-toc-link.active {
   @apply text-light border-primary;
 }
 

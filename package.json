@@ -44,7 +44,8 @@
     "@preline/collapse": "4.2.0",
     "@preline/overlay": "4.2.0",
     "@preline/tabs": "4.2.0",
-    "astro": "6.3.7",
+    "@preline/scrollspy": "4.2.0",
+    "astro": "6.3.8",
     "gpu-curtains": "0.16.3",
     "markdown-it": "14.2.0",
     "marked": "18.0.4",
@@ -57,7 +58,7 @@
   "devDependencies": {
     "@astrojs/check": "0.9.9",
     "@astrojs/mdx": "5.0.6",
-    "@astrojs/sitemap": "3.7.2",
+    "@astrojs/sitemap": "3.7.3",
     "@tailwindcss/forms": "0.5.11",
     "@tailwindcss/vite": "4.3.0",
     "@types/markdown-it": "14.1.2",

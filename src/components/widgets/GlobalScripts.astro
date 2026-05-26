@@ -7,6 +7,7 @@
   import HSCollapse from "@preline/collapse/non-auto";
   import HSOverlay from "@preline/overlay/non-auto";
   import HSTabs from "@preline/tabs/non-auto";
+  import HSScrollspy from "@preline/scrollspy/non-auto";
   import { animate, inView } from "motion";
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -15,7 +16,8 @@
     HSCollapse.autoInit();
     HSOverlay.autoInit();
     HSTabs.autoInit();
-    // Initialize custom Motion engine (replaces AOS)
+    HSScrollspy.autoInit();
+    // Initialize Motion Engine
     initMotionAnimations();
     initHorizontalScroll();
   });
