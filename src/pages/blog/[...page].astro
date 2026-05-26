@@ -1,0 +1,64 @@
+---
+import Base from "@/layouts/Base.astro";
+import BlogCard from "@/components/blog/BlogCard.astro";
+import BlogPagination from "@/components/blog/BlogPagination.astro";
+import Subtitle from "@/components/widgets/Subtitle.astro";
+import config from "../../../.astro/config.generated.json";
+import { getPublishedBlogPosts, fetchEntry } from "@/utils/content";
+import { markdownify } from "@/utils/text";
+import type { Page, GetStaticPathsOptions } from "astro";
+import type { CollectionEntry } from "astro:content";
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const posts = await getPublishedBlogPosts();
+  const pageSize = Math.max(
+    1,
+    Math.floor(Number(config.settings?.pagination) || 6),
+  );
+  return paginate(posts, { pageSize });
+}
+
+interface Props {
+  page: Page<CollectionEntry<"blog">>;
+}
+
+const { page } = Astro.props;
+const blogIndexMeta = await fetchEntry("homepage", "-blog");
+---
+
+<Base {...blogIndexMeta?.data}>
+  <section class="py-16 md:py-24 lg:py-32">
+    <div class="container">
+      <div class="mx-auto mb-16 max-w-2xl text-center" data-aos="fade-up-sm">
+        {
+          blogIndexMeta?.data?.subtitle && (
+            <Subtitle content={blogIndexMeta.data.subtitle} />
+          )
+        }
+        {
+          blogIndexMeta?.data?.title && (
+            <h1
+              class="h2 md:text-h1 has-italic-text capitalize"
+              set:html={markdownify(blogIndexMeta.data.title)}
+            />
+          )
+        }
+        {
+          blogIndexMeta?.data?.description && (
+            <p
+              class="text-text-default mt-4 text-lg opacity-80"
+              set:html={markdownify(blogIndexMeta.data.description)}
+            />
+          )
+        }
+      </div>
+      <div
+        class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+        data-aos="fade-up-sm"
+        data-aos-delay="200">
+        {page.data.map((post) => <BlogCard post={post} />)}
+      </div>
+      <BlogPagination page={page} />
+    </div>
+  </section>
+</Base>

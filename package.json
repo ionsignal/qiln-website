@@ -30,18 +30,14 @@
     "node": ">=22.12.0",
     "npm": ">=9.6.7"
   },
-  "resolutions": {
-    "sharp": "0.33.2",
-    "@taplo/lib": "0.4.0-alpha.2",
-    "vite": "7.3.2"
-  },
   "overrides": {
-    "yaml": "^2.8.3",
-    "postcss": "^8.5.12",
-    "fast-uri": "^3.1.1",
-    "devalue": "^5.8.0"
+    "yaml": "2.8.3",
+    "postcss": "8.5.12",
+    "fast-uri": "3.1.2",
+    "devalue": "5.8.1"
   },
   "dependencies": {
+    "@astrojs/rss": "4.0.18",
     "@floating-ui/dom": "1.7.6",
     "@lucide/astro": "1.16.0",
     "@preline/accordion": "4.2.0",
@@ -50,9 +46,13 @@
     "@preline/tabs": "4.2.0",
     "astro": "6.3.7",
     "gpu-curtains": "0.16.3",
+    "markdown-it": "14.2.0",
     "marked": "18.0.4",
+    "mdast-util-to-string": "4.0.0",
     "motion": "12.40.0",
-    "plyr": "3.8.4"
+    "plyr": "3.8.4",
+    "reading-time": "1.5.0",
+    "sanitize-html": "2.17.4"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
@@ -60,6 +60,8 @@
     "@astrojs/sitemap": "3.7.2",
     "@tailwindcss/forms": "0.5.11",
     "@tailwindcss/vite": "4.3.0",
+    "@types/markdown-it": "14.1.2",
+    "@types/sanitize-html": "2.16.1",
     "prettier": "3.8.3",
     "prettier-plugin-astro": "0.14.1",
     "prettier-plugin-tailwindcss": "0.8.0",

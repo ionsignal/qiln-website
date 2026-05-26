@@ -1,5 +1,5 @@
-import { defineCollection } from "astro:content";
-import { glob } from "astro/loaders";
+import { defineCollection, reference } from "astro:content";
+import { glob, file } from "astro/loaders";
 import { z } from "astro/zod";
 
 export const collections = {
@@ -178,6 +178,7 @@ export const collections = {
       z.object({
         draft: z.boolean().optional(),
         title: z.string().optional(),
+        subtitle: z.string().optional(),
         description: z.string().optional(),
         metaTitle: z.string().optional(),
         metaDescription: z.string().optional(),
@@ -251,5 +252,41 @@ export const collections = {
       icon: z.string().optional(),
       collapsed: z.boolean().default(false),
     }),
+  }),
+
+  // Authors collection using the file loader
+  authors: defineCollection({
+    loader: file("src/content/authors.json"),
+    schema: ({ image }) =>
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        role: z.string(),
+        avatar: image(),
+        url: z.url().optional(),
+      }),
+  }),
+
+  // Blog collection using the glob loader
+  blog: defineCollection({
+    loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/blog" }),
+    schema: ({ image }) =>
+      z.object({
+        title: z.string(),
+        description: z.string(),
+        pubDate: z.coerce.date(),
+        updatedDate: z.coerce.date().optional(),
+        image: image(),
+        categories: z.array(z.string()).default([]),
+        draft: z.boolean().default(false),
+        author: reference("authors").optional(),
+        // Global SEO / Meta Fields
+        metaTitle: z.string().optional(),
+        metaDescription: z.string().optional(),
+        canonical: z.string().optional(),
+        keywords: z.array(z.string()).optional(),
+        robots: z.string().optional(),
+        disableTagline: z.boolean().optional(),
+      }),
   }),
 };

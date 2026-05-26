@@ -32,3 +32,10 @@ export const fetchEntry = async <C extends CollectionKey>(
   }
   return entry as CollectionEntry<C>;
 };
+
+export const getPublishedBlogPosts = async () => {
+  const posts = await fetchCollection("blog");
+  return posts
+    .slice()
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+};

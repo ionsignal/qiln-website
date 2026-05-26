@@ -143,3 +143,8 @@ export interface NavigationLink extends ChildNavigationLink {
   cta?: NavigationLinkCTA;
   menus?: NavigationLink[];
 }
+
+export interface RemarkPluginFrontmatter {
+  minutesRead: string;
+  lastModified: string;
+}

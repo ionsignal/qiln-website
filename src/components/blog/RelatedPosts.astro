@@ -1,0 +1,42 @@
+---
+import { getPublishedBlogPosts } from "@/utils/content";
+import BlogCard from "./BlogCard.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  currentPost: CollectionEntry<"blog">;
+}
+
+const { currentPost } = Astro.props;
+const allPosts = await getPublishedBlogPosts();
+const relatedPosts = allPosts
+  .filter((post) => post.id !== currentPost.id)
+  .map((post) => {
+    const matchingCategories = post.data.categories.filter((c) =>
+      currentPost.data.categories.includes(c),
+    ).length;
+    return { post, matchingCategories };
+  })
+  .sort((a, b) => {
+    if (b.matchingCategories !== a.matchingCategories) {
+      return b.matchingCategories - a.matchingCategories;
+    }
+    // Fallback to sorting by date if category matches are tied
+    return b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf();
+  })
+  .map(({ post }) => post)
+  .slice(0, 3); // Take top 3
+---
+
+{
+  relatedPosts.length > 0 && (
+    <section class="mt-24 border-t border-white/10 pt-16">
+      <h2 class="mb-8 text-2xl font-bold text-white">Related Articles</h2>
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+        {relatedPosts.map((post) => (
+          <BlogCard post={post} />
+        ))}
+      </div>
+    </section>
+  )
+}

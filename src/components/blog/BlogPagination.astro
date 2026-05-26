@@ -1,0 +1,46 @@
+---
+import type { Page } from "astro";
+import type { CollectionEntry } from "astro:content";
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+
+interface Props {
+  page: Page<CollectionEntry<"blog">>;
+}
+
+const { page } = Astro.props;
+const hasPagination = Boolean(page.url.prev || page.url.next);
+---
+
+{
+  hasPagination && (
+    <nav
+      class="mt-16 flex items-center justify-between border-t border-white/10 pt-8"
+      aria-label="Blog pagination">
+      <div>
+        {page.url.prev && (
+          <a
+            href={page.url.prev}
+            class="btn btn-outline-white flex items-center gap-2"
+            rel="prev">
+            <LucideIcon icon="ArrowLeft" class="h-4 w-4" aria-hidden="true" />
+            <span>Previous</span>
+          </a>
+        )}
+      </div>
+      <div class="text-text-default text-sm">
+        Page {page.currentPage} of {page.lastPage}
+      </div>
+      <div>
+        {page.url.next && (
+          <a
+            href={page.url.next}
+            class="btn btn-outline-white flex items-center gap-2"
+            rel="next">
+            <span>Next</span>
+            <LucideIcon icon="ArrowRight" class="h-4 w-4" aria-hidden="true" />
+          </a>
+        )}
+      </div>
+    </nav>
+  )
+}

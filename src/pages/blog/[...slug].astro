@@ -1,0 +1,138 @@
+---
+import Base from "@/layouts/Base.astro";
+import RelatedPosts from "@/components/blog/RelatedPosts.astro";
+import Image from "@/components/helpers/Image.astro";
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+import { getPublishedBlogPosts } from "@/utils/content";
+import { render, getEntry } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import type { RemarkPluginFrontmatter } from "@/types";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedBlogPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+const { post }: Props = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(post);
+const { minutesRead, lastModified } =
+  remarkPluginFrontmatter as RemarkPluginFrontmatter;
+
+let authorData = null;
+if (post.data.author) {
+  authorData = await getEntry(post.data.author);
+}
+
+const formattedPubDate = post.data.pubDate.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
+const safeLastModified = lastModified
+  ? new Date(lastModified)
+  : post.data.pubDate;
+const actualUpdatedDate = post.data.updatedDate
+  ? post.data.updatedDate
+  : safeLastModified;
+const formattedModDate = actualUpdatedDate.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
+const pubDateZeroed = new Date(post.data.pubDate).setHours(0, 0, 0, 0);
+const modDateZeroed = new Date(actualUpdatedDate).setHours(0, 0, 0, 0);
+const hasBeenUpdated = modDateZeroed > pubDateZeroed;
+
+const seoProps = {
+  title: post.data.metaTitle || post.data.title,
+  description: post.data.metaDescription || post.data.description,
+  image: post.data.image,
+  canonical: post.data.canonical,
+  keywords: post.data.keywords,
+  robots: post.data.robots,
+  disableTagline: post.data.disableTagline,
+};
+---
+
+<Base {...seoProps}>
+  <article class="py-16 md:py-24">
+    <div class="container mx-auto max-w-3xl">
+      <header class="mb-12 text-center" data-aos="fade-up-sm">
+        {
+          post.data.categories && post.data.categories.length > 0 && (
+            <div class="mb-6 flex justify-center gap-2">
+              {post.data.categories.map((cat) => (
+                <span class="bg-primary/10 text-primary ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset">
+                  {cat}
+                </span>
+              ))}
+            </div>
+          )
+        }
+        <h1
+          class="mb-6 text-4xl leading-tight font-bold tracking-tight text-white md:text-5xl">
+          {post.data.title}
+        </h1>
+        <div
+          class="text-text-default/80 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
+          <time datetime={post.data.pubDate.toISOString()}>
+            {formattedPubDate}
+          </time>
+          <span class="flex items-center gap-1">
+            <LucideIcon icon="Clock" class="h-4 w-4" />
+            {minutesRead}
+          </span>
+          {
+            authorData && (
+              <div class="flex items-center gap-2">
+                <Image
+                  src={authorData.data.avatar}
+                  alt={authorData.data.name}
+                  class="h-6 w-6 rounded-full bg-white/10"
+                />
+                <span class="font-medium text-white">
+                  {authorData.data.name}
+                </span>
+              </div>
+            )
+          }
+        </div>
+      </header>
+      <div
+        class="relative mb-16 aspect-21/9 w-full overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10"
+        data-aos="fade-up-sm"
+        data-aos-delay="100">
+        <Image
+          src={post.data.image}
+          alt={post.data.title}
+          class="h-full w-full object-cover"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+      <div class="prose-styles" data-aos="fade-in" data-aos-delay="200">
+        <Content />
+      </div>
+      {
+        hasBeenUpdated && (
+          <p class="text-text-default/60 mt-8 text-sm italic">
+            Last updated on{" "}
+            <time datetime={actualUpdatedDate.toISOString()}>
+              {formattedModDate}
+            </time>
+          </p>
+        )
+      }
+      <RelatedPosts currentPost={post} />
+    </div>
+  </article>
+</Base>

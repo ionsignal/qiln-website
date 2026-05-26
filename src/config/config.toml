@@ -3,66 +3,55 @@
   title              = "Qiln"
   description        = "Qiln the container manager where every user gets their own GPU. Their own custom nodes. Their own subdomain. All sharing one model vault and one gpu pool on hardware you already own."
   tagline            = "Orchestrate GPUs"
-  taglineSeparator   = "" # default is " - " 
-  baseUrl            = "https://qiln.com" # Base URL for the site and used in OpenGraph meta tags.
-  logo               = "/images/logo.svg" # Path to the site's logo
-  logoHoverAnimation = false # Enable or disable logo hover animation
-  logoText           = "Qiln" # Text displayed next to the logo
-  logoWidth          = "32px" # Width of the logo
-  logoHeight         = "32px" # Height of the logo
+  taglineSeparator   = ""                   # default is " - " 
+  baseUrl            = "https://qiln.com"   # Base URL for the site and used in OpenGraph meta tags.
+  logo               = "/images/logo.svg"   # Path to the site's logo
+  logoHoverAnimation = false                # Enable or disable logo hover animation
+  logoText           = "Qiln"               # Text displayed next to the logo
+  logoWidth          = "32px"               # Width of the logo
+  logoHeight         = "32px"               # Height of the logo
 
-  # Add a trailing slash at the end of URLs (e.g., https://example.com/, https://example.com/contact/)
-  # Note: Manually restart your server when you change this value
+  # Add a trailing slash at the end of URLs (e.g., https://qiln.com/)
   trailingSlash = true
-  # Add your site logo in image path below and open your terminal and run "npm run generate-favicons" to generate favicons
+
+  # Run "npm run generate-favicons" to generate favicons
   [site.favicon]
-    path  = "/images/favicons" # favicon images path (No need to change it)
-    image = "/images/logo.svg" # Add your site logo path here and follow upper instruction
+    path  = "/images/favicons"
+    image = "/images/logo.svg"
 
 # SEO Metadata
 # Specific SEO configurations that complement the general site settings.
 # -----------------------------------------------------------------------------------------------------------------------------------
 [seo]
   author = "ionsignal"
-  keywords = ["gpu orchestration", "paas orchestration", "workspace orchestration"] # SEO keywords
-  robots = "index, follow" # Instructs search engines on how to crawl and index the pages.
+  keywords = ["gpu orchestration", "paas orchestration", "workspace orchestration"]
+  robots = "index, follow"                  # Instructs search engines on how to crawl and index the pages.
   [seo.robotsTxt]
-    enable = true # Enables or disables robots.txt file generation on site build
-    disallow = ["/cdn-cgi/"] # Disallow specific paths (e.g., "/_astro/", "/cdn-cgi/")
+    enable = true                           # Enables or disables robots.txt file generation on site build
+    disallow = ["/cdn-cgi/"]                # Disallow specific paths (e.g., "/_astro/", "/cdn-cgi/")
   [seo.sitemap]
-    enable = true # Enables or disables sitemap generation on site build
-    exclude = [] # exclude all pages that include these folder names (e.g., "blog", "services")
+    enable = true                           # Enables or disables sitemap generation on site build
+    exclude = []                            # exclude all pages that include these folder names (e.g., "blog", "services")
 
 [settings]
-  # If you change value of the following content folder, make sure to change the folder name also from
-  # note: restart your server when you change this value
-  # - "src/content" folder
-  # - "src/[...lang]/pages" folder
-  # - "src/content.config.ts" collections object
-  blogFolder   = "blog" # Folder where blog posts are stored
-  pagination   = 6 # Number of posts displayed on each page blog list page
-  stickyHeader = true # Enables or disable sticky feature of header
+  pagination = 6                            # Number of posts displayed on each page blog list page
+  stickyHeader = true                       # Enables or disable sticky feature of header
 
-  # For changing footer description and footer copyright in different languages see src/i18n/en.json and src/i18n/fr.json
-  # We kindly appreciate it if you retain the theme copyright. Thank you for supporting Getastrothemes!
+  # Copyright
   [settings.copyright]
     enable = true
 
   # Subscription Form located in footer
   [settings.subscription]
-    enable     = true # Enables or disable the subscription form
+    enable = true # Enables or disable the subscription form
     formAction = "https://getlaunchlist.com/s/z0EOXt"
 
   # Multilingual settings
-  # NOTE: Manually restart your server when you change the following multilingual table values
   [settings.multilingual]
-    # Set `enable` to `true` for enabling the multilingual feature or `false` for disabling it.
-    # Run `npm run remove-multilingual` for removing multilingual content files after disabling the feature.
-    enable               = true
-    defaultLanguage      = "en"
-    disableLanguages     = [] # List of languages to disable (eg: ["fr", "es"])
-    showDefaultLangInUrl = false # Show default language in URL (eg: https://getastrothemes.com/en/)
-
+    enable = true
+    defaultLanguage = "en"
+    disableLanguages = []                   # List of languages to disable (eg: ["fr", "es"])
+    showDefaultLangInUrl = false            # Show default language in URL (eg: https://getastrothemes.com/en/)
     [[settings.multilingual.languages]]
       languageName = "En"
       languageCode = "en"
@@ -77,11 +66,11 @@
 # OpenGraph Metadata
 # Specific OpenGraph settings, using values from the [site] section where possible.
 [opengraph]
-  image       = "/images/og-image.jpg" # Image used in OpenGraph previews
-  ogLocale    = "en_US" # Locale setting for OpenGraph
-  ogType      = "website" # Type of content for OpenGraph protocol
-  twitter     = "" # Twitter handle for Twitter Card meta tags
-  twitterCard = "summary_large_image" # Type of Twitter Card to use in social sharing
+  image       = "/images/og-image.jpg"            # Image used in OpenGraph previews
+  ogLocale    = "en_US"                           # Locale setting for OpenGraph
+  ogType      = "website"                         # Type of content for OpenGraph protocol
+  twitter     = ""                                # Twitter handle for Twitter Card meta tags
+  twitterCard = "summary_large_image"             # Type of Twitter Card to use in social sharing
 
 # Social Links
 [[social.main]]
@@ -112,5 +101,5 @@
 # Custom scripts, stylesheets, and meta tags to be rendered in the <head> section of the page
 [head]
   content = """
-  <!-- You can easily add this type of tracking code by updating the `config.toml` file -->
+  <!-- header scripts -->
   """

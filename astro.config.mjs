@@ -1,12 +1,25 @@
 import sitemap from "@astrojs/sitemap";
 import mdx from "@astrojs/mdx";
-import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import rehypeExternalLinks from "rehype-external-links";
 import config from "./.astro/config.generated.json" with { type: "json" };
-import remarkParseContent from "./src/utils/remark.ts";
+import remarkParseContent from "./src/utils/remark/ast.ts";
+import { defineConfig } from "astro/config";
+import {
+  remarkReadingTime,
+  remarkModifiedTime,
+} from "./src/utils/remark/frontmatter.ts";
 import { fontProviders } from "astro/config";
 
+let {
+  seo: { sitemap: sitemapConfig },
+} = config;
+const exclude = [
+  "widgets",
+  "sections",
+  "author",
+  ...(sitemapConfig.exclude || []),
+];
 const fonts = [
   {
     provider: fontProviders.google(),
@@ -36,15 +49,6 @@ const fonts = [
     subsets: ["latin"],
   },
 ];
-let {
-  seo: { sitemap: sitemapConfig },
-} = config;
-const EXCLUDE_FOLDERS = [
-  "widgets",
-  "sections",
-  "author",
-  ...(sitemapConfig.exclude || []),
-];
 export default defineConfig({
   site: config.site.baseUrl ? config.site.baseUrl : "http://examplesite.com",
   trailingSlash: config.site.trailingSlash ? "always" : "never",
@@ -58,7 +62,7 @@ export default defineConfig({
     sitemapConfig.enable
       ? sitemap({
           filter: (page) =>
-            !EXCLUDE_FOLDERS.some((folder) => page.includes(`/${folder}`)),
+            !exclude.some((folder) => page.includes(`/${folder}`)),
         })
       : null,
   ],
@@ -72,7 +76,7 @@ export default defineConfig({
         },
       ],
     ],
-    remarkPlugins: [remarkParseContent],
+    remarkPlugins: [remarkParseContent, remarkReadingTime, remarkModifiedTime],
     shikiConfig: {
       theme: "github-dark",
       wrap: false,
