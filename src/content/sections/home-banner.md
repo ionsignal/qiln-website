@@ -16,7 +16,7 @@ buttons:
     variant: "secondary"
 customers:
   enable: true
-  description: "Native blueprints for ComfyUI, vLLM, JupyterLab & more:"
+  description: "Native blueprints for ComfyUI, vLLM, JupyterLab and more:"
   list:
     - src: "../../assets/images/customers/1.png"
       alt: "ComfyUI"

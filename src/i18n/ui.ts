@@ -28,7 +28,7 @@ export const ui = {
       { enable: true, name: "Vault Storage", weight: 4, url: "/#storage" },
       {
         enable: true,
-        name: "Blueprints (Molds)",
+        name: "Blueprints",
         weight: 5,
         url: "/#blueprint-section",
       },
@@ -40,7 +40,7 @@ export const ui = {
       {
         enable: true,
         name: "GitHub",
-        url: "https://github.com/ionsignal",
+        url: "https://github.com/ionsignal/qiln",
         rel: "noopener noreferrer",
         target: "_blank",
       },

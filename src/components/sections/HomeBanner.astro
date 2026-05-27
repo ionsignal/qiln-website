@@ -101,7 +101,7 @@ const tickerData = parseTickerString(title);
                         {tickerData.prefix && (
                           <span set:html={markdownify(tickerData.prefix)} />
                         )}
-                        <span class="text-primary before:bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-primary/20%)_0%,transparent_100%)] relative isolate z-0 inline-flex items-baseline gap-0 px-0 py-0 align-baseline whitespace-nowrap before:pointer-events-none before:absolute before:top-1/2 before:left-1/2 before:-z-10 before:h-[300%] before:w-[150%] before:-translate-x-1/2 before:-translate-y-1/2">
+                        <span class="text-primary before:bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-primary/20%)_0%,transparent_100%)] relative isolate z-0 -mx-3 inline-flex items-baseline gap-0 px-0 py-0 align-baseline whitespace-nowrap before:pointer-events-none before:absolute before:top-1/2 before:left-1/2 before:-z-10 before:h-[300%] before:w-[150%] before:-translate-x-1/2 before:-translate-y-1/2">
                           <span class="ticker-container relative z-10 inline-grid items-baseline justify-items-center overflow-hidden">
                             <span class="invisible col-start-1 row-start-1">
                               {tickerData.longestOption}
@@ -127,7 +127,7 @@ const tickerData = parseTickerString(title);
                   )}
                   {subtitle && (
                     <span
-                      class="text-2xl font-bold text-white/80 md:text-4xl/tight lg:text-4xl"
+                      class="text-xl font-bold text-white/80 md:text-3xl/tight lg:text-4xl"
                       set:html={markdownify(subtitle)}
                     />
                   )}
