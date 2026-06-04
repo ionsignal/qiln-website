@@ -23,7 +23,7 @@ export const ui = {
     "footer.copyright":
       "Copyright {{ year }} / All Rights Reserved By IonSignal, Inc.",
     main: [
-      { enable: true, name: "Home", weight: 1, url: "/#home" },
+      // { enable: true, name: "Home", weight: 1, url: "/#home" },
       { enable: true, name: "Reserved GPU", weight: 3, url: "/#gpu" },
       { enable: true, name: "Model Vaults", weight: 4, url: "/#storage" },
       {
