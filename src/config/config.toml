@@ -1,8 +1,8 @@
 # Site Configuration
 [site]
   title              = "Qiln"
-  description        = "Qiln the container manager where every user gets their own GPU. Their own custom nodes. Their own subdomain. All sharing one model vault and one gpu pool on hardware you already own."
-  tagline            = "Orchestrate GPUs"
+  description        = "Qiln is a persistent visual-first AI workspace for ComfyUI, private model vaults, custom nodes, snapshots, routes, endpoints, and reserved high-VRAM GPU capacity."
+  tagline            = "Persistent AI Workspaces"
   taglineSeparator   = ""                   # default is " - " 
   baseUrl            = "https://qiln.com"   # Base URL for the site and used in OpenGraph meta tags.
   logo               = "/images/logo.svg"   # Path to the site's logo
@@ -24,7 +24,7 @@
 # -----------------------------------------------------------------------------------------------------------------------------------
 [seo]
   author = "ionsignal"
-  keywords = ["gpu orchestration", "paas orchestration", "workspace orchestration"]
+  keywords = ["persistent ComfyUI workspace", "AI workspace", "reserved GPU workspace", "private model vaults", "ComfyUI hosting"]
   robots = "index, follow"                  # Instructs search engines on how to crawl and index the pages.
   [seo.robotsTxt]
     enable = true                           # Enables or disables robots.txt file generation on site build
@@ -89,7 +89,7 @@
   enable = true
   label = "github"
   icon = "github"
-  url = "https://github.com/IonSignal"
+  url = "https://github.com/ionsignal/qiln"
 
 [[social.main]]
   enable = true

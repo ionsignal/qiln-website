@@ -2,7 +2,7 @@
 import config from ".astro/config.generated.json";
 import Image from "@/components/helpers/Image.astro";
 import SvgIcon from "@/components/helpers/SvgIcon.astro";
-import Customers from "@/components/sections/Customers.astro";
+import BlueprintsScroller from "@/components/sections/BlueprintsScroller.astro";
 import ButtonLink from "@/components/buttons/ButtonLink.astro";
 import AnimatedText from "@/components/widgets/AnimatedText.astro";
 import HeroSubscription from "@/components/widgets/HeroSubscription.astro";
@@ -101,7 +101,7 @@ const tickerData = parseTickerString(title);
                         {tickerData.prefix && (
                           <span set:html={markdownify(tickerData.prefix)} />
                         )}
-                        <span class="text-primary before:bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-primary/20%)_0%,transparent_100%)] relative isolate z-0 -mx-3 inline-flex items-baseline gap-0 px-0 py-0 align-baseline whitespace-nowrap before:pointer-events-none before:absolute before:top-1/2 before:left-1/2 before:-z-10 before:h-[300%] before:w-[150%] before:-translate-x-1/2 before:-translate-y-1/2">
+                        <span class="text-primary relative isolate z-0 -mx-3 inline-flex items-baseline gap-0 px-0 py-0 align-baseline whitespace-nowrap">
                           <span class="ticker-container relative z-10 inline-grid items-baseline justify-items-center overflow-hidden">
                             <span class="invisible col-start-1 row-start-1">
                               {tickerData.longestOption}
@@ -127,7 +127,7 @@ const tickerData = parseTickerString(title);
                   )}
                   {subtitle && (
                     <span
-                      class="text-xl font-bold text-white/80 md:text-3xl/tight lg:text-4xl"
+                      class="text-xl font-bold text-white/80 md:text-4xl lg:text-5xl"
                       set:html={markdownify(subtitle)}
                     />
                   )}
@@ -177,12 +177,6 @@ const tickerData = parseTickerString(title);
               ))
           }
         </div>
-        <Customers
-          content={customers}
-          data-aos-delay="600"
-          data-aos-duration="900"
-          data-aos="fade-in"
-        />
       </div>
     </div>
     {
@@ -192,6 +186,10 @@ const tickerData = parseTickerString(title);
           data-aos-overlap="0.025"
           data-aos-offset="0"
           class="relative mx-auto mt-12 -mb-4 max-w-6xl px-4 md:mt-14 md:mb-0 md:px-4 lg:mt-20 lg:px-5">
+          <BlueprintsScroller
+            content={customers}
+            class="mx-auto mb-8 max-w-4xl"
+          />
           <div class="bg-body relative z-10 overflow-hidden rounded-t-2xl px-0.5 pt-0.5 md:rounded-t-3xl">
             <div class="after:bg-primary/2 relative z-20 overflow-hidden rounded-t-2xl bg-black after:absolute after:inset-0 after:size-full after:rounded-t-2xl after:content-[''] md:rounded-t-3xl">
               <Image

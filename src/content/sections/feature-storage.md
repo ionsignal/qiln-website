@@ -1,11 +1,11 @@
 ---
 enable: true
-title: "ZFS Storage *Moves With Your Workload*"
-subtitle: "Storage Vaults"
-description: "Copy-on-write clones mean five users sharing a **80GB** model costs **zero extra bytes** and **instantly provisions**. Vaults attach to vessels, track usage, and snapshot volumes with a single click."
+title: "Real Folders. <span class='block'>**Private Model Vaults.**</span>"
+subtitle: "Persistent Storage"
+description: "**Your ComfyUI setup should not vanish with the pod.** Keep checkpoints, LoRAs, VAEs, ControlNets, workflows, custom nodes, inputs, and outputs in persistent workspace folders. Snapshot before risky node changes; roll back when dependencies break."
 features:
-  - "Zero-cost copy-on-write clones"
-  - "Instant provisioning when creating new instances"
-  - "One-click snapshots & rollbacks"
+  - "Private model vaults with direct file access"
+  - "Persistent outputs, workflows, and custom nodes"
+  - "ZFS-backed snapshots, clones, and rollbacks"
 image: "../../assets/images/feature-storage.png"
 ---

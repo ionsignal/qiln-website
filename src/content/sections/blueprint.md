@@ -1,46 +1,59 @@
 ---
 enable: true
-subtitle: "the blueprint"
-title: "Stateless Compute. **Persistent Data.**"
+subtitle: "workspace blueprints"
+title: "Blueprints for **persistent AI workspaces.**"
 yaml: |
-  name: comfyui-gpu-node
-  display_name: ComfyUI Inference Node
+  name: comfyui-workspace
+  display_name: Persistent ComfyUI Workspace
   image_alias: ubuntu:24.04-cuda
 
-  # data wiring
-  provisioning:
-    volumes:
-      - name: model-vault
-        type: clone
-        pool: is-nvme-pool
-        source_vault: comfy-base-models
-        mount_path: /opt/comfyui/models
+  apps:
+    - name: comfyui
+      route: https://{{ workspace.slug }}.qiln.app
+      command: /opt/comfyui/start.sh
+    - name: vscode
+      route: https://{{ workspace.slug }}-code.qiln.app
 
-    files:
-      - path: /opt/comfyui/gpu.env
-        content: |
-          CUDA_VISIBLE_DEVICES="{{ gpu.id }}"
+  gpu:
+    primary: reserved
+    burst: optional_when_available
 
-  # incus profile
-  instance_template: 
-    devices:
-      gpu0:
-        type: gpu
-        pci: "{{ limits.gpu.pci }}"
-        nvidia.runtime: 'true'
+  volumes:
+    - name: model-vault
+      type: private_vault
+      mount_path: /opt/comfyui/models
+    - name: outputs
+      type: persistent_folder
+      mount_path: /opt/comfyui/output
+    - name: custom-nodes
+      type: persistent_folder
+      mount_path: /opt/comfyui/custom_nodes
+
+  snapshots:
+    before_updates: true
+    retain: last_10
+
+  endpoints:
+    - name: workflow-api
+      app: fastapi-wrapper
+      route: https://{{ workspace.slug }}-api.qiln.app
 callouts:
-  - title: "Instant ZFS CoW Clones"
-    description: "Bypasses slow container pulls. Provisions a zero-copy clone from a base vault in milliseconds."
+  - title: "Workspace, not pod"
+    description: "ComfyUI and VS Code get stable routes inside one durable workspace instead of another throwaway GPU session."
+    icon: "Monitor"
+    lines: [5, 6, 7, 8, 9, 10]
+  - title: "Reserved primary GPU"
+    description: "The workspace has primary GPU capacity reserved by plan, with burst capacity available when the pool has room."
+    icon: "Gauge"
+    lines: [12, 13, 14]
+  - title: "Real folders and rollback"
+    description: "Models, outputs, and custom nodes mount as persistent folders with snapshots before risky updates."
     icon: "HardDrive"
-    lines: [6, 7, 8, 9, 10, 11, 12, 13]
-  - title: "Pre-flight Injection"
-    description: "Injects dynamic ledger data into the filesystem before the instance even boots."
-    icon: "FileCode2"
-    lines: [13, 14, 15, 16, 17]
-  - title: "Raw Hypervisor Security"
-    description: "Direct access to Incus primitives like MAC filtering, isolated networks, and PCIe passthrough."
-    icon: "ShieldCheck"
-    lines: [18, 19, 20, 21, 22, 23, 24, 25]
+    lines: [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 29]
+  - title: "Path to endpoints"
+    description: "When a visual workflow becomes useful, wrap it behind a stable API route instead of rebuilding somewhere else."
+    icon: "Route"
+    lines: [31, 32, 33, 34]
 infoBox:
-  description: "Qiln dynamically wires ZFS datasets into immutable containers at runtime."
+  description: "A Qiln blueprint describes the workspace a user opens — apps, folders, GPU capacity, routes, snapshots, and endpoint paths."
 ---

@@ -1,0 +1,81 @@
+---
+import { fetchEntry } from "@/utils/content";
+import Image from "@/components/helpers/Image.astro";
+import { overrideObjects } from "@/utils/core";
+import { markdownify } from "@/utils/text";
+import type { CollectionEntry } from "astro:content";
+
+type SectionData = CollectionEntry<"sections">["data"];
+type Props = {
+  content?: SectionData | any;
+  class?: string;
+};
+
+let defaultContent = (await fetchEntry("sections", "customers"))?.data;
+let actualContent = overrideObjects(
+  { ...defaultContent },
+  Astro.props.content,
+) as any;
+let { enable = true, description, marquee = {}, list = [] } = actualContent;
+const { class: className, ...rest } = Astro.props;
+let baseList = [...list];
+if (baseList.length > 0) {
+  while (baseList.length < 16) {
+    baseList = [...baseList, ...list];
+  }
+}
+---
+
+{
+  enable && (
+    <section class:list={["w-full", className]} {...rest}>
+      <div class="mx-auto w-full text-center">
+        {description && (
+          <p
+            class="mb-6 shrink-0 text-center text-sm tracking-wide text-white/60"
+            set:html={markdownify(description)}
+          />
+        )}
+        <div class="relative flex items-center overflow-hidden mask-[linear-gradient(to_right,rgba(0,0,0,0)_0%,rgb(0,0,0)_5%,rgb(0,0,0)_95%,rgba(0,0,0,0)_100%)]">
+          <div
+            class:list={[
+              "animate-marquee flex w-max",
+              { "hover:[animation-play-state:paused]": marquee.pauseOnHover },
+            ]}
+            style={{
+              "--marquee-duration": marquee.duration || "50s",
+              "--marquee-direction":
+                marquee.reverse === "reverse" ? "reverse" : "normal",
+            }}>
+            <div class="flex items-center justify-around gap-8 pr-8">
+              {baseList.map((item: any) => (
+                <div class="flex h-5 w-max shrink-0 items-center justify-center md:h-6">
+                  <Image
+                    src={item.src}
+                    alt={item.alt || ""}
+                    class="h-full w-auto object-contain"
+                    loading="eager"
+                  />
+                </div>
+              ))}
+            </div>
+            <div
+              class="flex items-center justify-around gap-8 pr-8"
+              aria-hidden="true">
+              {baseList.map((item: any) => (
+                <div class="flex h-5 w-max shrink-0 items-center justify-center md:h-6">
+                  <Image
+                    src={item.src}
+                    alt={item.alt || ""}
+                    class="h-full w-auto object-contain"
+                    loading="eager"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

@@ -10,8 +10,8 @@ export const ui = {
     "common.emailPlaceholder": "Email Address",
     "common.paginationNext": "Next",
     "common.paginationPrevious": "Previous",
-    "navigation.buttonLabel": "Join Early Testers",
-    "subscription.label": "Join our early testers group",
+    "navigation.buttonLabel": "Request a reserved workspace",
+    "subscription.label": "Request a Reserved Workspace",
     "integration.relatedIntegrationSectionTitle":
       "Vivamus sit amet **varius felis**",
     "integration.backToIntegration": "Browse",
@@ -19,13 +19,13 @@ export const ui = {
     "footer.legal": "Legal",
     "footer.resources": "Resources",
     "footer.description":
-      "Qiln turns your bare-metal GPU servers into managed, multi-tenant workspaces.",
+      "Qiln gives founders, artists, and teams persistent ComfyUI workspaces on reserved high-VRAM GPUs.",
     "footer.copyright":
       "Copyright {{ year }} / All Rights Reserved By IonSignal, Inc.",
     main: [
       { enable: true, name: "Home", weight: 1, url: "/#home" },
-      { enable: true, name: "Shared GPUs", weight: 3, url: "/#gpu" },
-      { enable: true, name: "Vault Storage", weight: 4, url: "/#storage" },
+      { enable: true, name: "Reserved GPU", weight: 3, url: "/#gpu" },
+      { enable: true, name: "Model Vaults", weight: 4, url: "/#storage" },
       {
         enable: true,
         name: "Blueprints",

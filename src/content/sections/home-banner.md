@@ -1,8 +1,9 @@
 ---
-title: "One [ComfyUI|vLLM|Jupyter|Ollama] per user."
-subtitle: "*Same metal. Separate worlds.*"
-badge: "Now in alpha • Read the announcement →"
-description: "Each teammate gets their own GPU lease. Their own environment. Their own subdomain. All sharing one model vault and one GPU pool — on hardware you already own."
+badge: "Persistent • Visual AI Workspaces • Reserved GPUs"
+
+title: "[Build visual AI products|Create video workflows|Automate creative pipelines|Serve workflow APIs]"
+subtitle: "without counting credits."
+description: "Open a stable remote AI creation machine with ComfyUI, VS Code, private model vaults, real folders, snapshots, routes, and endpoints — backed by **reserved high-VRAM GPUs** for one **predictable** monthly price."
 image: "../../assets/images/product-demo.png"
 subscription:
   enable: true
@@ -16,7 +17,7 @@ buttons:
     variant: "secondary"
 customers:
   enable: true
-  description: "Native blueprints for ComfyUI, vLLM, JupyterLab and more:"
+  description: "Run ComfyUI, n8n, vLLM, VSCode Server, Ollama and more."
   list:
     - src: "../../assets/images/customers/1.png"
       alt: "ComfyUI"
