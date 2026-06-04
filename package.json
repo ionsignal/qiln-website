@@ -24,7 +24,9 @@
     "typecheck": "tsc && astro-check",
     "generate-favicons": "node ./scripts/generate-favicons.mjs",
     "format": "prettier -w ./src",
-    "release": "npm run build && tar -czvf qiln-website-v$npm_package_version.tar.gz -C dist ."
+    "preversion": "npm run typecheck",
+    "release": "npm run build && tar -czvf qiln-website-v$npm_package_version.tar.gz -C dist .",
+    "postversion": "npm run release && git push --follow-tags"
   },
   "engines": {
     "node": ">=22.12.0",
