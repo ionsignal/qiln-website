@@ -1,0 +1,87 @@
+---
+import { markdownify } from "@/utils/text";
+
+type Variant = "secondary" | "primary" | "neutral";
+
+type Props = {
+  content: string;
+  href?: string;
+  arrow?: boolean;
+  variant?: Variant;
+  target?: string;
+  rel?: string;
+  class?: string;
+};
+
+const {
+  content,
+  href,
+  variant = "secondary",
+  target,
+  rel,
+  class: className,
+} = Astro.props;
+
+const arrowRequested = Astro.props.arrow ?? !!href;
+const showArrow = arrowRequested && !!href;
+const variants: Record<
+  Variant,
+  { base: string; interactive: string; inner: string }
+> = {
+  secondary: {
+    base: "border-secondary/25 bg-secondary/5 text-secondary/90 shadow-secondary/10",
+    interactive:
+      "hover:border-secondary/60 hover:bg-secondary/10 hover:text-secondary hover:shadow-secondary/20 focus-visible:ring-secondary/60",
+    inner: "decoration-secondary/60",
+  },
+  primary: {
+    base: "border-primary/25 bg-primary/5 text-primary/90 shadow-primary/10",
+    interactive:
+      "hover:border-primary/60 hover:bg-primary/10 hover:text-primary hover:shadow-primary/20 focus-visible:ring-primary/60",
+    inner: "decoration-primary/60",
+  },
+  neutral: {
+    base: "border-white/15 bg-white/5 text-white/80 shadow-white/10",
+    interactive:
+      "hover:border-white/30 hover:bg-white/10 hover:text-white hover:shadow-white/20 focus-visible:ring-white/30",
+    inner: "decoration-white/60",
+  },
+};
+const v = variants[variant];
+const rootBase = [
+  "group relative z-20 inline-flex items-center",
+  "rounded-2xl border px-2.5 py-1 md:px-4 md:py-1.5",
+  "shadow-lg transition-all duration-300",
+  v.base,
+];
+const rootInteractive = [
+  "focus-visible:ring-offset-body focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
+  v.interactive,
+];
+const rootClasses = [
+  ...rootBase,
+  ...(href ? rootInteractive : []),
+  showArrow ? "badge-arrow" : null,
+  className,
+];
+const innerClasses = [
+  "text-center text-xs font-medium tracking-wide",
+  "max-[425px]:text-[10px] sm:text-sm",
+  "underline-offset-4",
+  "[&_strong]:text-light [&_strong]:font-medium",
+  href ? "group-hover:underline group-hover:[&_strong]:text-white" : null,
+  v.inner,
+];
+---
+
+{
+  href ? (
+    <a href={href} target={target} rel={rel} class:list={rootClasses}>
+      <span class:list={innerClasses} set:html={markdownify(content)} />
+    </a>
+  ) : (
+    <span class:list={rootClasses}>
+      <span class:list={innerClasses} set:html={markdownify(content)} />
+    </span>
+  )
+}

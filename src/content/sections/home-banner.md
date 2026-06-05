@@ -1,8 +1,8 @@
 ---
-badge: "Custom GPU-backed AI workspaces"
-title: "[Build visual AI products|Create AI video workflows|Automate creative pipelines|Serve workflow APIs]"
-subtitle: "without watching the meter."
-description: "A **private**, **persistent**, **visual AI workspace** where founders, artists, and teams can build, modify, test, operate, and keep iterating on **custom generative AI workflows** using reserved high-VRAM GPUs."
+badge: "Announcing **Qiln Managed** — read more"
+title: "[Build visual AI products|Iterate beside production|Ship ComfyUI workflows|Run vLLM and Ollama]"
+subtitle: "without rebuilding GPU pods."
+description: "ComfyUI, VS Code, private model vaults, snapshots, HTTPS routes, and reserved high‑VRAM GPU capacity — kept together in one persistent workspace."
 image: "../../assets/images/product-demo.png"
 subscription:
   enable: true

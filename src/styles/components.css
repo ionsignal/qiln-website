@@ -38,6 +38,17 @@
   }
 }
 
+/* Badge component */
+.badge-arrow::after {
+  content: "→";
+  display: inline-block;
+  margin-left: 0.75em;
+  transition: transform 200ms ease;
+}
+.badge-arrow:hover::after {
+  transform: translateX(3px);
+}
+
 /* Hide alternate logo */
 header {
   .logo {
@@ -62,7 +73,7 @@ footer {
   }
 }
 
-.has-italic-text strong {
+.has-subtitle-text strong {
   @apply mt-1 block text-[0.75em] font-normal opacity-75;
 }
 

@@ -38,7 +38,7 @@ const blogIndexMeta = await fetchEntry("homepage", "-blog");
         {
           blogIndexMeta?.data?.title && (
             <h1
-              class="h2 md:text-h1 has-italic-text capitalize"
+              class="h2 md:text-h1 has-subtitle-text capitalize"
               set:html={markdownify(blogIndexMeta.data.title)}
             />
           )

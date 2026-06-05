@@ -5,6 +5,7 @@ import SvgIcon from "@/components/helpers/SvgIcon.astro";
 import BlueprintsScroller from "@/components/sections/BlueprintsScroller.astro";
 import ButtonLink from "@/components/buttons/ButtonLink.astro";
 import AnimatedText from "@/components/widgets/AnimatedText.astro";
+import Badge from "@/components/widgets/Badge.astro";
 import HeroSubscription from "@/components/widgets/HeroSubscription.astro";
 import Visualization from "@/components/widgets/Visualization.astro";
 import { plainify } from "@/utils/text";
@@ -77,20 +78,14 @@ const tickerData = parseTickerString(title);
                 data-duration="0.6"
                 data-delay="0.2"
                 data-stagger="0.1">
-                <div class="word inline-flex items-center rounded-2xl border border-white/5 px-3.5 py-1.5">
-                  <span
-                    aria-hidden="true"
-                    class="text-center text-xs tracking-wider text-white/50 uppercase max-[425px]:text-[10px] sm:text-sm">
-                    {badge}
-                  </span>
-                </div>
+                <Badge content={badge} href="/blog" class="word" />
               </div>
             )
           }
           <div class="relative inline-block w-full">
             {
               (title || subtitle) && (
-                <h1 class="has-italic-text font-secondary mx-auto flex flex-col gap-y-2 text-center text-3xl/tight text-white max-[425px]:text-2xl/tight md:gap-y-4 md:text-5xl/tight lg:text-6xl/tight">
+                <h1 class="has-subtitle-text font-secondary mx-auto flex flex-col gap-y-2 text-center text-3xl/tight text-white max-[425px]:text-2xl/tight md:gap-y-4 md:text-5xl/tight lg:text-6xl/tight">
                   {tickerData.isTicker ? (
                     <>
                       <span
@@ -164,7 +159,7 @@ const tickerData = parseTickerString(title);
                   class:list={[
                     "btn-md btn-has-icon group relative z-0 flex w-full items-center justify-center gap-4 sm:w-auto [&>.label]:z-20",
                     button.variant === "secondary"
-                      ? "btn-outline-secondary"
+                      ? "text-light border border-white/15 bg-white/5 shadow-none backdrop-blur-md transition-all duration-300 hover:border-white/30 hover:bg-white/10 hover:text-white"
                       : "btn-solid-primary",
                   ]}>
                   <span class="flex h-6 w-12 items-center justify-center rounded-full bg-white/15">
@@ -188,7 +183,7 @@ const tickerData = parseTickerString(title);
           class="relative mx-auto mt-12 -mb-4 max-w-6xl px-4 md:mt-14 md:mb-0 md:px-4 lg:mt-20 lg:px-5">
           <BlueprintsScroller
             content={customers}
-            class="mx-auto mb-8 max-w-4xl"
+            class="mx-auto mb-8 max-w-2xl lg:max-w-5xl"
           />
           <div class="bg-body relative z-10 overflow-hidden rounded-t-2xl px-0.5 pt-0.5 md:rounded-t-3xl">
             <div class="after:bg-primary/2 relative z-20 overflow-hidden rounded-t-2xl bg-black after:absolute after:inset-0 after:size-full after:rounded-t-2xl after:content-[''] md:rounded-t-3xl">
