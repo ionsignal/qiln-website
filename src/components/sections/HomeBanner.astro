@@ -77,10 +77,10 @@ const tickerData = parseTickerString(title);
                 data-duration="0.6"
                 data-delay="0.2"
                 data-stagger="0.1">
-                <div class="word inline-flex items-center rounded-lg border border-white/7.5 px-3.5 py-1.5">
+                <div class="word inline-flex items-center rounded-2xl border border-white/5 px-3.5 py-1.5">
                   <span
                     aria-hidden="true"
-                    class="text-center text-xs tracking-wider text-white/50 uppercase sm:text-sm">
+                    class="text-center text-xs tracking-wider text-white/50 uppercase max-[425px]:text-[10px] sm:text-sm">
                     {badge}
                   </span>
                 </div>
@@ -90,7 +90,7 @@ const tickerData = parseTickerString(title);
           <div class="relative inline-block w-full">
             {
               (title || subtitle) && (
-                <h1 class="has-italic-text font-secondary mx-auto flex flex-col gap-y-2 text-center text-3xl text-white md:gap-y-4 md:text-5xl/tight lg:text-6xl/tight">
+                <h1 class="has-italic-text font-secondary mx-auto flex flex-col gap-y-2 text-center text-3xl/tight text-white max-[425px]:text-2xl/tight md:gap-y-4 md:text-5xl/tight lg:text-6xl/tight">
                   {tickerData.isTicker ? (
                     <>
                       <span
@@ -127,7 +127,7 @@ const tickerData = parseTickerString(title);
                   )}
                   {subtitle && (
                     <span
-                      class="text-xl font-bold text-white/80 md:text-4xl lg:text-5xl"
+                      class="text-xl/loose font-bold text-white/80 md:text-4xl lg:text-5xl"
                       set:html={markdownify(subtitle)}
                     />
                   )}
@@ -138,7 +138,7 @@ const tickerData = parseTickerString(title);
           {
             description && (
               <AnimatedText
-                class="[&_strong]:text-secondary [&_b]:text-secondary mx-auto max-w-3xl text-center text-lg/normal text-white/90 [&_strong]:font-bold"
+                class="[&_strong]:text-secondary [&_b]:text-secondary mx-auto max-w-2xl text-center text-lg/normal text-white/90 max-[425px]:px-4 [&_strong]:font-bold"
                 stagger={0.03}
                 delay={0.4}
                 content={markdownify(description)}

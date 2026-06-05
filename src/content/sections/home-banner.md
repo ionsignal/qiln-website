@@ -1,9 +1,8 @@
 ---
-badge: "Persistent • Visual AI Workspaces • Reserved GPUs"
-
-title: "[Build visual AI products|Create video workflows|Automate creative pipelines|Serve workflow APIs]"
-subtitle: "without counting credits."
-description: "Open a stable remote AI creation machine with ComfyUI, VS Code, private model vaults, real folders, snapshots, routes, and endpoints — backed by **reserved high-VRAM GPUs** for one **predictable** monthly price."
+badge: "Custom GPU-backed AI workspaces"
+title: "[Build visual AI products|Create AI video workflows|Automate creative pipelines|Serve workflow APIs]"
+subtitle: "without watching the meter."
+description: "A **private**, **persistent**, **visual AI workspace** where founders, artists, and teams can build, modify, test, operate, and keep iterating on **custom generative AI workflows** using reserved high-VRAM GPUs."
 image: "../../assets/images/product-demo.png"
 subscription:
   enable: true

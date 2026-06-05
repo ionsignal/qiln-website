@@ -9,14 +9,14 @@ yaml: |
 
   apps:
     - name: comfyui
-      route: https://{{ workspace.slug }}.qiln.app
+      route: https://{{ workspace.slug }}.qiln.com
       command: /opt/comfyui/start.sh
     - name: vscode
-      route: https://{{ workspace.slug }}-code.qiln.app
+      route: https://{{ workspace.slug }}-code.qiln.com
 
   gpu:
     primary: reserved
-    burst: optional_when_available
+    burst: true
 
   volumes:
     - name: model-vault
@@ -36,7 +36,7 @@ yaml: |
   endpoints:
     - name: workflow-api
       app: fastapi-wrapper
-      route: https://{{ workspace.slug }}-api.qiln.app
+      route: https://{{ workspace.slug }}-api.qiln.com
 callouts:
   - title: "Workspace, not pod"
     description: "ComfyUI and VS Code get stable routes inside one durable workspace instead of another throwaway GPU session."

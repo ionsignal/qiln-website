@@ -63,7 +63,7 @@ footer {
 }
 
 .has-italic-text strong {
-  @apply font-tertiary font-normal text-inherit italic;
+  @apply mt-1 block text-[0.75em] font-normal opacity-75;
 }
 
 /* Icon Color Override */
