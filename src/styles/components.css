@@ -9,6 +9,11 @@
   @apply mx-auto px-4;
 }
 
+.home-banner-description strong {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
 /* Fit To Screen (Prevent Screen Flash ) */
 .fit-to-screen {
   @apply flex min-h-[102vh] flex-col justify-start;

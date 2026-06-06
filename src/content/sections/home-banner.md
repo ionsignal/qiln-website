@@ -1,8 +1,8 @@
 ---
-badge: "Announcing **Qiln Managed** — read more"
-title: "[Build visual AI products|Iterate beside production|Ship ComfyUI workflows|Run vLLM and Ollama]"
+badge: "Now onboarding **Qiln Managed** — read more"
+title: "[Build visual AI products|Ship ComfyUI workflows|Iterate beside production|Launch workflow endpoints]"
 subtitle: "without rebuilding GPU pods."
-description: "ComfyUI, VS Code, private model vaults, snapshots, HTTPS routes, and reserved high‑VRAM GPU capacity — kept together in one persistent workspace."
+description: "ComfyUI, VS Code, real folders, private model vaults, snapshots, stable HTTPS routes, and **reserved high‑VRAM GPU capacity** — kept together in **one persistent AI workspace**."
 image: "../../assets/images/product-demo.png"
 subscription:
   enable: true
@@ -16,7 +16,7 @@ buttons:
     variant: "secondary"
 customers:
   enable: true
-  description: "Run ComfyUI, n8n, vLLM, VSCode Server, Ollama and more."
+  description: "Start with ComfyUI. Add VS Code, n8n, vLLM, Ollama, Jupyter and more when the workflow needs them."
   list:
     - src: "../../assets/images/customers/1.png"
       alt: "ComfyUI"

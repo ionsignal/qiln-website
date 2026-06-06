@@ -23,8 +23,8 @@ export const ui = {
     "footer.copyright":
       "Copyright {{ year }} / All Rights Reserved By IonSignal, Inc.",
     main: [
-      // { enable: true, name: "Home", weight: 1, url: "/#home" },
-      { enable: true, name: "Reserved GPU", weight: 3, url: "/#gpu" },
+      { enable: false, name: "Home", weight: 1, url: "/#home" },
+      { enable: true, name: "Workspaces", weight: 3, url: "/#gpu" },
       { enable: true, name: "Model Vaults", weight: 4, url: "/#storage" },
       {
         enable: true,
@@ -32,8 +32,9 @@ export const ui = {
         weight: 5,
         url: "/#blueprint-section",
       },
-      // { enable: true, name: "Use Cases", weight: 5, url: "/#features" },
-      // { enable: true, name: "FAQ", weight: 6, url: "/#faq" },
+      { enable: false, name: "Pricing", weight: 5, url: "/pricing" },
+      { enable: false, name: "Use Cases", weight: 5, url: "/#features" },
+      { enable: false, name: "FAQ", weight: 6, url: "/#faq" },
     ] as NavigationLink[],
     footerMenu: [] as NavigationLink[],
     footerMenuQuickLink: [
