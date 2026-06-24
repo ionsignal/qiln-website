@@ -11,7 +11,7 @@ interface Props {
 
 export async function getStaticPaths() {
   const pages = await getCollection("pages");
-  const reservedSlugs = ["index", "404", "docs"];
+  const reservedSlugs = ["index", "404", "docs", "pricing"];
   const filteredPages = pages.filter((page) => {
     if (import.meta.env.PROD && page.data.draft) {
       return false;

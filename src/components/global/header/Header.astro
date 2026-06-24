@@ -33,7 +33,7 @@ const {
       />
       <div
         id="nav-menu"
-        class="hs-collapse hidden grow basis-full overflow-hidden transition-all duration-300 max-lg:absolute max-lg:top-full max-lg:left-0 max-lg:z-40 max-lg:w-full lg:block lg:w-auto lg:basis-auto">
+        class="hs-collapse hidden grow basis-full overflow-hidden transition-all duration-300 max-lg:absolute max-lg:top-full max-lg:left-0 max-lg:z-40 max-lg:w-full lg:block lg:w-auto lg:basis-auto lg:overflow-visible">
         <ul class="navbar has-customized-scrollbar">
           {main.map((menu) => <NavMenuItem menu={menu} />)}
           {
@@ -98,7 +98,7 @@ const {
     ) as HTMLElement | null;
     if (navMenu && navMenu.classList.contains("open")) {
       const target = event.target as Element;
-      const clickedLink = target.closest("a");
+      const clickedLink = target.closest("a:not(.hs-dropdown-toggle)");
       const isOutsideClick =
         !navMenu.contains(target) && navToggler && !navToggler.contains(target);
       const isInsideLinkClick =

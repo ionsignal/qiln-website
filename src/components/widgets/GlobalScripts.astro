@@ -8,6 +8,7 @@
   import HSOverlay from "@preline/overlay/non-auto";
   import HSTabs from "@preline/tabs/non-auto";
   import HSScrollspy from "@preline/scrollspy/non-auto";
+  import HSDropdown from "@preline/dropdown/non-auto";
   import { animate, inView } from "motion";
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -17,6 +18,8 @@
     HSOverlay.autoInit();
     HSTabs.autoInit();
     HSScrollspy.autoInit();
+    HSDropdown.autoInit();
+
     // Initialize Motion Engine
     initMotionAnimations();
     initHorizontalScroll();

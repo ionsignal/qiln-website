@@ -10,6 +10,7 @@ import {
   remarkModifiedTime,
 } from "./src/utils/remark/frontmatter.ts";
 import { fontProviders } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 
 let {
   seo: { sitemap: sitemapConfig },
@@ -52,6 +53,7 @@ const fonts = [
 export default defineConfig({
   site: config.site.baseUrl ? config.site.baseUrl : "http://examplesite.com",
   trailingSlash: config.site.trailingSlash ? "always" : "never",
+  compressHTML: true,
   image: {
     layout: "constrained",
     remotePatterns: [{ protocol: "https" }],
@@ -67,21 +69,28 @@ export default defineConfig({
       : null,
   ],
   markdown: {
-    rehypePlugins: [
-      [
-        rehypeExternalLinks,
-        {
-          rel: "noopener noreferrer nofollow",
-          target: "_blank",
-        },
+    processor: unified({
+      rehypePlugins: [
+        [
+          rehypeExternalLinks,
+          {
+            rel: "noopener noreferrer nofollow",
+            target: "_blank",
+          },
+        ],
       ],
-    ],
-    remarkPlugins: [remarkParseContent, remarkReadingTime, remarkModifiedTime],
+      remarkPlugins: [
+        remarkParseContent,
+        remarkReadingTime,
+        remarkModifiedTime,
+      ],
+      gfm: true,
+      smartypants: true,
+    }),
     shikiConfig: {
       theme: "github-dark",
       wrap: false,
     },
-    extendDefaultPlugins: true,
   },
   vite: {
     plugins: [tailwindcss()],

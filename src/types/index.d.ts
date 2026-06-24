@@ -115,7 +115,7 @@ export interface Badge {
 }
 
 export interface NavigationLinkCTA {
-  enable: string;
+  enable: boolean;
   image: string;
   title: string;
   description: string;

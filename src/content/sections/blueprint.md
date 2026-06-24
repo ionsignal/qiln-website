@@ -1,6 +1,6 @@
 ---
 enable: true
-subtitle: "workspace blueprints"
+subtitle: "Qiln Blueprints"
 title: "Blueprints for **persistent AI workspaces.**"
 yaml: |
   name: comfyui-workspace

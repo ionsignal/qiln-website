@@ -7,6 +7,7 @@
 @source "../../node_modules/@preline/overlay/*.js";
 @source "../../node_modules/@preline/tabs/*.js";
 @source "../../node_modules/@preline/scrollspy/*.js";
+@source "../../node_modules/@preline/dropdown/*.js";
 
 /* Modular Preline Variants */
 @import "../../node_modules/@preline/accordion/variants.css";
@@ -14,6 +15,7 @@
 @import "../../node_modules/@preline/overlay/variants.css";
 @import "../../node_modules/@preline/tabs/variants.css";
 @import "../../node_modules/@preline/scrollspy/variants.css";
+@import "../../node_modules/@preline/dropdown/variants.css";
 
 /* Tailwind */
 @plugin "@tailwindcss/forms";

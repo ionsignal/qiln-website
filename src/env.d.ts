@@ -32,3 +32,8 @@ declare module "@preline/scrollspy/non-auto" {
   const HSScrollspy: { autoInit: () => void };
   export default HSScrollspy;
 }
+
+declare module "@preline/dropdown/non-auto" {
+  const HSDropdown: { autoInit: () => void };
+  export default HSDropdown;
+}
