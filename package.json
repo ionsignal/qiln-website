@@ -1,9 +1,9 @@
 {
   "private": true,
   "name": "qiln-website",
-  "description": "Marketing and documentation website for Qiln.",
+  "description": "Qiln makes an AI workflow system durable, branchable, and reviewable.",
   "type": "module",
-  "version": "0.5.11",
+  "version": "0.5.12",
   "license": "UNLICENSED",
   "author": "IonSignal, Inc.",
   "homepage": "https://qiln.com",
@@ -21,7 +21,7 @@
     "build": "npm run toml:build && astro build",
     "preview": "npm run build && astro preview",
     "astro-check": "npm run toml:build && astro check",
-    "typecheck": "tsc && astro-check",
+    "typecheck": "npm run astro-check",
     "generate-favicons": "node ./scripts/generate-favicons.mjs",
     "format": "prettier -w ./src",
     "preversion": "npm run typecheck",
@@ -29,8 +29,8 @@
     "postversion": "npm run release && git push --follow-tags"
   },
   "engines": {
-    "node": ">=22.12.0",
-    "npm": ">=9.6.7"
+    "node": ">=22.23.1",
+    "npm": ">=10.9.1"
   },
   "overrides": {
     "@lucide/astro": {

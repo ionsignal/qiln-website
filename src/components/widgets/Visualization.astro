@@ -3,19 +3,42 @@
 // and initializes the client-side rendering engine.
 ---
 
-<div
+<qiln-visualization
   id="hero-bg-canvas"
-  class="pointer-events-none absolute inset-0 -z-10 size-full overflow-hidden"
+  class="pointer-events-none absolute inset-0 -z-10 block size-full overflow-hidden"
   aria-hidden="true">
   <div
-    class="bg-body absolute inset-0 size-full mask-[linear-gradient(to_top,black_0%,transparent_20%)] [-webkit-mask-image:linear-gradient(to_top,black_0%,transparent_20%)]">
+    class="bg-body absolute inset-0 z-10 size-full mask-[linear-gradient(to_top,black_0%,transparent_20%)] [-webkit-mask-image:linear-gradient(to_top,black_0%,transparent_20%)]">
   </div>
-</div>
+</qiln-visualization>
 
 <script>
   import { initVisualization } from "@/utils/visualization";
 
-  document.addEventListener("DOMContentLoaded", () => {
-    initVisualization("#hero-bg-canvas");
-  });
+  class QilnVisualization extends HTMLElement {
+    private cleanup: (() => void) | null = null;
+    private initializationId = 0;
+
+    connectedCallback() {
+      const initializationId = ++this.initializationId;
+      void initVisualization(this).then((cleanup) => {
+        if (!this.isConnected || initializationId !== this.initializationId) {
+          cleanup();
+          return;
+        }
+        this.cleanup?.();
+        this.cleanup = cleanup;
+      });
+    }
+
+    disconnectedCallback() {
+      this.initializationId++;
+      this.cleanup?.();
+      this.cleanup = null;
+    }
+  }
+
+  if (!customElements.get("qiln-visualization")) {
+    customElements.define("qiln-visualization", QilnVisualization);
+  }
 </script>

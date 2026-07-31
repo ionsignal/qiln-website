@@ -10,21 +10,6 @@
   }
 }
 
-.home-banner {
-  animation: spin-banner-image-border 12s linear infinite;
-  transform: rotate(80deg);
-}
-
-@keyframes spin-banner-image-border {
-  0% {
-    transform: rotate(80deg);
-  }
-
-  100% {
-    transform: rotate(290deg);
-  }
-}
-
 @theme {
   --animate-blink: blink 1s step-end infinite;
   --animate-marquee: marquee var(--marquee-duration, 50s) linear infinite
