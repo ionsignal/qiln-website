@@ -10,7 +10,7 @@ export const ui = {
     "common.emailPlaceholder": "Email Address",
     "common.paginationNext": "Next",
     "common.paginationPrevious": "Previous",
-    "navigation.buttonLabel": "Request a reserved workspace",
+    "navigation.buttonLabel": "Apply your own workflow →",
     "subscription.label": "Request a Reserved Workspace",
     "integration.relatedIntegrationSectionTitle":
       "Vivamus sit amet **varius felis**",
@@ -23,7 +23,35 @@ export const ui = {
     "footer.copyright":
       "Copyright {{ year }} / All Rights Reserved By IonSignal, Inc.",
     main: [
-      { enable: false, name: "Home", weight: 1, url: "/#home" },
+      {
+        enable: true,
+        name: "Product",
+        weight: 3,
+        hasMegaMenu: false,
+        menus: [
+          {
+            enable: true,
+            name: "Workspaces",
+            weight: 2,
+            url: "/#gpu",
+          },
+          {
+            enable: true,
+            name: "Model Vaults",
+            weight: 3,
+            url: "/#storage",
+          },
+          {
+            enable: true,
+            name: "Blueprints",
+            weight: 4,
+            url: "/#blueprint-section",
+          },
+        ],
+      },
+      { enable: true, name: "Blog", weight: 3, url: "/blog" },
+      { enable: true, name: "Documentation", weight: 3, url: "/docs" },
+      /*
       {
         enable: true,
         name: "Product",
@@ -64,29 +92,8 @@ export const ui = {
           },
         },
       },
-      {
-        enable: true,
-        name: "Solutions",
-        weight: 3,
-        hasMegaMenu: false,
-        menus: [
-          {
-            enable: true,
-            name: "Use Cases",
-            description: "See how others build.",
-            icon: "Briefcase",
-            url: "/#features",
-          },
-          {
-            enable: true,
-            name: "FAQ",
-            description: "Common questions answered.",
-            icon: "HelpCircle",
-            url: "/#faq",
-          },
-        ],
-      },
       { enable: true, name: "Pricing", weight: 4, url: "/pricing" },
+       */
     ] as NavigationLink[],
     footerMenu: [] as NavigationLink[],
     footerMenuQuickLink: [

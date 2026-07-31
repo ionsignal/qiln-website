@@ -1,0 +1,19 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 1440 810"
+  preserveAspectRatio="xMidYMid meet"
+  aria-hidden="true"
+  focusable="false"
+  class:list={[
+    "block h-auto w-full rounded-t-2xl md:rounded-t-3xl",
+    className,
+  ]}>
+  <rect width="1440" height="810" rx="32" fill="transparent"></rect>
+</svg>
