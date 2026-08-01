@@ -1,4 +1,4 @@
-@theme inline {
+@theme {
   /* Configure base font size, type scale, and font families in `src/config/fonts.json` */
   --leading-body: 1.8;
   --leading-inherit: inherit;
@@ -9,7 +9,7 @@
 
   /* Colors - Abyssal Web Scheme */
   --color-primary: #33b1ff; /* Bioluminescent Ice Blue */
-  --color-secondary: #34d399; /* Amber 400 — Warm gold counterpoint */
+  --color-secondary: #34d399; /* Mint green */
   --color-accent: #0b1221; /* Slightly elevated deep blue for cards/sections */
   --color-body: #060913; /* Deep Abyss Blue */
   --color-divider: #1a233a; /* Subtle structural borders */

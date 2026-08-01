@@ -1,19 +1,1766 @@
 ---
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+import type { CollectionEntry } from "astro:content";
+
+type HeroDiagramContent = NonNullable<
+  CollectionEntry<"sections">["data"]["heroDiagram"]
+>;
+
 interface Props {
   class?: string;
+  content?: HeroDiagramContent;
+  scale?: number;
 }
 
-const { class: className } = Astro.props;
+const { class: className, content, scale = 1 } = Astro.props as Props;
+const diagramScale = Number.isFinite(scale)
+  ? Math.min(Math.max(scale, 0.5), 1)
+  : 1;
+const annotations = content?.annotations;
+const humansAgents = annotations?.humansAgents;
+const branchPolicy = annotations?.branchPolicy;
+const knownGood = content?.knownGood;
+const forkAction = content?.fork;
+const forkedBranchDetails = content?.forkedBranch;
+const goldenTest = content?.goldenTest;
+const capsuleDiff = content?.capsuleDiff;
+const promoteAction = content?.promote;
+const productionRoute = content?.productionRoute;
+const rollback = content?.rollback;
+const processRail = content?.processRail;
+const knownGoodItemIcons = ["Workflow", "Database", "Route", "History"];
+
+const PROCESS_RAIL_BACKGROUND_Y = 752;
+const PROCESS_RAIL_BACKGROUND_HEIGHT = 48;
+const PROCESS_RAIL_STAGE_Y = 763;
+const PROCESS_RAIL_STAGE_WIDTH = 126;
+const PROCESS_RAIL_STAGE_HEIGHT = 26;
+const PROCESS_RAIL_STAGE_PADDING = 4;
+const PROCESS_RAIL_ICON_SIZE = 18;
+const PROCESS_RAIL_ICON_LABEL_GAP = 8;
+const PROCESS_RAIL_ICON_Y = 767;
+const PROCESS_RAIL_LABEL_Y = 781;
+const PROCESS_RAIL_CONNECTOR_Y = 776;
+
+const processRailStageDefinitions = processRail
+  ? ([
+      {
+        id: "fork",
+        label: processRail.fork,
+        icon: "GitFork",
+        tone: "activity",
+        iconX: 185,
+      },
+      {
+        id: "edit",
+        label: processRail.edit,
+        icon: "PencilLine",
+        tone: "activity",
+        iconX: 355,
+      },
+      {
+        id: "test",
+        label: processRail.test,
+        icon: "FlaskConical",
+        tone: "activity",
+        iconX: 525,
+      },
+      {
+        id: "diff",
+        label: processRail.diff,
+        icon: "FileDiff",
+        tone: "production",
+        iconX: 695,
+      },
+      {
+        id: "promote",
+        label: processRail.promote,
+        icon: "ShieldCheck",
+        tone: "approval",
+        iconX: 865,
+      },
+      {
+        id: "rollback",
+        label: processRail.rollback,
+        icon: "RotateCcw",
+        tone: "rollback",
+        iconX: 1035,
+      },
+    ] as const)
+  : [];
+
+const processRailStages = processRailStageDefinitions.map((stage) => {
+  const cardX = stage.iconX - PROCESS_RAIL_STAGE_PADDING;
+  return {
+    ...stage,
+    cardX,
+    labelX: stage.iconX + PROCESS_RAIL_ICON_SIZE + PROCESS_RAIL_ICON_LABEL_GAP,
+  };
+});
+
+const firstProcessRailStage = processRailStages[0];
+const lastProcessRailStage = processRailStages[processRailStages.length - 1];
+const processRailBounds =
+  firstProcessRailStage && lastProcessRailStage
+    ? {
+        x: firstProcessRailStage.cardX,
+        width:
+          lastProcessRailStage.cardX +
+          PROCESS_RAIL_STAGE_WIDTH -
+          firstProcessRailStage.cardX,
+      }
+    : null;
+
+const processRailRelationships = processRailStages.flatMap((stage, index) => {
+  const nextStage = processRailStages[index + 1];
+  if (!nextStage) return [];
+  return [
+    {
+      id: `${stage.id}-to-${nextStage.id}`,
+      stage: nextStage.id,
+      tone: nextStage.tone,
+      fromX: stage.cardX + PROCESS_RAIL_STAGE_WIDTH,
+      toX: nextStage.cardX,
+    },
+  ];
+});
+
+const splitSvgTextLines = (content: string) =>
+  content
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+const wrapSvgTextLines = (content: string, maxCharacters: number) => {
+  const wrappedLines: string[] = [];
+  for (const sourceLine of splitSvgTextLines(content)) {
+    let currentLine = "";
+    for (const word of sourceLine.split(/\s+/)) {
+      const candidate = currentLine ? `${currentLine} ${word}` : word;
+      if (currentLine && candidate.length > maxCharacters) {
+        wrappedLines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = candidate;
+      }
+    }
+    if (currentLine) {
+      wrappedLines.push(currentLine);
+    }
+  }
+  return wrappedLines;
+};
+
+// Expanding the viewBox creates equal canvas padding without changing diagram coordinates.
+const createCenteredViewBox = (
+  width: number,
+  height: number,
+  scaleFactor: number,
+) => {
+  const scaledWidth = width / scaleFactor;
+  const scaledHeight = height / scaleFactor;
+  const offsetX = (width - scaledWidth) / 2;
+  const offsetY = (height - scaledHeight) / 2;
+  return [offsetX, offsetY, scaledWidth, scaledHeight]
+    .map((value) => value.toFixed(3))
+    .join(" ");
+};
+
+const goldenTestTitleLines = goldenTest
+  ? wrapSvgTextLines(goldenTest.title, 16)
+  : [];
+const capsuleDiffTitleLines = capsuleDiff
+  ? wrapSvgTextLines(capsuleDiff.title, 15)
+  : [];
+const productionRouteTitleLines = productionRoute
+  ? wrapSvgTextLines(productionRoute.title, 14)
+  : [];
+
+const desktopViewBox = createCenteredViewBox(1440, 810, diagramScale);
 ---
 
 <svg
-  viewBox="0 0 1440 810"
+  viewBox={desktopViewBox}
   preserveAspectRatio="xMidYMid meet"
   aria-hidden="true"
   focusable="false"
   class:list={[
-    "block h-auto w-full rounded-t-2xl md:rounded-t-3xl",
+    "hero-product-diagram relative z-30 hidden h-auto w-full rounded-t-2xl md:block md:rounded-t-3xl",
     className,
   ]}>
-  <rect width="1440" height="810" rx="32" fill="transparent"></rect>
+  <defs>
+    <marker
+      id="diagram-arrow-base-desktop"
+      viewBox="0 0 10 10"
+      refX="10"
+      refY="5"
+      markerWidth="6"
+      markerHeight="6"
+      orient="auto">
+      <path class="diagram-arrow-base" d="M 0 0 L 10 5 L 0 10 z"></path>
+    </marker>
+    <marker
+      id="diagram-arrow-activity-desktop"
+      viewBox="0 0 10 10"
+      refX="10"
+      refY="5"
+      markerWidth="6"
+      markerHeight="6"
+      orient="auto">
+      <path class="diagram-arrow-activity" d="M 0 0 L 10 5 L 0 10 z"></path>
+    </marker>
+    <marker
+      id="diagram-arrow-production-desktop"
+      viewBox="0 0 10 10"
+      refX="10"
+      refY="5"
+      markerWidth="6"
+      markerHeight="6"
+      orient="auto">
+      <path class="diagram-arrow-production" d="M 0 0 L 10 5 L 0 10 z"></path>
+    </marker>
+    <marker
+      id="diagram-arrow-approval-desktop"
+      viewBox="0 0 10 10"
+      refX="10"
+      refY="5"
+      markerWidth="6"
+      markerHeight="6"
+      orient="auto">
+      <path class="diagram-arrow-approval" d="M 0 0 L 10 5 L 0 10 z"></path>
+    </marker>
+    <marker
+      id="diagram-arrow-rollback-desktop"
+      viewBox="0 0 10 10"
+      refX="10"
+      refY="5"
+      markerWidth="6"
+      markerHeight="6"
+      orient="auto">
+      <path class="diagram-arrow-rollback" d="M 0 0 L 10 5 L 0 10 z"></path>
+    </marker>
+    <filter
+      id="diagram-branch-glow-desktop"
+      x="-30%"
+      y="-30%"
+      width="160%"
+      height="160%">
+      <feGaussianBlur stdDeviation="9"></feGaussianBlur>
+    </filter>
+  </defs>
+
+  <g class="diagram-connector-layer" data-diagram-layer="connectors">
+    <g
+      class="diagram-relationship"
+      data-relationship="known-good-to-fork"
+      data-storyboard-stage="fork">
+      <path
+        d="M285 445H342"
+        class="diagram-connector-base"
+        marker-end="url(#diagram-arrow-base-desktop)">
+      </path>
+      <path
+        d="M285 445H342"
+        class="diagram-signal diagram-signal-activity"
+        marker-end="url(#diagram-arrow-activity-desktop)"
+        pathLength="1">
+      </path>
+    </g>
+    <g
+      class="diagram-relationship"
+      data-relationship="fork-to-branch"
+      data-storyboard-stage="fork">
+      <path
+        d="M454 445H500"
+        class="diagram-connector-base"
+        marker-end="url(#diagram-arrow-base-desktop)">
+      </path>
+      <path
+        d="M454 445H500"
+        class="diagram-signal diagram-signal-activity"
+        marker-end="url(#diagram-arrow-activity-desktop)"
+        pathLength="1">
+      </path>
+    </g>
+    <g
+      class="diagram-relationship"
+      data-relationship="branch-to-test"
+      data-storyboard-stage="test">
+      <path
+        d="M720 445H760"
+        class="diagram-connector-base"
+        marker-end="url(#diagram-arrow-base-desktop)">
+      </path>
+      <path
+        d="M720 445H760"
+        class="diagram-signal diagram-signal-activity"
+        marker-end="url(#diagram-arrow-activity-desktop)"
+        pathLength="1">
+      </path>
+    </g>
+    <g
+      class="diagram-relationship"
+      data-relationship="test-to-diff"
+      data-storyboard-stage="diff">
+      <path
+        d="M900 445H930"
+        class="diagram-connector-base"
+        marker-end="url(#diagram-arrow-base-desktop)">
+      </path>
+      <path
+        d="M900 445H930"
+        class="diagram-signal diagram-signal-production"
+        marker-end="url(#diagram-arrow-production-desktop)"
+        pathLength="1">
+      </path>
+    </g>
+    <g
+      class="diagram-relationship"
+      data-relationship="diff-to-promote"
+      data-storyboard-stage="promote">
+      <path
+        d="M1070 445H1119"
+        class="diagram-connector-base"
+        marker-end="url(#diagram-arrow-base-desktop)">
+      </path>
+      <path
+        d="M1070 445H1119"
+        class="diagram-signal diagram-signal-approval"
+        marker-end="url(#diagram-arrow-approval-desktop)"
+        pathLength="1">
+      </path>
+    </g>
+    <g
+      class="diagram-relationship"
+      data-relationship="promote-to-production"
+      data-storyboard-stage="route-move">
+      <path
+        d="M1231 445H1280"
+        class="diagram-connector-base"
+        marker-end="url(#diagram-arrow-base-desktop)">
+      </path>
+      <path
+        d="M1231 445H1280"
+        class="diagram-signal diagram-signal-activity"
+        marker-end="url(#diagram-arrow-activity-desktop)"
+        pathLength="1">
+      </path>
+    </g>
+    <g
+      class="diagram-relationship"
+      data-relationship="humans-agents-to-branch"
+      data-storyboard-stage="edit">
+      <path
+        d="M635 67.5H680V340"
+        class="diagram-connector-conditional"
+        marker-end="url(#diagram-arrow-base-desktop)">
+      </path>
+      <path
+        d="M635 67.5H680V340"
+        class="diagram-signal diagram-signal-activity"
+        marker-end="url(#diagram-arrow-activity-desktop)"
+        pathLength="1">
+      </path>
+    </g>
+    <g
+      class="diagram-relationship"
+      data-relationship="branch-policy-to-branch"
+      data-storyboard-stage="edit">
+      <path
+        d="M485 307V390H500"
+        class="diagram-connector-conditional"
+        marker-end="url(#diagram-arrow-base-desktop)">
+      </path>
+      <path
+        d="M485 330V390H500"
+        class="diagram-signal diagram-signal-activity"
+        marker-end="url(#diagram-arrow-activity-desktop)"
+        pathLength="1">
+      </path>
+    </g>
+    <g
+      class="diagram-relationship"
+      data-relationship="production-to-rollback"
+      data-storyboard-stage="rollback">
+      <path
+        d="M1350 536V667H858"
+        class="diagram-connector-recovery"
+        marker-end="url(#diagram-arrow-base-desktop)">
+      </path>
+      <path
+        d="M1350 536V667H858"
+        class="diagram-signal diagram-signal-rollback"
+        marker-end="url(#diagram-arrow-rollback-desktop)"
+        pathLength="1">
+      </path>
+    </g>
+    <g
+      class="diagram-relationship"
+      data-relationship="rollback-to-known-good"
+      data-storyboard-stage="rollback">
+      <path
+        d="M594 667H145V668"
+        class="diagram-connector-recovery"
+        marker-end="url(#diagram-arrow-base-desktop)">
+      </path>
+      <path
+        d="M594 667H145V668"
+        class="diagram-signal diagram-signal-rollback"
+        marker-end="url(#diagram-arrow-rollback-desktop)"
+        pathLength="1">
+      </path>
+    </g>
+  </g>
+
+  <g
+    class="diagram-resting-emphasis-layer"
+    data-diagram-layer="resting-emphasis">
+    <rect
+      x="500"
+      y="340"
+      width="220"
+      height="210"
+      rx="14"
+      class="diagram-branch-resting-glow"
+      filter="url(#diagram-branch-glow-desktop)">
+    </rect>
+  </g>
+
+  <g class="diagram-node-layer" data-diagram-layer="nodes">
+    <g
+      class="diagram-node diagram-node-known-good"
+      data-diagram-node="known-good"
+      data-storyboard-stage="initial">
+      <rect
+        x="25"
+        y="220"
+        width="260"
+        height="440"
+        rx="14"
+        class="diagram-card-surface">
+      </rect>
+      <rect
+        x="25"
+        y="220"
+        width="260"
+        height="440"
+        rx="14"
+        class="diagram-card-border">
+      </rect>
+      <rect
+        x="45"
+        y="305"
+        width="220"
+        height="55"
+        rx="8"
+        class="diagram-card-inset">
+      </rect>
+      <rect
+        x="45"
+        y="370"
+        width="220"
+        height="55"
+        rx="8"
+        class="diagram-card-inset">
+      </rect>
+      <rect
+        x="45"
+        y="435"
+        width="220"
+        height="55"
+        rx="8"
+        class="diagram-card-inset">
+      </rect>
+      <rect
+        x="45"
+        y="500"
+        width="220"
+        height="55"
+        rx="8"
+        class="diagram-card-inset">
+      </rect>
+      <path d="M45 286H265" class="diagram-divider"></path>
+      <path d="M45 575H265" class="diagram-divider"></path>
+      {
+        knownGood && (
+          <g class="diagram-node-content" data-diagram-part="content">
+            <text
+              x="45"
+              y="264"
+              class="diagram-content-title"
+              data-diagram-part="title">
+              {knownGood.title}
+            </text>
+            {knownGood.items.map((item, index) => {
+              const itemLines = splitSvgTextLines(item);
+              const labelY = itemLines.length > 1 ? 332 : 340;
+              return (
+                <g
+                  data-diagram-part="list-item"
+                  transform={`translate(0 ${index * 64})`}>
+                  <LucideIcon
+                    icon={knownGoodItemIcons[index] ?? "Circle"}
+                    x="58"
+                    y="322"
+                    width="22"
+                    height="22"
+                    class="diagram-content-icon diagram-content-icon-capsule"
+                  />
+                  <text
+                    x="88"
+                    y={labelY}
+                    class="diagram-content-row-label"
+                    data-diagram-part="row-label">
+                    {itemLines.map((line, lineIndex) => (
+                      <tspan
+                        x="88"
+                        dy={lineIndex === 0 ? 0 : 16}
+                        data-diagram-part="line">
+                        {line}
+                      </tspan>
+                    ))}
+                  </text>
+                </g>
+              );
+            })}
+            <g data-diagram-part="status">
+              <LucideIcon
+                icon="Power"
+                x="58"
+                y="594"
+                width="20"
+                height="20"
+                class="diagram-content-icon diagram-content-icon-runtime"
+              />
+              <text x="88" y="608" class="diagram-content-runtime-label">
+                {knownGood.runtime.label}
+              </text>
+              <text x="88" y="631" class="diagram-content-runtime-description">
+                {knownGood.runtime.description}
+              </text>
+            </g>
+          </g>
+        )
+      }
+    </g>
+
+    <g
+      class="diagram-node diagram-node-annotation"
+      data-diagram-node="humans-agents"
+      data-storyboard-stage="edit">
+      <rect
+        x="335"
+        y="25"
+        width="300"
+        height="85"
+        rx="12"
+        class="diagram-card-surface">
+      </rect>
+      <rect
+        x="335"
+        y="25"
+        width="300"
+        height="85"
+        rx="12"
+        class="diagram-card-border">
+      </rect>
+      {
+        humansAgents && (
+          <g class="diagram-node-content" data-diagram-part="content">
+            <LucideIcon
+              icon="UsersRound"
+              x="360"
+              y="40"
+              width="38"
+              height="38"
+              class="diagram-content-icon diagram-content-icon-production"
+            />
+            <text
+              x="415"
+              y="64"
+              class="diagram-content-title"
+              data-diagram-part="title">
+              {splitSvgTextLines(humansAgents.title).map((line, lineIndex) => (
+                <tspan
+                  x="420"
+                  dy={lineIndex === 0 ? 0 : 16}
+                  data-diagram-part="line">
+                  {line}
+                </tspan>
+              ))}
+            </text>
+            <text
+              x="415"
+              y="86"
+              class="diagram-content-supporting"
+              data-diagram-part="body">
+              {splitSvgTextLines(humansAgents.description).map(
+                (line, lineIndex) => (
+                  <tspan
+                    x="420"
+                    dy={lineIndex === 0 ? 0 : 16}
+                    data-diagram-part="line">
+                    {line}
+                  </tspan>
+                ),
+              )}
+            </text>
+          </g>
+        )
+      }
+    </g>
+
+    <g
+      class="diagram-node diagram-node-annotation"
+      data-diagram-node="branch-policy"
+      data-storyboard-stage="edit">
+      <rect
+        x="335"
+        y="140"
+        width="300"
+        height="167"
+        rx="12"
+        class="diagram-card-surface">
+      </rect>
+      <rect
+        x="335"
+        y="140"
+        width="300"
+        height="167"
+        rx="12"
+        class="diagram-card-border">
+      </rect>
+      {
+        branchPolicy && (
+          <g class="diagram-node-content" data-diagram-part="content">
+            <LucideIcon
+              icon="ShieldCheck"
+              x="360"
+              y="155"
+              width="38"
+              height="38"
+              class="diagram-content-icon diagram-content-icon-production"
+            />
+            <text
+              x="420"
+              y="180"
+              class="diagram-content-title"
+              data-diagram-part="title">
+              {splitSvgTextLines(branchPolicy.title).map((line, lineIndex) => (
+                <tspan
+                  x="415"
+                  dy={lineIndex === 0 ? 0 : 16}
+                  data-diagram-part="line">
+                  {line}
+                </tspan>
+              ))}
+            </text>
+            {branchPolicy.items.map((item, index) => {
+              const itemLines = splitSvgTextLines(item);
+              return (
+                <g
+                  data-diagram-part="list-item"
+                  transform={`translate(0 ${index * 32})`}>
+                  <LucideIcon
+                    icon="Check"
+                    x="367"
+                    y="202"
+                    width="24"
+                    height="24"
+                    class="diagram-content-icon diagram-content-icon-production"
+                  />
+                  <text
+                    x="415"
+                    y="218"
+                    class="diagram-content-list-item"
+                    data-diagram-part="row-label">
+                    {itemLines.map((line, lineIndex) => (
+                      <tspan
+                        x="416"
+                        dy={lineIndex === 0 ? 0 : 16}
+                        data-diagram-part="line">
+                        {line}
+                      </tspan>
+                    ))}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+        )
+      }
+    </g>
+
+    <g
+      class="diagram-node diagram-node-fork"
+      data-diagram-node="fork"
+      data-storyboard-stage="fork">
+      <rect
+        x="342"
+        y="410"
+        width="112"
+        height="70"
+        rx="10"
+        class="diagram-card-surface">
+      </rect>
+      <rect
+        x="342"
+        y="410"
+        width="112"
+        height="70"
+        rx="10"
+        class="diagram-card-border">
+      </rect>
+      {
+        forkAction && (
+          <g class="diagram-node-content" data-diagram-part="content">
+            <g data-diagram-part="icon">
+              <LucideIcon
+                icon="GitFork"
+                x="365"
+                y="435"
+                width="21"
+                height="21"
+                class="diagram-content-icon diagram-content-icon-activity"
+              />
+            </g>
+            <text
+              x="395"
+              y="451"
+              class="diagram-content-action-label"
+              data-diagram-part="title">
+              {forkAction.label}
+            </text>
+          </g>
+        )
+      }
+    </g>
+
+    <g
+      class="diagram-node diagram-node-branch"
+      data-diagram-node="forked-branch"
+      data-storyboard-stage="fork edit test diff">
+      <rect
+        x="500"
+        y="340"
+        width="220"
+        height="210"
+        rx="14"
+        class="diagram-card-surface">
+      </rect>
+      <rect
+        x="500"
+        y="340"
+        width="220"
+        height="210"
+        rx="14"
+        class="diagram-card-border">
+      </rect>
+      <path d="M525 505H695" class="diagram-branch-divider"></path>
+      {
+        forkedBranchDetails && (
+          <g class="diagram-node-content" data-diagram-part="content">
+            <g data-diagram-part="icon">
+              <LucideIcon
+                icon="GitFork"
+                x="598"
+                y="360"
+                width="24"
+                height="24"
+                class="diagram-content-icon diagram-content-icon-activity"
+              />
+            </g>
+            <text
+              x="610"
+              y="414"
+              text-anchor="middle"
+              class="diagram-content-branch-title"
+              data-diagram-part="title">
+              {forkedBranchDetails.title}
+            </text>
+            <text
+              x="610"
+              y="446"
+              text-anchor="middle"
+              class="diagram-content-supporting"
+              data-diagram-part="body">
+              {forkedBranchDetails.isolationDescription}
+            </text>
+            <text
+              x="610"
+              y="470"
+              text-anchor="middle"
+              class="diagram-content-supporting"
+              data-diagram-part="candidate-version">
+              {forkedBranchDetails.candidateDescription}
+            </text>
+            <g data-diagram-part="status">
+              <LucideIcon
+                icon="Power"
+                x="525"
+                y="517"
+                width="19"
+                height="19"
+                class="diagram-content-icon diagram-content-icon-runtime"
+              />
+              <text x="554" y="532" class="diagram-content-runtime-label">
+                {forkedBranchDetails.runtimeStatus}
+              </text>
+            </g>
+          </g>
+        )
+      }
+    </g>
+
+    <g
+      class="diagram-node diagram-node-standard"
+      data-diagram-node="golden-test"
+      data-storyboard-stage="test">
+      <rect
+        x="760"
+        y="380"
+        width="140"
+        height="130"
+        rx="12"
+        class="diagram-card-surface">
+      </rect>
+      <rect
+        x="760"
+        y="380"
+        width="140"
+        height="130"
+        rx="12"
+        class="diagram-card-border">
+      </rect>
+      {
+        goldenTest && (
+          <g class="diagram-node-content" data-diagram-part="content">
+            <g data-diagram-part="icon">
+              <LucideIcon
+                icon="FlaskConical"
+                x="816"
+                y="405"
+                width="28"
+                height="28"
+                class="diagram-content-icon diagram-content-icon-diff"
+              />
+            </g>
+            <text
+              x="830"
+              y="460"
+              text-anchor="middle"
+              class="diagram-content-card-title"
+              data-diagram-part="title">
+              {goldenTestTitleLines.map((line, lineIndex) => (
+                <tspan
+                  x="830"
+                  dy={lineIndex === 0 ? 0 : 17}
+                  data-diagram-part="line">
+                  {line}
+                </tspan>
+              ))}
+            </text>
+          </g>
+        )
+      }
+    </g>
+
+    <g
+      class="diagram-node diagram-node-diff"
+      data-diagram-node="capsule-diff"
+      data-storyboard-stage="diff">
+      <rect
+        x="930"
+        y="380"
+        width="140"
+        height="130"
+        rx="12"
+        class="diagram-card-surface">
+      </rect>
+      <rect
+        x="930"
+        y="380"
+        width="140"
+        height="130"
+        rx="12"
+        class="diagram-card-border">
+      </rect>
+      {
+        capsuleDiff && (
+          <g class="diagram-node-content" data-diagram-part="content">
+            <g data-diagram-part="icon">
+              <LucideIcon
+                icon="FileDiff"
+                x="986"
+                y="405"
+                width="28"
+                height="28"
+                class="diagram-content-icon diagram-content-icon-diff"
+              />
+            </g>
+            <text
+              x="1000"
+              y="460"
+              text-anchor="middle"
+              class="diagram-content-card-title"
+              data-diagram-part="title">
+              {capsuleDiffTitleLines.map((line, lineIndex) => (
+                <tspan
+                  x="1000"
+                  dy={lineIndex === 0 ? 0 : 17}
+                  data-diagram-part="line">
+                  {line}
+                </tspan>
+              ))}
+            </text>
+          </g>
+        )
+      }
+    </g>
+
+    <g
+      class="diagram-node diagram-node-promote"
+      data-diagram-node="promote"
+      data-storyboard-stage="promote">
+      <rect
+        x="1119"
+        y="410"
+        width="112"
+        height="70"
+        rx="10"
+        class="diagram-card-surface">
+      </rect>
+      <rect
+        x="1119"
+        y="410"
+        width="112"
+        height="70"
+        rx="10"
+        class="diagram-card-border">
+      </rect>
+      {
+        promoteAction && (
+          <g class="diagram-node-content" data-diagram-part="content">
+            <g data-diagram-part="icon">
+              <LucideIcon
+                icon="ShieldCheck"
+                x="1132"
+                y="435"
+                width="21"
+                height="21"
+                class="diagram-content-icon diagram-content-icon-approval"
+              />
+            </g>
+            <text
+              x="1160"
+              y="451"
+              class="diagram-content-action-label"
+              data-diagram-part="title">
+              {promoteAction.label}
+            </text>
+          </g>
+        )
+      }
+    </g>
+
+    <g
+      class="diagram-node diagram-node-production"
+      data-diagram-node="production-route"
+      data-storyboard-stage="route-move">
+      <rect
+        x="1280"
+        y="360"
+        width="140"
+        height="170"
+        rx="12"
+        class="diagram-card-surface">
+      </rect>
+      <rect
+        x="1280"
+        y="360"
+        width="140"
+        height="170"
+        rx="12"
+        class="diagram-card-border">
+      </rect>
+      {
+        productionRoute && (
+          <g class="diagram-node-content" data-diagram-part="content">
+            <g data-diagram-part="icon">
+              <LucideIcon
+                icon="Globe2"
+                x="1336"
+                y="382"
+                width="28"
+                height="28"
+                class="diagram-content-icon diagram-content-icon-production"
+              />
+            </g>
+            <g data-diagram-part="badge">
+              <LucideIcon
+                icon="LockKeyhole"
+                x="1392"
+                y="374"
+                width="14"
+                height="14"
+                class="diagram-content-icon diagram-content-icon-production"
+              />
+            </g>
+            <text
+              x="1350"
+              y="435"
+              text-anchor="middle"
+              class="diagram-content-card-title"
+              data-diagram-part="title">
+              {productionRouteTitleLines.map((line, lineIndex) => (
+                <tspan
+                  x="1350"
+                  dy={lineIndex === 0 ? 0 : 17}
+                  data-diagram-part="line">
+                  {line}
+                </tspan>
+              ))}
+            </text>
+            <text
+              x="1350"
+              y="480"
+              text-anchor="middle"
+              class="diagram-content-card-body"
+              data-diagram-part="route-alias">
+              {productionRoute.routeAliasDescription}
+            </text>
+            <text
+              x="1350"
+              y="503"
+              text-anchor="middle"
+              class="diagram-content-card-body"
+              data-diagram-part="version">
+              {productionRoute.versionDescription}
+            </text>
+          </g>
+        )
+      }
+    </g>
+
+    <g
+      class="diagram-node diagram-node-rollback"
+      data-diagram-node="rollback"
+      data-storyboard-stage="rollback">
+      <rect
+        x="600"
+        y="620"
+        width="250"
+        height="95"
+        rx="12"
+        class="diagram-card-surface">
+      </rect>
+      <rect
+        x="600"
+        y="620"
+        width="250"
+        height="95"
+        rx="12"
+        class="diagram-card-border">
+      </rect>
+      {
+        rollback && (
+          <g class="diagram-node-content" data-diagram-part="content">
+            <g data-diagram-part="icon">
+              <LucideIcon
+                icon="RotateCcw"
+                x="625"
+                y="638"
+                width="29"
+                height="29"
+                class="diagram-content-icon diagram-content-icon-rollback"
+              />
+            </g>
+            <text
+              x="665"
+              y="650"
+              class="diagram-content-card-title"
+              data-diagram-part="title">
+              {rollback.title}
+            </text>
+            <g data-diagram-part="status">
+              <text x="665" y="671" class="diagram-content-recovery-status">
+                {rollback.availabilityDescription}
+              </text>
+            </g>
+            <g data-diagram-part="route-alias">
+              <text x="625" y="695" class="diagram-content-recovery-action">
+                {rollback.routeAliasDescription}
+              </text>
+              <text
+                x="625"
+                y="710"
+                class="diagram-content-recovery-destination">
+                {rollback.destinationDescription}
+              </text>
+            </g>
+          </g>
+        )
+      }
+    </g>
+  </g>
+
+  <g class="diagram-event-layer" data-diagram-layer="events">
+    <g class="diagram-event" data-storyboard-event="initial">
+      <rect
+        x="25"
+        y="220"
+        width="260"
+        height="440"
+        rx="14"
+        class="diagram-node-emphasis diagram-known-good-emphasis">
+      </rect>
+    </g>
+
+    <g class="diagram-event" data-storyboard-event="fork">
+      <rect
+        x="342"
+        y="410"
+        width="112"
+        height="70"
+        rx="10"
+        class="diagram-node-emphasis diagram-activity-emphasis">
+      </rect>
+      <rect
+        x="500"
+        y="340"
+        width="220"
+        height="210"
+        rx="14"
+        class="diagram-node-emphasis diagram-activity-emphasis">
+      </rect>
+    </g>
+
+    <g class="diagram-event" data-storyboard-event="edit">
+      <rect
+        x="500"
+        y="340"
+        width="220"
+        height="210"
+        rx="14"
+        class="diagram-node-emphasis diagram-activity-emphasis">
+      </rect>
+    </g>
+
+    <g class="diagram-event" data-storyboard-event="test">
+      <rect
+        x="760"
+        y="360"
+        width="140"
+        height="170"
+        rx="12"
+        class="diagram-node-emphasis diagram-activity-emphasis">
+      </rect>
+    </g>
+
+    <g class="diagram-event" data-storyboard-event="diff">
+      <rect
+        x="930"
+        y="360"
+        width="140"
+        height="170"
+        rx="12"
+        class="diagram-node-emphasis diagram-production-emphasis">
+      </rect>
+    </g>
+
+    <g class="diagram-event" data-storyboard-event="promote">
+      <rect
+        x="1119"
+        y="410"
+        width="112"
+        height="70"
+        rx="10"
+        class="diagram-node-emphasis diagram-approval-emphasis">
+      </rect>
+    </g>
+
+    <g class="diagram-event" data-storyboard-event="route-move">
+      <rect
+        x="1280"
+        y="360"
+        width="140"
+        height="170"
+        rx="12"
+        class="diagram-node-emphasis diagram-production-emphasis">
+      </rect>
+      <circle
+        cx="1264"
+        cy="445"
+        r="4"
+        class="diagram-route-token"
+        data-animation-token="production-route">
+      </circle>
+    </g>
+
+    <g class="diagram-event" data-storyboard-event="rollback">
+      <rect
+        x="600"
+        y="620"
+        width="250"
+        height="95"
+        rx="12"
+        class="diagram-node-emphasis diagram-rollback-emphasis">
+      </rect>
+    </g>
+  </g>
+
+  <g class="diagram-process-rail" data-diagram-layer="process-rail">
+    {
+      processRailBounds && (
+        <g
+          class="diagram-process-rail-background"
+          data-diagram-part="background">
+          <rect
+            x={processRailBounds.x}
+            y={PROCESS_RAIL_BACKGROUND_Y}
+            width={processRailBounds.width}
+            height={PROCESS_RAIL_BACKGROUND_HEIGHT}
+            rx="10"
+            class="diagram-card-surface"
+          />
+          <rect
+            x={processRailBounds.x}
+            y={PROCESS_RAIL_BACKGROUND_Y}
+            width={processRailBounds.width}
+            height={PROCESS_RAIL_BACKGROUND_HEIGHT}
+            rx="10"
+            class="diagram-card-border"
+          />
+        </g>
+      )
+    }
+
+    {
+      processRailRelationships.map((relationship) => (
+        <g
+          class="diagram-rail-relationship"
+          data-rail-relationship={relationship.id}
+          data-storyboard-stage={relationship.stage}>
+          <path
+            d={`M${relationship.fromX} ${PROCESS_RAIL_CONNECTOR_Y}H${relationship.toX}`}
+            class="diagram-rail-connector-base"
+            marker-end="url(#diagram-arrow-base-desktop)"
+          />
+          <path
+            d={`M${relationship.fromX} ${PROCESS_RAIL_CONNECTOR_Y}H${relationship.toX}`}
+            class:list={[
+              "diagram-signal",
+              `diagram-signal-${relationship.tone}`,
+            ]}
+            marker-end={`url(#diagram-arrow-${relationship.tone}-desktop)`}
+            pathLength="1"
+          />
+        </g>
+      ))
+    }
+
+    {
+      processRailStages.map((stage) => (
+        <g
+          class="diagram-rail-stage"
+          data-rail-stage={stage.id}
+          data-rail-tone={stage.tone}
+          data-storyboard-stage={stage.id}>
+          <rect
+            x={stage.cardX}
+            y={PROCESS_RAIL_STAGE_Y}
+            width={PROCESS_RAIL_STAGE_WIDTH}
+            height={PROCESS_RAIL_STAGE_HEIGHT}
+            rx="6"
+            class="diagram-rail-stage-surface"
+            data-diagram-part="surface"
+          />
+          <rect
+            x={stage.cardX}
+            y={PROCESS_RAIL_STAGE_Y}
+            width={PROCESS_RAIL_STAGE_WIDTH}
+            height={PROCESS_RAIL_STAGE_HEIGHT}
+            rx="6"
+            class="diagram-rail-stage-border"
+            data-diagram-part="border"
+          />
+          <g class="diagram-rail-stage-content" data-diagram-part="content">
+            <g data-diagram-part="icon">
+              <LucideIcon
+                icon={stage.icon}
+                x={stage.iconX}
+                y={PROCESS_RAIL_ICON_Y}
+                width={PROCESS_RAIL_ICON_SIZE}
+                height={PROCESS_RAIL_ICON_SIZE}
+                class:list={[
+                  "diagram-content-icon",
+                  `diagram-content-icon-${stage.tone}`,
+                ]}
+              />
+            </g>
+            <text
+              x={stage.labelX}
+              y={PROCESS_RAIL_LABEL_Y}
+              class:list={[
+                "diagram-rail-label",
+                `diagram-rail-label-${stage.tone}`,
+              ]}
+              data-diagram-part="title">
+              {stage.label}
+            </text>
+          </g>
+        </g>
+      ))
+    }
+  </g>
 </svg>
+
+<style>
+  .hero-product-diagram {
+    --diagram-activity: #1fcfbd;
+    --diagram-rollback: #2f82b8;
+    --diagram-text-primary: var(--color-light);
+    --diagram-text-supporting: var(--color-text-default);
+    --diagram-text-label: var(--color-light);
+    --diagram-text-recovery-status: var(--diagram-rollback);
+    --diagram-text-recovery-action: var(--diagram-text-primary);
+    --diagram-text-recovery-destination: var(--diagram-text-supporting);
+    --diagram-icon-activity: var(--diagram-activity);
+    --diagram-icon-capsule: var(--color-primary);
+    --diagram-icon-diff: var(--color-primary);
+    --diagram-icon-production: var(--color-primary);
+    --diagram-icon-approval: var(--color-secondary);
+    --diagram-icon-rollback: var(--diagram-rollback);
+    --diagram-status-runtime: var(--diagram-activity);
+    --diagram-status-text: var(--diagram-activity);
+    --diagram-recovery-connector: var(--color-light);
+    --diagram-recovery-signal: var(--diagram-activity);
+  }
+
+  .diagram-card-surface {
+    fill: var(--color-theme-dark);
+    fill-opacity: 0.72;
+  }
+
+  .diagram-card-border {
+    fill: none;
+    stroke: var(--color-light);
+    stroke-opacity: 0.26;
+    stroke-width: 1.2;
+  }
+
+  .diagram-card-inset {
+    fill: var(--color-body);
+    fill-opacity: 0.4;
+    stroke: var(--color-light);
+    stroke-opacity: 0.22;
+    stroke-width: 1;
+  }
+
+  .diagram-node-annotation .diagram-card-surface {
+    fill-opacity: 0.55;
+  }
+
+  .diagram-node-annotation .diagram-card-border {
+    stroke-opacity: 0.18;
+  }
+
+  .diagram-node-known-good .diagram-card-surface {
+    fill-opacity: 0.76;
+  }
+
+  .diagram-node-known-good .diagram-card-border {
+    stroke-opacity: 0.32;
+  }
+
+  .diagram-node-fork .diagram-card-surface {
+    fill: var(--diagram-activity);
+    fill-opacity: 0.07;
+  }
+
+  .diagram-node-fork .diagram-card-border {
+    stroke: var(--diagram-activity);
+    stroke-opacity: 0.84;
+    stroke-width: 1.35;
+  }
+
+  .diagram-node-branch .diagram-card-border {
+    stroke: var(--diagram-activity);
+    stroke-opacity: 0.92;
+    stroke-width: 1.5;
+  }
+
+  .diagram-branch-resting-glow {
+    fill: none;
+    stroke: var(--diagram-activity);
+    stroke-opacity: 0.22;
+    stroke-width: 3;
+  }
+
+  .diagram-node-promote .diagram-card-surface {
+    fill: var(--color-secondary);
+    fill-opacity: 0.07;
+  }
+
+  .diagram-node-promote .diagram-card-border {
+    stroke: var(--color-secondary);
+    stroke-opacity: 0.88;
+    stroke-width: 1.5;
+  }
+
+  .diagram-node-rollback .diagram-card-surface {
+    fill-opacity: 0.76;
+  }
+
+  .diagram-node-rollback .diagram-card-border {
+    stroke: var(--diagram-rollback);
+    stroke-opacity: 0.7;
+    stroke-width: 1.35;
+  }
+
+  .diagram-connector-base,
+  .diagram-rail-connector-base {
+    fill: none;
+    stroke: var(--color-light);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-opacity: 0.5;
+    stroke-width: 1.4;
+  }
+
+  .diagram-connector-conditional {
+    fill: none;
+    stroke: var(--color-light);
+    stroke-dasharray: 4 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-opacity: 0.54;
+    stroke-width: 1.35;
+  }
+
+  .diagram-connector-recovery {
+    fill: none;
+    stroke: var(--diagram-recovery-connector);
+    stroke-dasharray: 4 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-opacity: 0.54;
+    stroke-width: 1.35;
+  }
+
+  .diagram-arrow-base {
+    fill: var(--color-light);
+    fill-opacity: 0.5;
+  }
+
+  .diagram-arrow-activity {
+    fill: var(--diagram-activity);
+  }
+
+  .diagram-arrow-production {
+    fill: var(--color-primary);
+  }
+
+  .diagram-arrow-approval {
+    fill: var(--color-secondary);
+  }
+
+  .diagram-arrow-rollback {
+    fill: var(--diagram-recovery-signal);
+  }
+
+  .diagram-divider,
+  .diagram-muted-line {
+    fill: none;
+    stroke: var(--color-light);
+    stroke-linecap: round;
+    stroke-opacity: 0.18;
+    stroke-width: 1;
+  }
+
+  .diagram-branch-divider {
+    fill: none;
+    stroke: var(--diagram-activity);
+    stroke-linecap: round;
+    stroke-opacity: 0.46;
+    stroke-width: 1;
+  }
+
+  .diagram-node-content,
+  .diagram-rail-stage-content {
+    pointer-events: none;
+  }
+
+  .diagram-content-title,
+  .diagram-content-branch-title,
+  .diagram-content-action-label,
+  .diagram-content-supporting,
+  .diagram-content-list-item,
+  .diagram-content-row-label,
+  .diagram-content-runtime-label,
+  .diagram-content-runtime-description,
+  .diagram-content-card-title,
+  .diagram-content-card-body,
+  .diagram-content-recovery-status,
+  .diagram-content-recovery-action,
+  .diagram-content-recovery-destination,
+  .diagram-rail-label {
+    font-family: var(--font-primary);
+    text-rendering: geometricPrecision;
+  }
+
+  .diagram-content-title {
+    fill: var(--diagram-text-primary);
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+  }
+
+  .diagram-content-branch-title {
+    fill: var(--diagram-text-primary);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.15px;
+  }
+
+  .diagram-content-action-label {
+    fill: var(--diagram-text-primary);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .diagram-content-supporting {
+    fill: var(--diagram-text-supporting);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .diagram-content-list-item {
+    fill: var(--diagram-text-primary);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .diagram-content-row-label {
+    fill: var(--diagram-text-label);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .diagram-content-runtime-label {
+    fill: var(--diagram-status-runtime);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .diagram-content-runtime-description {
+    fill: var(--diagram-text-supporting);
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .diagram-content-card-title {
+    fill: var(--diagram-text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.1px;
+  }
+
+  .diagram-content-card-body {
+    fill: var(--diagram-text-supporting);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .diagram-content-recovery-status {
+    fill: var(--diagram-text-recovery-status);
+    font-size: 12.5px;
+    font-weight: 500;
+  }
+
+  .diagram-content-recovery-action {
+    fill: var(--diagram-text-recovery-action);
+    font-size: 12.5px;
+    font-weight: 500;
+  }
+
+  .diagram-content-recovery-destination {
+    fill: var(--diagram-text-recovery-destination);
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .diagram-content-lock-badge {
+    fill: var(--color-primary);
+    fill-opacity: 0.14;
+    stroke: var(--color-primary);
+    stroke-opacity: 0.85;
+    stroke-width: 1;
+  }
+
+  .diagram-content-icon {
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .diagram-content-icon-activity {
+    color: var(--diagram-icon-activity);
+  }
+
+  .diagram-content-icon-capsule {
+    color: var(--diagram-icon-capsule);
+  }
+
+  .diagram-content-icon-test {
+    color: var(--diagram-icon-diff);
+  }
+
+  .diagram-content-icon-diff {
+    color: var(--diagram-icon-diff);
+  }
+
+  .diagram-content-icon-production {
+    color: var(--diagram-icon-production);
+  }
+
+  .diagram-content-icon-approval {
+    color: var(--diagram-icon-approval);
+  }
+
+  .diagram-content-icon-rollback {
+    color: var(--diagram-icon-rollback);
+  }
+
+  .diagram-content-icon-runtime {
+    color: var(--diagram-status-runtime);
+  }
+
+  .diagram-event {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .diagram-node-emphasis {
+    fill: none;
+    stroke-width: 2;
+  }
+
+  .diagram-known-good-emphasis {
+    stroke: var(--color-light);
+    stroke-opacity: 0.7;
+  }
+
+  .diagram-activity-emphasis {
+    stroke: var(--diagram-activity);
+    stroke-opacity: 0.95;
+  }
+
+  .diagram-production-emphasis {
+    stroke: var(--color-primary);
+    stroke-opacity: 0.95;
+  }
+
+  .diagram-approval-emphasis {
+    stroke: var(--color-secondary);
+    stroke-opacity: 0.98;
+  }
+
+  .diagram-rollback-emphasis {
+    stroke: var(--diagram-rollback);
+    stroke-opacity: 0.9;
+  }
+
+  .diagram-route-token {
+    fill: var(--diagram-activity);
+    opacity: 0;
+  }
+
+  .diagram-signal {
+    fill: none;
+    opacity: 0;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+  }
+
+  .diagram-signal-activity {
+    stroke: var(--diagram-activity);
+  }
+
+  .diagram-signal-production {
+    stroke: var(--color-primary);
+  }
+
+  .diagram-signal-approval {
+    stroke: var(--color-secondary);
+  }
+
+  .diagram-signal-rollback {
+    stroke: var(--diagram-recovery-signal);
+  }
+
+  .diagram-rail-stage-surface,
+  .diagram-rail-stage-border {
+    opacity: 0;
+  }
+
+  .diagram-rail-stage-surface {
+    fill: var(--color-theme-dark);
+    fill-opacity: 0.68;
+  }
+
+  .diagram-rail-stage-border {
+    fill: none;
+    stroke: var(--color-light);
+    stroke-opacity: 0.22;
+    stroke-width: 1;
+  }
+
+  .diagram-rail-stage[data-rail-tone="activity"] .diagram-rail-stage-border {
+    stroke: var(--diagram-activity);
+    stroke-opacity: 0.36;
+  }
+
+  .diagram-rail-stage[data-rail-tone="production"] .diagram-rail-stage-border {
+    stroke: var(--color-primary);
+    stroke-opacity: 0.36;
+  }
+
+  .diagram-rail-stage[data-rail-tone="approval"] .diagram-rail-stage-border {
+    stroke: var(--color-secondary);
+    stroke-opacity: 0.4;
+  }
+
+  .diagram-rail-stage[data-rail-tone="rollback"] .diagram-rail-stage-border {
+    stroke: var(--diagram-rollback);
+    stroke-opacity: 0.4;
+  }
+
+  .diagram-rail-label {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.1px;
+  }
+
+  .diagram-rail-label-activity {
+    fill: var(--diagram-icon-activity);
+  }
+
+  .diagram-rail-label-production {
+    fill: var(--diagram-icon-production);
+  }
+
+  .diagram-rail-label-approval {
+    fill: var(--diagram-icon-approval);
+  }
+
+  .diagram-rail-label-rollback {
+    fill: var(--diagram-icon-rollback);
+  }
+</style>

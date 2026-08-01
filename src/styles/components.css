@@ -1,5 +1,5 @@
 .banner-gradient::after {
-  @apply via-primary/5 from-body/0 to-primary/80 pointer-events-none absolute bottom-0 left-0 -z-10 size-full bg-linear-to-b via-50% to-100% content-[''];
+  @apply via-primary/5 from-body/0 to-primary/25 pointer-events-none absolute bottom-0 left-0 -z-10 size-full bg-linear-to-b via-50% to-100% content-[''];
 }
 .section-gradient::after {
   @apply bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-primary/30%)_0%,--theme(--color-primary/0%)_100%)] pointer-events-none absolute bottom-72 left-1/2 h-135 w-4/5 -translate-x-1/2 content-[''] md:rotate-[-20deg];

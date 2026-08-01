@@ -19,8 +19,15 @@ type Props = {
 
 let defaultContent = (await fetchEntry("sections", "home-banner"))?.data;
 let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
-let { title, subtitle, badge, customers, description, buttons, subscription } =
-  actualContent;
+let {
+  title,
+  subtitle,
+  badge,
+  description,
+  buttons,
+  subscription,
+  heroDiagram,
+} = actualContent;
 
 function parseTickerTitle(rawTitle: string | undefined) {
   if (!rawTitle) return { isTicker: false };
@@ -29,12 +36,13 @@ function parseTickerTitle(rawTitle: string | undefined) {
     const prefix = match[1].trim();
     const options = match[2]
       .split("|")
-      .map((s) => s.trim())
+      .map((option) => option.trim())
       .filter(Boolean);
     const suffix = match[3].trim();
     if (options.length > 1) {
       const longestOption = options.reduce(
-        (a, b) => (a.length > b.length ? a : b),
+        (currentLongest, option) =>
+          currentLongest.length > option.length ? currentLongest : option,
         "",
       );
       const fallbackTitle = `${prefix} ${options[0]} ${suffix}`.trim();
@@ -56,7 +64,7 @@ const tickerTitle = parseTickerTitle(title);
 
 <section id="home" class="scroll-mt-24 lg:scroll-mt-32">
   <div
-    class="banner-gradient stretched-link relative pt-12 md:pt-12 lg:pt-12 xl:pt-16">
+    class="banner-gradient stretched-link relative pt-12 pb-12 md:pt-12 md:pb-16 lg:pt-12 lg:pb-20 xl:pt-16 xl:pb-24">
     <Visualization />
     <div class="container">
       <div class="relative z-10 max-w-4xl space-y-10">
@@ -91,13 +99,13 @@ const tickerTitle = parseTickerTitle(title);
                             <span class="invisible col-start-1 row-start-1">
                               {tickerTitle.longestOption}
                             </span>
-                            {tickerTitle.options?.map((opt, i) => (
+                            {tickerTitle.options?.map((option, index) => (
                               <span
                                 class:list={[
                                   "ticker-item col-start-1 row-start-1 will-change-[transform,filter,opacity]",
-                                  i === 0 ? "opacity-100" : "opacity-0",
+                                  index === 0 ? "opacity-100" : "opacity-0",
                                 ]}>
-                                {opt}
+                                {option}
                               </span>
                             ))}
                           </span>
@@ -164,38 +172,13 @@ const tickerTitle = parseTickerTitle(title);
         </div>
       </div>
     </div>
-    <div
-      class="relative container mt-12 -mb-4 px-4 md:mb-0 md:px-8 lg:px-0 xl:mt-16 xl:px-4">
+    <div class="relative container mt-12 px-4 md:px-8 lg:px-0 xl:mt-16 xl:px-4">
       <div class="hero-product-frame">
-        <HeroProductDiagram />
+        <HeroProductDiagram content={heroDiagram} scale={0.94} />
       </div>
     </div>
   </div>
 </section>
-
-<style>
-  .hero-product-frame {
-    position: relative;
-    z-index: 10;
-    overflow: hidden;
-    border-radius: 1rem 1rem 0 0;
-    background: rgb(12 18 33 / 0.5);
-    -webkit-backdrop-filter: blur(24px);
-    backdrop-filter: blur(24px);
-  }
-
-  .hero-product-frame::after {
-    position: absolute;
-    z-index: 20;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 80%;
-    pointer-events: none;
-    background: linear-gradient(to bottom, transparent, var(--color-body));
-    content: "";
-  }
-</style>
 
 <script>
   import { animate } from "motion";
@@ -247,11 +230,11 @@ const tickerTitle = parseTickerTitle(title);
     }
 
     private runAnimation() {
-      const outgoing = this.items[this.currentIndex];
+      const outgoingItem = this.items[this.currentIndex];
       this.currentIndex = (this.currentIndex + 1) % this.items.length;
-      const incoming = this.items[this.currentIndex];
+      const incomingItem = this.items[this.currentIndex];
       animate(
-        outgoing,
+        outgoingItem,
         {
           y: ["0%", "-100%"],
           opacity: [1, 0],
@@ -260,7 +243,7 @@ const tickerTitle = parseTickerTitle(title);
         { type: "spring", stiffness: 400, damping: 30 },
       );
       animate(
-        incoming,
+        incomingItem,
         {
           y: ["100%", "0%"],
           opacity: [0, 1],
@@ -275,3 +258,38 @@ const tickerTitle = parseTickerTitle(title);
     customElements.define("qiln-ticker", QilnTicker);
   }
 </script>
+
+<style>
+  .hero-product-frame {
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    border: solid color-mix(in srgb, var(--color-primary) 24%, transparent) 2px;
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--color-theme-dark) 58%, transparent);
+    box-shadow:
+      0 24px 60px rgb(0 0 0 / 0.24),
+      inset 0 1px 0 rgb(255 255 255 / 0.035);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+  }
+
+  .hero-product-frame::after {
+    position: absolute;
+    z-index: 20;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      color-mix(in srgb, var(--color-primary) 5%, transparent)
+    );
+    content: "";
+  }
+
+  @media (min-width: 768px) {
+    .hero-product-frame {
+      border-radius: 1.5rem;
+    }
+  }
+</style>

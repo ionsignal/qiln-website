@@ -12,7 +12,9 @@ const PULSE_ATTACK_SECONDS = 0.15;
 const PULSE_SPAWN_INTERVAL_MIN_SECONDS = 0.05;
 const PULSE_SPAWN_INTERVAL_MAX_SECONDS = 0.3;
 const PULSE_RADIUS_UV = 0.05;
-const PULSE_MAX_INTENSITY = 1;
+const PULSE_MAX_GLOW_INTENSITY = 0.38;
+const GRID_LINE_ALPHA = 0.34;
+const PULSE_ALPHA_CONTRIBUTION = 0.2;
 const PULSE_SPAWN_ROW_MIN = Math.floor(0.34 * GRID_CELLS);
 const PULSE_SPAWN_ROW_MAX = Math.floor(0.64 * GRID_CELLS);
 const PULSE_SENTINEL_AGE = -1;
@@ -306,14 +308,19 @@ export async function initVisualization(
         }
 
         pulseGlow =
-          min(pulseGlow, ${PULSE_MAX_INTENSITY.toFixed(4)}) *
+          min(pulseGlow, ${PULSE_MAX_GLOW_INTENSITY.toFixed(4)}) *
           (1.0 - fogFactor);
 
         let finalColor =
           mix(params.gridColor, params.bgColor, fogFactor) +
           params.gridColor * pulseGlow;
         let finalAlpha = min(
-          mix(lineAlpha * 0.8, 0.0, fogFactor) + pulseGlow * 0.5,
+          mix(
+            lineAlpha * ${GRID_LINE_ALPHA.toFixed(4)},
+            0.0,
+            fogFactor
+          ) +
+          pulseGlow * ${PULSE_ALPHA_CONTRIBUTION.toFixed(4)},
           1.0
         );
 
@@ -334,7 +341,7 @@ export async function initVisualization(
             time: { type: "f32", value: 0 },
             gridColor: {
               type: "vec3f",
-              value: new Vec3(51 / 255, 177 / 255, 255 / 255),
+              value: new Vec3(32 / 255, 104 / 255, 145 / 255),
             },
             bgColor: {
               type: "vec3f",

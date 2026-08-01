@@ -22,6 +22,66 @@ export const collections = {
             enable: z.boolean().optional(),
           })
           .optional(),
+        heroDiagram: z
+          .object({
+            annotations: z.object({
+              humansAgents: z.object({
+                title: z.string(),
+                description: z.string(),
+              }),
+              branchPolicy: z.object({
+                title: z.string(),
+                items: z.array(z.string()).length(3),
+              }),
+            }),
+            knownGood: z.object({
+              badge: z.string(),
+              title: z.string(),
+              items: z.array(z.string()).length(4),
+              runtime: z.object({
+                label: z.string(),
+                description: z.string(),
+              }),
+            }),
+            fork: z.object({
+              label: z.string(),
+            }),
+            forkedBranch: z.object({
+              title: z.string(),
+              isolationDescription: z.string(),
+              candidateDescription: z.string(),
+              runtimeStatus: z.string(),
+            }),
+            goldenTest: z.object({
+              title: z.string(),
+            }),
+            capsuleDiff: z.object({
+              title: z.string(),
+            }),
+            promote: z.object({
+              label: z.string(),
+            }),
+            productionRoute: z.object({
+              title: z.string(),
+              routeAliasDescription: z.string(),
+              versionDescription: z.string(),
+            }),
+            rollback: z.object({
+              title: z.string(),
+              availabilityDescription: z.string(),
+              routeAliasDescription: z.string(),
+              destinationDescription: z.string(),
+            }),
+            processRail: z.object({
+              fork: z.string(),
+              edit: z.string(),
+              test: z.string(),
+              diff: z.string(),
+              promote: z.string(),
+              rollback: z.string(),
+            }),
+          })
+          .optional(),
         // Explicit Buttons Array (from home-banner)
         buttons: z
           .array(
@@ -132,21 +192,6 @@ export const collections = {
               }),
             ),
           ])
-          .optional(),
-        // Nested Customers override (e.g., inside home-banner.md)
-        customers: z
-          .object({
-            enable: z.boolean().optional(),
-            description: z.string().optional(),
-            list: z
-              .array(
-                z.object({
-                  src: z.union([image(), z.string()]),
-                  alt: z.string().optional(),
-                }),
-              )
-              .optional(),
-          })
           .optional(),
         yaml: z.string().optional(),
         callouts: z

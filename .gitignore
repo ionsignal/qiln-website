@@ -30,5 +30,7 @@ pnpm-lock.yaml
 .vercel
 
 # Other
+PROMPT.md
+CODE.md
 tsconfig.tsbuildinfo
 dev.diff
