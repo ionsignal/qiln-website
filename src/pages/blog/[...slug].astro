@@ -34,6 +34,7 @@ const formattedPubDate = post.data.pubDate.toLocaleDateString("en-US", {
   year: "numeric",
   month: "long",
   day: "numeric",
+  timeZone: "UTC",
 });
 
 const safeLastModified = lastModified
@@ -46,6 +47,7 @@ const formattedModDate = actualUpdatedDate.toLocaleDateString("en-US", {
   year: "numeric",
   month: "long",
   day: "numeric",
+  timeZone: "UTC",
 });
 
 const pubDateZeroed = new Date(post.data.pubDate).setHours(0, 0, 0, 0);

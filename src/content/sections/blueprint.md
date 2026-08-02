@@ -1,59 +1,60 @@
 ---
 enable: true
 subtitle: "Qiln Blueprints"
-title: "Blueprints for **persistent AI workspaces.**"
+title: "A blueprint defines a <strong>versioned AI workflow capsule.</strong>"
 yaml: |
-  name: comfyui-workspace
-  display_name: Persistent ComfyUI Workspace
-  image_alias: ubuntu:24.04-cuda
-
-  apps:
-    - name: comfyui
-      route: https://{{ workspace.slug }}.qiln.com
-      command: /opt/comfyui/start.sh
-    - name: vscode
-      route: https://{{ workspace.slug }}-code.qiln.com
-
-  gpu:
-    primary: reserved
-    burst: true
-
-  volumes:
-    - name: model-vault
-      type: private_vault
-      mount_path: /opt/comfyui/models
-    - name: outputs
-      type: persistent_folder
-      mount_path: /opt/comfyui/output
-    - name: custom-nodes
-      type: persistent_folder
-      mount_path: /opt/comfyui/custom_nodes
-
-  snapshots:
-    before_updates: true
-    retain: last_10
-
-  endpoints:
-    - name: workflow-api
-      app: fastapi-wrapper
-      route: https://{{ workspace.slug }}-api.qiln.com
+  schema_version: 1
+  name: ai-workflow-capsule
+  display_name: AI Workflow Capsule
+  description: Versioned Python and PyTorch workspace with a writable branch and a read-only shared model mount.
+  provisioning:
+    volumes:
+      - name: workspace
+        type: clone
+        mount_path: /workspace
+        shifted: true
+        readonly: false
+      - name: shared-models
+        type: bind
+        mount_path: /workspace/models
+        shifted: true
+        readonly: true
+  runtime:
+    config:
+      security.privileged: 'false'
+      nvidia.runtime: 'true'
+      boot.autostart: 'false'
+  snapshot_capture:
+    policy_version: 1
+    instance_rootfs:
+      mode: rebuildable
+    artifact_roots:
+      - id: workspace
+        volume: workspace
+        required: true
+    external_mounts:
+      - volume: shared-models
+        required: true
+        dependency:
+          kind: model_vault
+          logical_id: shared-models
 callouts:
-  - title: "Workspace, not pod"
-    description: "ComfyUI and VS Code get stable routes inside one durable workspace instead of another throwaway GPU session."
-    icon: "Monitor"
-    lines: [5, 6, 7, 8, 9, 10]
-  - title: "Reserved primary GPU"
-    description: "The workspace has primary GPU capacity reserved by plan, with burst capacity available when the pool has room."
+  - title: "Writable branch workspace"
+    description: "Each branch uses a writable cloned workspace instead of sharing mutable project files."
+    icon: "GitFork"
+    lines: [7, 8, 9, 10, 11]
+  - title: "Read-only model boundary"
+    description: "Shared models mount read-only, so a branch can use them without modifying the shared dependency."
+    icon: "Database"
+    lines: [12, 13, 14, 15, 16]
+  - title: "CUDA at the runtime boundary"
+    description: "`nvidia.runtime` enables NVIDIA runtime support for CUDA workloads. Keep GPU runtime configuration outside the Python workspace."
     icon: "Gauge"
-    lines: [12, 13, 14]
-  - title: "Real folders and rollback"
-    description: "Models, outputs, and custom nodes mount as persistent folders with snapshots before risky updates."
-    icon: "HardDrive"
-    lines: [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 29]
-  - title: "Path to endpoints"
-    description: "When a visual workflow becomes useful, wrap it behind a stable API route instead of rebuilding somewhere else."
-    icon: "Route"
-    lines: [31, 32, 33, 34]
+    lines: [17, 18, 19, 20, 21]
+  - title: "Explicit snapshot boundaries"
+    description: "Snapshot capture rebuilds the instance root filesystem, records workspace state, and treats shared models as an external immutable dependency."
+    icon: "History"
+    lines: [22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
 infoBox:
-  description: "A Qiln blueprint describes the workspace a user opens — apps, folders, GPU capacity, routes, snapshots, and endpoint paths."
+  description: "This compact example shows capsule boundaries. Deployment-specific image, storage-pool, seed-volume, network, and route values are configured per environment."
 ---

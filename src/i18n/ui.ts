@@ -10,8 +10,8 @@ export const ui = {
     "common.emailPlaceholder": "Email Address",
     "common.paginationNext": "Next",
     "common.paginationPrevious": "Previous",
-    "navigation.buttonLabel": "Apply your own workflow →",
-    "subscription.label": "Request a Reserved Workspace",
+    "navigation.buttonLabel": "Let us migrate your workflow →",
+    "subscription.label": "Let us migrate your workflow →",
     "integration.relatedIntegrationSectionTitle":
       "Vivamus sit amet **varius felis**",
     "integration.backToIntegration": "Browse",
@@ -19,7 +19,7 @@ export const ui = {
     "footer.legal": "Legal",
     "footer.resources": "Resources",
     "footer.description":
-      "Qiln gives founders, artists, and teams persistent ComfyUI workspaces on reserved high-VRAM GPUs.",
+      "Qiln makes an AI workflow system durable, branchable, and reviewable.",
     "footer.copyright":
       "Copyright {{ year }} / All Rights Reserved By IonSignal, Inc.",
     main: [
@@ -31,21 +31,27 @@ export const ui = {
         menus: [
           {
             enable: true,
-            name: "Workspaces",
-            weight: 2,
+            name: "What Qiln Protects",
+            weight: 1,
             url: "/#gpu",
           },
           {
             enable: true,
-            name: "Model Vaults",
-            weight: 3,
+            name: "Agent-Safe Branches",
+            weight: 2,
             url: "/#storage",
           },
           {
             enable: true,
-            name: "Blueprints",
-            weight: 4,
+            name: "Qiln Blueprints",
+            weight: 3,
             url: "/#blueprint-section",
+          },
+          {
+            enable: true,
+            name: "Qiln FAQ",
+            weight: 4,
+            url: "/#faq",
           },
         ],
       },

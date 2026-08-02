@@ -1,11 +1,12 @@
 ---
 enable: true
-title: "Real Folders. <span class='block'>**Private Model Vaults.**</span>"
-subtitle: "Qiln Storage"
-description: "**Your ComfyUI setup should not vanish with the pod.** Keep checkpoints, LoRAs, VAEs, ControlNets, workflows, custom nodes, inputs, and outputs in persistent workspace folders. Snapshot before risky node changes; roll back when dependencies break."
+title: "Agents get forks, <span class='block'>**not production.**</span>"
+subtitle: "Agent-safe branches"
+description: >-
+  Humans and agents work in forked capsule branches instead of editing production. Each branch follows a controlled path: edit the workflow system, run golden tests, inspect the capsule diff, and promote an approved version.
 features:
-  - "Private model vaults with direct file access"
-  - "Persistent outputs, workflows, and custom nodes"
-  - "ZFS-backed snapshots, clones, and rollbacks"
+  - "Use scoped credentials and keep production secret references out of branches."
+  - "Block, log, mock, or approval-gate external calls during tests to enforce a side-effect policy."
+  - "Require human or separate-policy approval to promote. Rollback restores capsule state and route aliases, not completed external calls."
 image: "../../assets/images/feature-storage.png"
 ---

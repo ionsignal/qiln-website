@@ -1,11 +1,11 @@
 ---
 enable: true
-title: "Reserved GPU. <span class='block'>**Burst When Available.**</span>"
-subtitle: "Qiln Workspaces"
-description: "**Stop racing the pod market.** Your Qiln workspace gets a dedicated primary GPU allocation by plan — a full GPU or GPU slice (MIG) depending on the workspace. Keep the same environment, folders, routes, and models; add burst GPUs when the pool has room."
+title: "A production <span class='block'>**AI workflow is more than just source code.**</span>"
+subtitle: "What Qiln protects"
+description: >-
+  Production AI workflows combine definitions, models, private assets, services, dependencies, routes, tests, and external side effects. Qiln captures the deployable system as a versioned capsule, not as one file or graph.
 features:
-  - "Dedicated GPU or GPU slice by plan"
-  - "Optional burst capacity when available"
-  - "No shared-VRAM surprises from other users"
+  - "Keep workflow definitions, models, private assets, services, dependencies, routes, tests, and outputs together."
+  - "Protect systems that matter when you need to change, move, upgrade, or let an agent edit them."
 image: "../../assets/images/feature-gpu.png"
 ---
