@@ -1,8 +1,8 @@
 ---
-import Base from "@/layouts/Base.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
 ---
 
-<Base status={404} title="Page Not Found" disableTagline={true}>
+<SiteLayout status={404} title="Page Not Found" disableTagline={true}>
   <section class="py-8 md:py-16">
     <div class="container">
       <div class="flex flex-col items-center gap-y-10">
@@ -10,4 +10,4 @@ import Base from "@/layouts/Base.astro";
       </div>
     </div>
   </section>
-</Base>
+</SiteLayout>

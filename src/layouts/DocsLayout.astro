@@ -1,5 +1,5 @@
 ---
-import App from "@/layouts/App.astro";
+import BasicLayout from "@/layouts/BasicLayout.astro";
 import DocsHeader from "@/components/docs/header/Header.astro";
 import DocsFooter from "@/components/docs/Footer.astro";
 import Sidebar from "@/components/docs/Sidebar.astro";
@@ -33,7 +33,7 @@ const seoProps = {
 };
 ---
 
-<App {...seoProps} class="docs-layout">
+<BasicLayout {...seoProps} class="docs-layout">
   <DocsHeader />
   <div class="w-full pt-(--docs-header-h)">
     <Sidebar tree={tree} activeTrail={activeTrail} />
@@ -69,4 +69,4 @@ const seoProps = {
       <Toc headings={headings} entry={entry} />
     </aside>
   </div>
-</App>
+</BasicLayout>

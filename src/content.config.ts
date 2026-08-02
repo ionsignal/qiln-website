@@ -128,30 +128,6 @@ export const collections = {
               .optional(),
           })
           .optional(),
-        // Pricing grid cards
-        pricingPlans: z
-          .array(
-            z.object({
-              name: z.string(),
-              price: z.string(),
-              period: z.string().optional(),
-              description: z.string(),
-              highlight: z.boolean().optional(),
-              features: z.array(z.string()),
-              button: z
-                .object({
-                  enable: z.boolean().optional(),
-                  label: z.string(),
-                  url: z.string().optional(),
-                  type: z.string().optional(),
-                  rel: z.string().optional(),
-                  target: z.string().optional(),
-                  variant: z.string().optional(),
-                })
-                .optional(),
-            }),
-          )
-          .optional(),
         // Marquee configuration (from customers)
         marquee: z
           .object({

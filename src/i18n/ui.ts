@@ -92,7 +92,6 @@ export const ui = {
           },
         },
       },
-      { enable: true, name: "Pricing", weight: 4, url: "/pricing" },
        */
     ] as NavigationLink[],
     footerMenu: [] as NavigationLink[],

@@ -1,5 +1,5 @@
 ---
-import Base from "@/layouts/Base.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
 import { fetchEntry } from "@/utils/content";
 import HomeBanner from "@/components/sections/HomeBanner.astro";
 import FeatureSplit from "@/components/sections/FeatureSplit.astro";
@@ -16,7 +16,7 @@ const blueprint = await fetchEntry("sections", "blueprint");
 // const comparison = await fetchEntry("sections", "comparison");
 ---
 
-<Base {...homepage.data}>
+<SiteLayout {...homepage.data}>
   <HomeBanner />
   {
     featureGpu && (
@@ -38,4 +38,4 @@ const blueprint = await fetchEntry("sections", "blueprint");
   <!-- <Features /> -->
   <!-- <FaqSection /> -->
   <!-- <CallToAction /> -->
-</Base>
+</SiteLayout>

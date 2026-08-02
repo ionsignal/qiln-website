@@ -1,5 +1,5 @@
 ---
-import Base from "@/layouts/Base.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
 import BlogCard from "@/components/blog/BlogCard.astro";
 import BlogPagination from "@/components/blog/BlogPagination.astro";
 import Subtitle from "@/components/widgets/Subtitle.astro";
@@ -26,7 +26,7 @@ const { page } = Astro.props;
 const blogIndexMeta = await fetchEntry("homepage", "-blog");
 ---
 
-<Base {...blogIndexMeta?.data}>
+<SiteLayout {...blogIndexMeta?.data}>
   <section class="py-16 md:py-24 lg:py-32">
     <div class="container">
       <div class="mx-auto mb-16 max-w-2xl text-center" data-aos="fade-up-sm">
@@ -61,4 +61,4 @@ const blogIndexMeta = await fetchEntry("homepage", "-blog");
       <BlogPagination page={page} />
     </div>
   </section>
-</Base>
+</SiteLayout>

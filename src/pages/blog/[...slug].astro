@@ -1,5 +1,5 @@
 ---
-import Base from "@/layouts/Base.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
 import RelatedPosts from "@/components/blog/RelatedPosts.astro";
 import Image from "@/components/helpers/Image.astro";
 import LucideIcon from "@/components/helpers/LucideIcon.astro";
@@ -63,7 +63,7 @@ const seoProps = {
 };
 ---
 
-<Base {...seoProps}>
+<SiteLayout {...seoProps}>
   <article class="py-16 md:py-24">
     <div class="container mx-auto max-w-3xl">
       <header class="mb-12 text-center" data-aos="fade-up-sm">
@@ -135,4 +135,4 @@ const seoProps = {
       <RelatedPosts currentPost={post} />
     </div>
   </article>
-</Base>
+</SiteLayout>
