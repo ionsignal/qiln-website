@@ -1,12 +1,12 @@
 ---
 import config from ".astro/config.generated.json";
 import SvgIcon from "@/components/helpers/SvgIcon.astro";
-import ButtonLink from "@/components/buttons/ButtonLink.astro";
-import AnimatedText from "@/components/widgets/AnimatedText.astro";
-import Badge from "@/components/widgets/Badge.astro";
-import HeroSubscription from "@/components/widgets/HeroSubscription.astro";
-import HeroProductDiagram from "@/components/widgets/HeroProductDiagram.astro";
-import Visualization from "@/components/widgets/Visualization.astro";
+import ActionButton from "@/components/ui/ActionButton.astro";
+import Badge from "@/components/ui/Badge.astro";
+import AnimatedText from "@/components/sections/hero/AnimatedText.astro";
+import Subscription from "@/components/sections/hero/Subscription.astro";
+import Diagram from "@/components/sections/hero/Diagram.astro";
+import Background from "@/components/sections/hero/Background.astro";
 import { overrideObjects } from "@/utils/core";
 import { markdownify } from "@/utils/text";
 import { fetchEntry } from "@/utils/content";
@@ -17,7 +17,7 @@ type Props = {
   content?: SectionData;
 };
 
-let defaultContent = (await fetchEntry("sections", "home-banner"))?.data;
+let defaultContent = (await fetchEntry("sections", "hero"))?.data;
 let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
 let {
   title,
@@ -65,7 +65,7 @@ const tickerTitle = parseTickerTitle(title);
 <section id="home" class="scroll-mt-24 lg:scroll-mt-32">
   <div
     class="banner-gradient stretched-link relative pt-12 pb-12 md:pt-12 md:pb-16 lg:pt-12 lg:pb-20 xl:pt-16 xl:pb-24">
-    <Visualization />
+    <Background />
     <div class="container">
       <div class="relative z-10 max-w-4xl space-y-10">
         <div class="flex flex-col items-start gap-y-8 text-left md:gap-y-10">
@@ -131,7 +131,7 @@ const tickerTitle = parseTickerTitle(title);
           {
             description && (
               <AnimatedText
-                class="home-banner-description [&_strong]:text-secondary [&_b]:text-secondary w-full max-w-4xl text-left text-lg/normal text-white/90 [&_strong]:font-medium md:[&_strong]:whitespace-nowrap"
+                class="hero-description [&_strong]:text-secondary [&_b]:text-secondary w-full max-w-4xl text-left text-lg/normal text-white/90 [&_strong]:font-medium md:[&_strong]:whitespace-nowrap"
                 stagger={0.03}
                 delay={0.4}
                 content={markdownify(description)}
@@ -146,13 +146,13 @@ const tickerTitle = parseTickerTitle(title);
           class="flex flex-col items-start justify-start gap-4 sm:flex-row">
           {
             subscription?.enable && config.settings.navigationButton.enable && (
-              <HeroSubscription />
+              <Subscription />
             )
           }
           {
             buttons &&
               buttons.map((button) => (
-                <ButtonLink
+                <ActionButton
                   content={button}
                   class:list={[
                     "btn-md btn-has-icon group relative z-0 flex w-full items-center justify-center gap-4 sm:w-auto [&>.label]:z-20",
@@ -166,7 +166,7 @@ const tickerTitle = parseTickerTitle(title);
                       class="h-5 w-5 transition-all duration-300 group-hover:rotate-180"
                     />
                   </span>
-                </ButtonLink>
+                </ActionButton>
               ))
           }
         </div>
@@ -174,7 +174,7 @@ const tickerTitle = parseTickerTitle(title);
     </div>
     <div class="relative container mt-12 px-4 md:px-8 lg:px-0 xl:mt-16 xl:px-4">
       <div class="hero-product-frame">
-        <HeroProductDiagram content={heroDiagram} scale={0.94} />
+        <Diagram content={heroDiagram} scale={0.94} />
       </div>
     </div>
   </div>

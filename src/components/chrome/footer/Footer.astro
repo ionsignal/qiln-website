@@ -1,10 +1,10 @@
 ---
-import Logo from "@/components/global/Logo.astro";
 import config from ".astro/config.generated.json";
 import { markdownify } from "@/utils/text";
 import { splitProtectedText, useTranslations, formatUrl } from "@/utils/core";
 import SocialComponent from "@/components/social/Social.astro";
-import FooterSubscription from "@/components/widgets/FooterSubscription.astro";
+import Logo from "@/components/chrome/Logo.astro";
+import FooterSubscription from "@/components/chrome/footer/FooterSubscription.astro";
 import type { NavigationLink } from "@/types";
 
 const t = useTranslations();

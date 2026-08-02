@@ -1,8 +1,8 @@
 ---
 import Icons from "@/components/helpers/LucideIcon.astro";
 import SvgIcon from "@/components/helpers/SvgIcon.astro";
-import ButtonLink from "@/components/buttons/ButtonLink.astro";
-import VideoModal from "@/components/widgets/VideoModal.astro";
+import ActionButton from "@/components/ui/ActionButton.astro";
+import VideoModal from "@/components/ui/VideoModal.astro";
 import Image from "@/components/helpers/Image.astro";
 import { fetchEntry } from "@/utils/content";
 import { markdownify } from "@/utils/text";
@@ -62,7 +62,7 @@ let { enable = true, title, features, ctaBtn, image } = actualContent;
               {ctaBtn && ctaBtn.enable && (
                 <div>
                   {ctaBtn.type === "video" ? (
-                    <ButtonLink
+                    <ActionButton
                       tag={"button"}
                       content={ctaBtn}
                       type="button"
@@ -98,9 +98,9 @@ let { enable = true, title, features, ctaBtn, image } = actualContent;
                           Your browser does not support the video tag.
                         </video>
                       )}
-                    </ButtonLink>
+                    </ActionButton>
                   ) : (
-                    <ButtonLink
+                    <ActionButton
                       class="btn-md btn-primary btn-has-icon group relative z-30 flex items-center gap-4"
                       content={ctaBtn}>
                       <span class="flex h-6 w-12 items-center justify-center rounded-full bg-white/15">
@@ -109,7 +109,7 @@ let { enable = true, title, features, ctaBtn, image } = actualContent;
                           class="h-5 w-5 transition-all duration-300 group-hover:rotate-180"
                         />
                       </span>
-                    </ButtonLink>
+                    </ActionButton>
                   )}
                 </div>
               )}

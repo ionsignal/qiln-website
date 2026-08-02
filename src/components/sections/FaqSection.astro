@@ -1,9 +1,9 @@
 ---
 import { fetchEntry } from "@/utils/content";
 import { overrideObjects } from "@/utils/core";
-import Subtitle from "@/components/widgets/Subtitle.astro";
 import { markdownify } from "@/utils/text";
-import AccordionList from "@/components/widgets/AccordionList.astro";
+import Subtitle from "@/components/ui/Subtitle.astro";
+import AccordionList from "@/components/ui/AccordionList.astro";
 import type { CollectionEntry } from "astro:content";
 
 type SectionData = CollectionEntry<"sections">["data"];
@@ -23,7 +23,6 @@ type Props = {
 let defaultContent = (await fetchEntry("sections", "faq"))?.data;
 let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
 let { enable = true, title, subtitle, limit, showCategories } = actualContent;
-
 let list = actualContent.list as FAQCategory[];
 list = limit && list ? list.slice(0, limit as number) : list;
 if (!showCategories) {

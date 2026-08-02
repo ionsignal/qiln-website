@@ -9,7 +9,7 @@
   @apply mx-auto px-4;
 }
 
-.home-banner-description strong {
+.hero-description strong {
   overflow-wrap: anywhere;
   word-break: normal;
 }

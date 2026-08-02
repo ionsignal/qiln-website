@@ -1,7 +1,7 @@
 ---
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { fetchEntry } from "@/utils/content";
-import HomeBanner from "@/components/sections/HomeBanner.astro";
+import Hero from "@/components/sections/hero/Hero.astro";
 import FeatureSplit from "@/components/sections/FeatureSplit.astro";
 import BlueprintSection from "@/components/sections/BlueprintSection.astro";
 // import Features from "@/components/sections/FeaturesSection.astro";
@@ -17,7 +17,7 @@ const blueprint = await fetchEntry("sections", "blueprint");
 ---
 
 <SiteLayout {...homepage.data}>
-  <HomeBanner />
+  <Hero />
   {
     featureGpu && (
       <FeatureSplit id="gpu" content={featureGpu.data} imagePosition="right" />

@@ -3,7 +3,7 @@ import { fetchEntry } from "@/utils/content";
 import { markdownify } from "@/utils/text";
 import Image from "@/components/helpers/Image.astro";
 import LucideIcon from "@/components/helpers/LucideIcon.astro";
-import Subtitle from "@/components/widgets/Subtitle.astro";
+import Subtitle from "@/components/ui/Subtitle.astro";
 import type { CollectionEntry } from "astro:content";
 
 type SectionData = CollectionEntry<"sections">["data"];
@@ -59,7 +59,7 @@ const {
                 <h2
                   class:list={[
                     "has-subtitle-text capitalize",
-                    "lg:text-(length:--text-h4) xl:text-(length:--text-h2)",
+                    "lg:text-h4 xl:text-h2",
                   ]}
                   set:html={markdownify(title)}
                 />

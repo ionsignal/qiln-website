@@ -82,7 +82,7 @@ export const collections = {
             }),
           })
           .optional(),
-        // Explicit Buttons Array (from home-banner)
+        // Explicit Buttons Array (used by hero)
         buttons: z
           .array(
             z.object({
@@ -273,7 +273,7 @@ export const collections = {
         tableOfContents: z.boolean().default(true),
         tocMinLevel: z.number().min(1).max(6).default(2),
         tocMaxLevel: z.number().min(1).max(6).default(3),
-        // SEO passthrough — mirrors `homepage` schema for Base.astro compatibility
+        // SEO passthrough — mirrors `homepage` schema for BasicLayout.astro compatibility
         metaTitle: z.string().optional(),
         metaDescription: z.string().optional(),
         canonical: z.string().optional(),

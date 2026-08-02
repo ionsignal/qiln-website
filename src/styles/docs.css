@@ -5,7 +5,7 @@
   --docs-toc-w: 14rem;
 }
 
-/* The `docs-layout` class is applied to <main> via Base.astro's class prop. */
+/* The `docs-layout` class is applied to <main> via BasicLayout.astro's class prop. */
 main.docs-layout {
   @apply pt-0;
 }

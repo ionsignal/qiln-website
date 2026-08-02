@@ -1,9 +1,9 @@
 ---
-import Logo from "@/components/global/Logo.astro";
 import config from ".astro/config.generated.json";
-import NavigationButton from "@/components/global/header/NavigationButton.astro";
-import NavMenuItem from "@/components/global/header/MenuItem.astro";
-import NavToggleBtn from "@/components/global/header/NavToggleBtn.astro";
+import Logo from "@/components/chrome/Logo.astro";
+import NavigationButton from "@/components/chrome/header/NavigationButton.astro";
+import NavMenuItem from "@/components/chrome/header/MenuItem.astro";
+import NavigationToggleButton from "@/components/chrome/header/NavigationToggleButton.astro";
 import SocialChips from "@/components/social/SocialChips.astro";
 import { useTranslations, sortByWeight, filteredEnabled } from "@/utils/core";
 import { headerSocials } from "@/utils/socials";
@@ -86,7 +86,7 @@ const {
           </div>
         )
       }
-      <NavToggleBtn />
+      <NavigationToggleButton />
     </nav>
   </div>
 </header>
