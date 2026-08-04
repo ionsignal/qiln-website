@@ -16,12 +16,6 @@
   }
 }
 
-.header .logo-wrapper {
-  .logo-text {
-    @apply text-white;
-  }
-}
-
 /* Navbar */
 .navbar {
   @apply lg:flex!;
