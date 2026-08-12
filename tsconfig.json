@@ -6,7 +6,6 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "jsx": "react",
     "isolatedModules": true,
     "incremental": true,
     "types": ["node"],

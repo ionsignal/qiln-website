@@ -16,6 +16,7 @@
   },
   "scripts": {
     "dev": "npm run toml:watch & astro dev",
+    "predev": "npm run toml:build",
     "toml:build": "node scripts/toml-watcher.mjs",
     "toml:watch": "node scripts/toml-watcher.mjs --watch",
     "build": "npm run toml:build && astro build",
@@ -24,6 +25,7 @@
     "typecheck": "npm run astro-check",
     "generate-favicons": "node ./scripts/generate-favicons.mjs",
     "format": "prettier -w ./src",
+    "format:check": "prettier --check ./src",
     "preversion": "npm run typecheck",
     "release": "npm run build && tar -czvf qiln-website-v$npm_package_version.tar.gz -C dist .",
     "postversion": "npm run release && git push --follow-tags"
@@ -43,20 +45,25 @@
     "linkify-it": "5.0.2",
     "svgo": "4.0.2"
   },
+  "allowScripts": {
+    "fsevents": false,
+    "esbuild": false,
+    "core-js": false
+  },
   "dependencies": {
     "@astrojs/rss": "4.0.19",
     "@floating-ui/dom": "1.8.0",
-    "@lucide/astro": "1.28.0",
+    "@lucide/astro": "1.31.0",
     "@preline/accordion": "4.2.0",
     "@preline/collapse": "4.2.0",
     "@preline/dropdown": "4.2.0",
     "@preline/overlay": "4.2.0",
     "@preline/scrollspy": "4.2.0",
     "@preline/tabs": "4.2.0",
-    "astro": "7.1.6",
+    "astro": "7.2.1",
     "gpu-curtains": "0.16.3",
     "markdown-it": "14.2.0",
-    "marked": "18.0.7",
+    "marked": "18.0.9",
     "mdast-util-to-string": "4.0.0",
     "motion": "12.43.0",
     "plyr": "3.8.4",
@@ -71,6 +78,7 @@
     "@tailwindcss/forms": "0.5.11",
     "@tailwindcss/vite": "4.3.3",
     "@types/markdown-it": "14.1.2",
+    "@types/node": "26.2.0",
     "@types/sanitize-html": "2.16.1",
     "prettier": "3.9.6",
     "prettier-plugin-astro": "0.14.1",

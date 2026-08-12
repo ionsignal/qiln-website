@@ -1,8 +1,6 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
-declare module "aos";
-
 /*
  * Preline's scoped packages currently lack proper TypeScript mappings
  * for their `/non-auto` exports. We explicitly declare them here
