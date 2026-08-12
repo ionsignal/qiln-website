@@ -80,45 +80,210 @@ const playerConfig = {
 }
 
 <script>
-  const videoButtons = document.querySelectorAll(
-    "[data-hs-overlay].video-modal-toggle",
-  );
+  type PlyrConstructor = (typeof import("plyr"))["default"];
+  type PlyrInstance = InstanceType<PlyrConstructor>;
 
-  videoButtons.forEach((button) => {
-    button.addEventListener("click", async () => {
-      try {
-        // const { default: Plyr } = await import("plyr");
-        // await import("plyr/dist/plyr.css");
+  interface PlayerRecord {
+    player: PlyrInstance;
+    autoplay: boolean;
+    ready: boolean;
+  }
 
-        // const players = Plyr.setup(".video-player");
+  const players = new Map<HTMLElement, PlayerRecord>();
+  const pendingPlayers = new Map<
+    HTMLElement,
+    Promise<PlayerRecord | undefined>
+  >();
 
-        alert("needs fixes");
+  let autoplayRequests = new WeakSet<HTMLElement>();
+  let playerConstructorPromise: Promise<PlyrConstructor> | null = null;
+  let listenerController: AbortController | null = null;
+  let lifecycleId = 0;
 
-        // players.forEach((player) => {
-        //   const originalElement = player.elements.original;
-        //   const autoplay = originalElement.dataset.autoplay === "true";
-        //   const modalId = originalElement.dataset.id;
+  function loadPlayerConstructor(): Promise<PlyrConstructor> {
+    playerConstructorPromise ??= Promise.all([
+      import("plyr"),
+      import("plyr/dist/plyr.css"),
+    ]).then(([module]) => module.default);
 
-        //   if (!modalId) return;
+    return playerConstructorPromise;
+  }
 
-        //   const overlayElement = document.getElementById(modalId);
-        //   if (!overlayElement) return;
+  function requestPlayback(overlay: HTMLElement, record: PlayerRecord): void {
+    if (!record.autoplay) return;
 
-        //   overlayElement.addEventListener("open.hs.overlay", () => {
-        //     if (autoplay && player.ready) {
-        //       void player.play();
-        //     }
-        //   });
+    autoplayRequests.add(overlay);
 
-        //   overlayElement.addEventListener("close.hs.overlay", () => {
-        //     if (!player.pip && player.ready) {
-        //       player.pause();
-        //     }
-        //   });
-        // });
-      } catch (error) {
-        console.error("Failed to load Plyr", error);
+    if (record.ready) {
+      void record.player.play();
+    }
+  }
+
+  function pausePlayer(overlay: HTMLElement): void {
+    autoplayRequests.delete(overlay);
+
+    const record = players.get(overlay);
+    if (!record || record.player.pip) return;
+
+    record.player.pause();
+  }
+
+  async function createPlayer(
+    overlay: HTMLElement,
+    expectedLifecycleId: number,
+  ): Promise<PlayerRecord | undefined> {
+    const playerElement = overlay.querySelector<HTMLElement>(".video-player");
+
+    if (!playerElement) return undefined;
+
+    const Plyr = await loadPlayerConstructor();
+
+    if (
+      expectedLifecycleId !== lifecycleId ||
+      !overlay.isConnected ||
+      !playerElement.isConnected
+    ) {
+      return undefined;
+    }
+
+    const player = new Plyr(playerElement);
+    const record: PlayerRecord = {
+      player,
+      autoplay: playerElement.dataset.autoplay === "true",
+      ready: player.autoplay,
+    };
+
+    players.set(overlay, record);
+
+    player.on("ready", () => {
+      record.ready = true;
+
+      if (autoplayRequests.has(overlay)) {
+        requestPlayback(overlay, record);
       }
     });
-  });
+
+    if (autoplayRequests.has(overlay)) {
+      requestPlayback(overlay, record);
+    }
+
+    return record;
+  }
+
+  function ensurePlayer(
+    overlay: HTMLElement,
+  ): Promise<PlayerRecord | undefined> {
+    const existingPlayer = players.get(overlay);
+    if (existingPlayer) {
+      return Promise.resolve(existingPlayer);
+    }
+
+    const pendingPlayer = pendingPlayers.get(overlay);
+    if (pendingPlayer) {
+      return pendingPlayer;
+    }
+
+    const expectedLifecycleId = lifecycleId;
+    const playerPromise = createPlayer(overlay, expectedLifecycleId);
+
+    pendingPlayers.set(overlay, playerPromise);
+
+    playerPromise.then(
+      () => {
+        if (pendingPlayers.get(overlay) === playerPromise) {
+          pendingPlayers.delete(overlay);
+        }
+      },
+      () => {
+        if (pendingPlayers.get(overlay) === playerPromise) {
+          pendingPlayers.delete(overlay);
+        }
+      },
+    );
+
+    return playerPromise;
+  }
+
+  function initializePlayerForOverlay(
+    overlay: HTMLElement,
+    requestAutoplay: boolean,
+  ): void {
+    if (requestAutoplay) {
+      autoplayRequests.add(overlay);
+    }
+
+    void ensurePlayer(overlay)
+      .then((record) => {
+        if (record && requestAutoplay && autoplayRequests.has(overlay)) {
+          requestPlayback(overlay, record);
+        }
+      })
+      .catch((error: unknown) => {
+        autoplayRequests.delete(overlay);
+        console.error("[VideoModal] Failed to load Plyr.", error);
+      });
+  }
+
+  function initializeVideoModals() {
+    listenerController?.abort();
+
+    const controller = new AbortController();
+    const configuredOverlays = new Set<HTMLElement>();
+
+    listenerController = controller;
+
+    document
+      .querySelectorAll<HTMLElement>("[data-hs-overlay].video-modal-toggle")
+      .forEach((button) => {
+        const modalId = button.getAttribute("aria-controls");
+        const overlay = modalId ? document.getElementById(modalId) : null;
+
+        if (!overlay) return;
+
+        button.addEventListener(
+          "click",
+          () => {
+            initializePlayerForOverlay(overlay, true);
+          },
+          { signal: controller.signal },
+        );
+
+        if (configuredOverlays.has(overlay)) return;
+        configuredOverlays.add(overlay);
+
+        overlay.addEventListener(
+          "open.hs.overlay",
+          () => {
+            initializePlayerForOverlay(overlay, true);
+          },
+          { signal: controller.signal },
+        );
+
+        overlay.addEventListener(
+          "close.hs.overlay",
+          () => {
+            pausePlayer(overlay);
+          },
+          { signal: controller.signal },
+        );
+      });
+  }
+
+  function teardownVideoModals() {
+    lifecycleId++;
+    listenerController?.abort();
+    listenerController = null;
+    autoplayRequests = new WeakSet<HTMLElement>();
+    pendingPlayers.clear();
+
+    players.forEach(({ player }) => {
+      player.destroy();
+    });
+    players.clear();
+  }
+
+  initializeVideoModals();
+
+  window.addEventListener("pagehide", teardownVideoModals);
+  window.addEventListener("pageshow", initializeVideoModals);
 </script>
