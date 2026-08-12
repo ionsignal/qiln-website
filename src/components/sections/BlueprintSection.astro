@@ -14,9 +14,13 @@ interface Props {
   class?: string;
 }
 
-let defaultContent = (await fetchEntry("sections", "blueprint"))?.data;
-let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
-let {
+const defaultContent = (await fetchEntry("sections", "blueprint"))?.data;
+const actualContent = overrideObjects<SectionData>(
+  defaultContent ?? {},
+  Astro.props.content,
+);
+
+const {
   enable = true,
   title,
   subtitle,
@@ -117,11 +121,6 @@ const { class: className } = Astro.props;
 }
 
 <style>
-  /* 
-   * Scoped Shiki Overrides 
-   * Shiki sets inline styles for background. We force transparency to use our container.
-   * We also structure `.line` for the hover interaction state machine.
-   */
   .code-wrapper :global(.astro-code) {
     background-color: transparent !important;
     margin: 0;
@@ -158,54 +157,75 @@ const { class: className } = Astro.props;
   import { animate, inView } from "motion";
 
   const cleanupCallbacks: Array<() => void> = [];
+
+  function getTargetLines(value: string | null): number[] {
+    try {
+      const parsed: unknown = JSON.parse(value || "[]");
+      if (!Array.isArray(parsed)) {
+        return [];
+      }
+      return parsed.filter(
+        (line): line is number =>
+          typeof line === "number" &&
+          Number.isInteger(line) &&
+          Number.isFinite(line) &&
+          line > 0,
+      );
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.warn(
+          "[BlueprintSection] Invalid data-target-lines attribute",
+          error,
+        );
+      }
+      return [];
+    }
+  }
+
   function initBlueprintSection() {
-    const sections = document.querySelectorAll(".blueprint-section");
+    const sections =
+      document.querySelectorAll<HTMLElement>(".blueprint-section");
+
     sections.forEach((section) => {
       if (section.hasAttribute("data-initialized")) return;
+
       section.setAttribute("data-initialized", "true");
-      const cards = section.querySelectorAll(".spotlight-card");
-      const codeWrapper = section.querySelector(".code-wrapper");
-      const lines = codeWrapper?.querySelectorAll(".line");
+
+      const cards = section.querySelectorAll<HTMLElement>(".spotlight-card");
+      const codeWrapper = section.querySelector<HTMLElement>(".code-wrapper");
+      const lines = codeWrapper?.querySelectorAll<HTMLElement>(".line");
       let autopilotTimer: ReturnType<typeof setInterval> | null = null;
       let currentIndex = 0;
       let isManual = false;
+
       const activateCard = (index: number) => {
         if (!codeWrapper || !lines || lines.length === 0) return;
-        cards.forEach((c) => {
-          c.classList.remove("border-primary/50", "bg-primary/20");
-          c.setAttribute("aria-current", "false");
+        cards.forEach((card) => {
+          card.classList.remove("border-primary/50", "bg-primary/20");
+          card.setAttribute("aria-current", "false");
         });
-        lines.forEach((l) => l.classList.remove("highlighted"));
+        lines.forEach((line) => line.classList.remove("highlighted"));
         const targetCard = cards[index];
-        if (targetCard) {
-          targetCard.classList.add("border-primary/50", "bg-primary/20");
-          targetCard.setAttribute("aria-current", "true");
-          codeWrapper.classList.add("is-interacting");
-          try {
-            const targetLines = JSON.parse(
-              targetCard.getAttribute("data-target-lines") || "[]",
-            );
-            targetLines.forEach((lineNum: number) => {
-              const lineNode = lines[lineNum - 1];
-              if (lineNode) {
-                lineNode.classList.add("highlighted");
-              }
-            });
-          } catch (e) {
-            if (import.meta.env.DEV) {
-              console.warn(
-                "[BlueprintSection] Invalid data-target-lines attribute",
-                e,
-              );
-            }
-          }
-        }
+        if (!targetCard) return;
+        targetCard.classList.add("border-primary/50", "bg-primary/20");
+        targetCard.setAttribute("aria-current", "true");
+        codeWrapper.classList.add("is-interacting");
+        getTargetLines(targetCard.getAttribute("data-target-lines")).forEach(
+          (lineNumber) => {
+            lines[lineNumber - 1]?.classList.add("highlighted");
+          },
+        );
       };
 
       const startAutopilot = () => {
         if (isManual || cards.length === 0) return;
-        if (autopilotTimer) clearInterval(autopilotTimer);
+
+        if (autopilotTimer) {
+          clearInterval(autopilotTimer);
+        }
+
         activateCard(0);
+
         autopilotTimer = setInterval(() => {
           currentIndex = (currentIndex + 1) % cards.length;
           activateCard(currentIndex);
@@ -221,8 +241,11 @@ const { class: className } = Astro.props;
       };
 
       cleanupCallbacks.push(() => {
-        if (autopilotTimer) clearInterval(autopilotTimer);
+        if (autopilotTimer) {
+          clearInterval(autopilotTimer);
+        }
       });
+
       cards.forEach((card, index) => {
         const triggerManual = () => {
           stopAutopilot();
@@ -230,35 +253,37 @@ const { class: className } = Astro.props;
         };
         card.addEventListener("mouseenter", triggerManual);
         card.addEventListener("click", triggerManual);
-        card.addEventListener("keydown", (e: Event) => {
-          const keyEvent = e as KeyboardEvent;
-          if (keyEvent.key === "Enter" || keyEvent.key === " ") {
-            keyEvent.preventDefault();
+        card.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
             triggerManual();
           }
         });
       });
 
-      const header = section.querySelector(".motion-header");
-      const leftCol = section.querySelector(".motion-left");
-      const rightCol = section.querySelector(".motion-right");
+      const header = section.querySelector<HTMLElement>(".motion-header");
+      const leftColumn = section.querySelector<HTMLElement>(".motion-left");
+      const rightColumn = section.querySelector<HTMLElement>(".motion-right");
       const stopInView = inView(
         section,
         () => {
-          if (header)
+          if (header) {
             animate(header, { opacity: [0, 1], y: [30, 0] }, { duration: 0.6 });
-          if (leftCol)
+          }
+          if (leftColumn) {
             animate(
-              leftCol,
+              leftColumn,
               { opacity: [0, 1], x: [-30, 0] },
               { duration: 0.6, delay: 0.2 },
             );
-          if (rightCol)
+          }
+          if (rightColumn) {
             animate(
-              rightCol,
+              rightColumn,
               { opacity: [0, 1], x: [30, 0] },
               { duration: 0.6, delay: 0.4 },
             );
+          }
           startAutopilot();
         },
         { amount: 0.2 },
@@ -268,8 +293,8 @@ const { class: className } = Astro.props;
   }
 
   function teardownBlueprintSection() {
-    cleanupCallbacks.forEach((cb) => cb());
-    cleanupCallbacks.length = 0; // Empty the array
+    cleanupCallbacks.forEach((cleanup) => cleanup());
+    cleanupCallbacks.length = 0;
   }
 
   if (document.readyState === "loading") {
@@ -280,6 +305,5 @@ const { class: className } = Astro.props;
 
   document.addEventListener("astro:page-load", initBlueprintSection);
   document.addEventListener("astro:before-swap", teardownBlueprintSection);
-
   window.addEventListener("pagehide", teardownBlueprintSection);
 </script>

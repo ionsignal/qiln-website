@@ -1,6 +1,6 @@
 ---
 import SiteLayout from "@/layouts/SiteLayout.astro";
-import { fetchEntry } from "@/utils/content";
+import { fetchEntry, fetchRequiredEntry } from "@/utils/content";
 import Hero from "@/components/sections/hero/Hero.astro";
 import FeatureSplit from "@/components/sections/FeatureSplit.astro";
 import BlueprintSection from "@/components/sections/BlueprintSection.astro";
@@ -9,7 +9,7 @@ import BlueprintSection from "@/components/sections/BlueprintSection.astro";
 import FaqSection from "@/components/sections/FaqSection.astro";
 // import ComparisonSection from "@/components/sections/ComparisonSection.astro";
 
-const homepage = await fetchEntry("homepage", "-index");
+const homepage = await fetchRequiredEntry("homepage", "-index");
 const featureGpu = await fetchEntry("sections", "feature-gpu");
 const featureStorage = await fetchEntry("sections", "feature-storage");
 const blueprint = await fetchEntry("sections", "blueprint");

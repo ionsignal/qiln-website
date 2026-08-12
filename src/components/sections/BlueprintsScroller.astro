@@ -4,21 +4,43 @@ import Image from "@/components/helpers/Image.astro";
 import { overrideObjects } from "@/utils/core";
 import { markdownify } from "@/utils/text";
 import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
 
 type SectionData = CollectionEntry<"sections">["data"];
-type Props = {
-  content?: SectionData | any;
-  class?: string;
+
+type CustomerItem = {
+  src: string | ImageMetadata;
+  alt?: string;
 };
 
-let defaultContent = (await fetchEntry("sections", "customers"))?.data;
-let actualContent = overrideObjects(
-  { ...defaultContent },
+interface Props {
+  content?: SectionData;
+  class?: string;
+}
+
+function isCustomerList(value: SectionData["list"]): value is CustomerItem[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) => typeof item === "object" && item !== null && "src" in item,
+    )
+  );
+}
+
+const defaultContent = (await fetchEntry("sections", "customers"))?.data;
+const actualContent = overrideObjects<SectionData>(
+  defaultContent ?? {},
   Astro.props.content,
-) as any;
-let { enable = true, description, marquee = {}, list = [] } = actualContent;
-const { class: className, ...rest } = Astro.props;
+);
+
+const { enable = true, description, marquee = {} } = actualContent;
+
+const list = isCustomerList(actualContent.list) ? actualContent.list : [];
+
+const { class: className } = Astro.props;
+
 let baseList = [...list];
+
 if (baseList.length > 0) {
   while (baseList.length < 16) {
     baseList = [...baseList, ...list];
@@ -28,7 +50,7 @@ if (baseList.length > 0) {
 
 {
   enable && (
-    <section class:list={["w-full", className]} {...rest}>
+    <section class:list={["w-full", className]}>
       <div class="mx-auto w-full text-center">
         {description && (
           <p
@@ -48,7 +70,7 @@ if (baseList.length > 0) {
                 marquee.reverse === "reverse" ? "reverse" : "normal",
             }}>
             <div class="flex items-center justify-around gap-8 pr-8">
-              {baseList.map((item: any) => (
+              {baseList.map((item) => (
                 <div class="flex h-5 w-max shrink-0 items-center justify-center md:h-6">
                   <Image
                     src={item.src}
@@ -62,7 +84,7 @@ if (baseList.length > 0) {
             <div
               class="flex items-center justify-around gap-8 pr-8"
               aria-hidden="true">
-              {baseList.map((item: any) => (
+              {baseList.map((item) => (
                 <div class="flex h-5 w-max shrink-0 items-center justify-center md:h-6">
                   <Image
                     src={item.src}

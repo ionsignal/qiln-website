@@ -2,7 +2,7 @@ import type { ImageMetadata } from "astro";
 
 export type MarqueeConfig = {
   pauseOnHover: boolean;
-  reverse?: "reverse" | "" | undefined;
+  reverse?: "reverse" | "";
   duration: string;
 };
 
@@ -11,14 +11,13 @@ export type MarqueeListItem = {
   alt: string;
 };
 
-// Type for the video configuration
 export type VideoConfig = {
-  src: string; // youtube or vimeo video ID or path to video file
-  type?: string; // Optional: only required for local files (e.g., "video/mp4")
-  provider?: "youtube" | "vimeo" | "html5"; // Accepted providers (default is "youtube")
-  poster?: string; // Optional: URL or image path for video thumbnail
-  autoplay?: boolean; // Optional: true to autoplay, false to start manually (default is false)
-  id?: string; // required if same video is used on multiple time on same page
+  src: string;
+  type?: string;
+  provider?: string;
+  poster?: string;
+  autoplay?: boolean;
+  id?: string;
 };
 
 export type NavButton = {
@@ -30,7 +29,6 @@ export type NavButton = {
   target?: string;
   icon?: string;
   variant?: string;
-  [x: string]: any;
 };
 
 export type SocialLink = {
@@ -45,13 +43,9 @@ export type Social = {
   list: SocialLink[];
 };
 
-// For Astro Font
 export type GlobalValues =
-  | "inherit"
-  | "initial"
-  | "revert"
-  | "revert-layer"
-  | "unset";
+  "inherit" | "initial" | "revert" | "revert-layer" | "unset";
+
 export interface Source {
   path?: string;
   preload?: boolean;
@@ -90,6 +84,7 @@ export interface Source {
     | (string & {})
     | (number & {});
 }
+
 export interface FontConfig {
   name: string;
   src: Source[];
@@ -104,12 +99,12 @@ export interface FontConfig {
   cssVariable?: string | boolean;
   fallback: "serif" | "sans-serif" | "monospace";
   display: "auto" | "block" | "swap" | "fallback" | "optional" | (string & {});
-  provider?: "local-hosted" | "google-fonts" | undefined;
+  provider?: "local-hosted" | "google-fonts";
 }
 
 export interface Badge {
   enable: boolean;
-  label: string;
+  label?: string;
   color: "primary" | "success" | "danger" | "warning" | string;
   type: "dot" | "text";
 }
@@ -125,8 +120,8 @@ export interface NavigationLinkCTA {
 export interface ChildNavigationLink {
   enable: boolean;
   name: string;
-  description: string;
-  icon: string;
+  description?: string;
+  icon?: string;
   weight?: number;
   url?: string;
   rel?: string;
@@ -137,14 +132,12 @@ export interface ChildNavigationLink {
 }
 
 export interface NavigationLink extends ChildNavigationLink {
-  enable: boolean;
-  weight?: number;
   hasMegaMenu?: boolean;
   cta?: NavigationLinkCTA;
   menus?: NavigationLink[];
 }
 
-export interface RemarkPluginFrontmatter {
-  minutesRead: string;
-  lastModified: string;
+export interface RemarkMetadata {
+  minutesRead?: string;
+  lastModified?: string;
 }

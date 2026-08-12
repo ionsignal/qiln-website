@@ -11,7 +11,7 @@ const t = useTranslations();
 const footerDescription = t("footer.description");
 const copyrightText = t("footer.copyright");
 const copyrightParts = splitProtectedText(copyrightText);
-let { subscription } = config.settings;
+const { subscription } = config.settings;
 ---
 
 <footer class="to-primary/20 lg:to-primary/5 bg-linear-to-b from-transparent">
@@ -31,9 +31,7 @@ let { subscription } = config.settings;
             linkType="follow"
             class="mt-5 gap-1"
             size="sm"
-            list={(config.social?.main || []).filter(
-              (social: any) => social.enable,
-            )}
+            list={(config.social?.main || []).filter((social) => social.enable)}
           />
         </div>
         <div
@@ -112,7 +110,7 @@ let { subscription } = config.settings;
               </div>
             </div>
             {
-              subscription && subscription.enable && (
+              subscription.enable && (
                 <div class="mt-8 border-t pt-5">
                   {t("subscription.label") && (
                     <p
@@ -120,7 +118,7 @@ let { subscription } = config.settings;
                       set:html={markdownify(t("subscription.label"))}
                     />
                   )}
-                  <FooterSubscription {...subscription} />
+                  <FooterSubscription formAction={subscription.formAction} />
                 </div>
               )
             }
@@ -144,9 +142,9 @@ let { subscription } = config.settings;
             }
           </ul>
           {
-            config.settings.copyright && config.settings.copyright.enable && (
+            config.settings.copyright.enable && (
               <ul class="has-list has-list-slash flex flex-wrap gap-y-4 text-white [&_a]:text-inherit">
-                {copyrightParts.map((value: string) => (
+                {copyrightParts.map((value) => (
                   <li class="[&_a]:text-secondary inline-block opacity-90 [&_a]:underline [&_a]:underline-offset-2 [&_a]:transition-colors [&_a]:duration-300 [&_a:hover]:text-white">
                     <span set:html={markdownify(value)} />
                   </li>

@@ -1,26 +1,33 @@
 ---
 import { formatUrl } from "@/utils/core";
 
-const { navigationButton, navigationbuttonLabel } = Astro.props;
+interface NavigationButtonData {
+  url?: string;
+  rel?: string;
+  target?: string;
+}
+
+interface Props {
+  navigationButton: NavigationButtonData;
+  label: string;
+}
+
+const { navigationButton, label } = Astro.props;
+const isExternal = navigationButton.url?.startsWith("http") ?? false;
+const rel = isExternal
+  ? navigationButton.rel || "noopener noreferrer"
+  : navigationButton.rel || undefined;
+const target = isExternal
+  ? navigationButton.target || "_blank"
+  : navigationButton.target || undefined;
 ---
 
 <a
-  {...{
-    // Set `rel` attribute for external urls or use provided value
-    rel: navigationButton.url?.startsWith("http")
-      ? navigationButton.rel || "noopener noreferrer"
-      : navigationButton.rel || undefined,
-
-    // Set `target` to "_blank" for external urls unless otherwise specified
-    target: navigationButton.url?.startsWith("http")
-      ? navigationButton.target || "_blank"
-      : navigationButton.target || undefined,
-  }}
+  rel={rel}
+  target={target}
   class="relative flex items-center"
   href={formatUrl(navigationButton.url)}>
-  <span
-    class:list={["btn btn-primary has-text-flip-animation"]}
-    data-content={navigationbuttonLabel}>
-    {navigationbuttonLabel}
+  <span class="btn btn-primary has-text-flip-animation" data-content={label}>
+    {label}
   </span>
 </a>

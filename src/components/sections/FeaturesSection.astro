@@ -6,17 +6,32 @@ import { markdownify } from "@/utils/text";
 import type { CollectionEntry } from "astro:content";
 
 type SectionData = CollectionEntry<"sections">["data"];
-type Props = {
-  content?: SectionData;
+
+type FeatureItem = {
+  title: string;
+  description?: string;
 };
 
-let defaultContent = (await fetchEntry("sections", "features-section"))?.data;
-let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
-let { enable = true, title, subtitle } = actualContent;
-let list = actualContent.list as Extract<
-  SectionData["list"],
-  { title: string }[]
->;
+interface Props {
+  content?: SectionData;
+}
+
+function isFeatureList(value: SectionData["list"]): value is FeatureItem[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item) => typeof item === "object" && item !== null && "title" in item,
+    )
+  );
+}
+
+const defaultContent = (await fetchEntry("sections", "features-section"))?.data;
+const actualContent = overrideObjects<SectionData>(
+  defaultContent ?? {},
+  Astro.props.content,
+);
+const { enable = true, title, subtitle } = actualContent;
+const list = isFeatureList(actualContent.list) ? actualContent.list : [];
 ---
 
 {

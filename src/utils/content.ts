@@ -5,37 +5,64 @@ import {
   type CollectionKey,
 } from "astro:content";
 
-type HasDraft = { draft?: boolean };
+type DraftableData = {
+  draft?: boolean;
+};
 
-export const fetchCollection = async <C extends CollectionKey>(
+function isDraft(data: unknown): boolean {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "draft" in data &&
+    (data as DraftableData).draft === true
+  );
+}
+
+export async function fetchCollection<C extends CollectionKey>(
   collectionName: C,
-): Promise<CollectionEntry<C>[]> => {
-  const pages: CollectionEntry<C>[] = (await getCollection(
+): Promise<CollectionEntry<C>[]> {
+  const entries = await getCollection(
     collectionName,
-    (item: CollectionEntry<C>) => {
-      return !item.id.endsWith("-index");
-    },
-  )) as CollectionEntry<C>[];
+    (entry) => !entry.id.endsWith("-index"),
+  );
   if (import.meta.env.PROD) {
-    return pages.filter((page) => !(page.data as HasDraft).draft);
+    return entries.filter((entry) => !isDraft(entry.data));
   }
-  return pages;
-};
+  return entries;
+}
 
-export const fetchEntry = async <C extends CollectionKey>(
+export function fetchEntry<C extends CollectionKey>(
   collectionName: C,
-  subCollectionName: string,
-): Promise<CollectionEntry<C>> => {
-  const entry = await getEntry(collectionName, subCollectionName);
-  if (import.meta.env.PROD && (entry?.data as HasDraft | undefined)?.draft) {
-    return undefined as unknown as CollectionEntry<C>;
-  }
-  return entry as CollectionEntry<C>;
-};
+  entryId: string,
+): Promise<CollectionEntry<C> | undefined>;
 
-export const getPublishedBlogPosts = async () => {
+export async function fetchEntry(
+  collectionName: CollectionKey,
+  entryId: string,
+) {
+  const entry = await getEntry(collectionName, entryId);
+  if (!entry || (import.meta.env.PROD && isDraft(entry.data))) {
+    return undefined;
+  }
+  return entry;
+}
+
+export async function fetchRequiredEntry<C extends CollectionKey>(
+  collectionName: C,
+  entryId: string,
+): Promise<CollectionEntry<C>> {
+  const entry = await fetchEntry(collectionName, entryId);
+  if (!entry) {
+    throw new Error(
+      `[content] Required entry "${entryId}" was not found in the "${collectionName}" collection or is not published.`,
+    );
+  }
+  return entry;
+}
+
+export async function getPublishedBlogPosts() {
   const posts = await fetchCollection("blog");
   return posts
     .slice()
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-};
+}

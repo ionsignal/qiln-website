@@ -3,17 +3,45 @@ import config from ".astro/config.generated.json";
 
 const useTrailingSlash: boolean = Boolean(config.site.trailingSlash);
 
+type MergeableObject = Record<string, unknown>;
+
+type WeightedItem = {
+  weight?: number | null;
+  children?: WeightedItem[];
+  menus?: WeightedItem[];
+};
+
+function isMergeableObject(value: unknown): value is MergeableObject {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 /**
  * Safely clones an object using native structuredClone.
- * Falls back to returning the original reference if the object is non-serializable (e.g., contains functions).
+ * Falls back to returning the original reference if the object is non-serializable.
  */
-function safeClone<T>(obj: T): T {
-  if (obj === undefined) return obj;
+function safeClone<T>(value: T): T {
+  if (value === undefined) return value;
   try {
-    return structuredClone(obj);
-  } catch (e) {
-    return obj;
+    return structuredClone(value);
+  } catch {
+    return value;
   }
+}
+
+function mergeRecords(
+  target: MergeableObject,
+  source: MergeableObject,
+): MergeableObject {
+  const result = safeClone(target);
+  for (const [key, sourceValue] of Object.entries(source)) {
+    const targetValue = result[key];
+    if (isMergeableObject(sourceValue) && isMergeableObject(targetValue)) {
+      result[key] = mergeRecords(targetValue, sourceValue);
+    } else {
+      result[key] = safeClone(sourceValue);
+    }
+  }
+  return result;
 }
 
 /**
@@ -38,18 +66,15 @@ export const useTranslations = (lang: keyof typeof ui = defaultLang) => {
  */
 function normalizeTrailingSlash(path: string): string {
   if (path === "/") return path;
-  // Split into [pathname, suffix] where suffix begins at the first `?` or `#`.
   const suffixIndex = path.search(/[?#]/);
   const pathname = suffixIndex === -1 ? path : path.slice(0, suffixIndex);
   const suffix = suffixIndex === -1 ? "" : path.slice(suffixIndex);
-  // Exempt static-asset-style paths (anything ending in a file extension).
   if (/\.[a-z0-9]+$/i.test(pathname)) return path;
-  // Collapse any number of trailing slashes, then re-apply per policy.
   const trimmed = pathname.replace(/\/+$/, "");
-  // Defensive: stripping could yield "" for an input like "/"; guard regardless.
   const base = trimmed === "" ? "/" : trimmed;
   const normalizedPath =
     base === "/" ? "/" : useTrailingSlash ? base + "/" : base;
+
   return normalizedPath + suffix;
 }
 
@@ -72,7 +97,7 @@ export const formatUrl = (url: string | undefined): string => {
     const isAbsolute = url.startsWith("http://") || url.startsWith("https://");
     if (isAbsolute) return new URL(url).href;
     return normalizeTrailingSlash(url);
-  } catch (error) {
+  } catch {
     return url;
   }
 };
@@ -80,66 +105,57 @@ export const formatUrl = (url: string | undefined): string => {
 /**
  * Deep merges a source object into a target object using native APIs.
  */
-export function overrideObjects<T>(target: T, source: any): T {
-  if (!target) return source;
+export function overrideObjects<T extends object>(
+  target: T,
+  source?: Partial<T> | null,
+): T {
   if (!source) return target;
-  const result = safeClone(target) as any;
-  for (const key in source) {
-    if (
-      source[key] &&
-      typeof source[key] === "object" &&
-      !Array.isArray(source[key]) &&
-      result[key] &&
-      typeof result[key] === "object" &&
-      !Array.isArray(result[key])
-    ) {
-      // Recursively merge nested objects
-      result[key] = overrideObjects(result[key], source[key]);
-    } else {
-      // Overwrite or add the value (safely cloned to prevent reference leaking)
-      result[key] = safeClone(source[key]);
-    }
+  const clonedTarget = safeClone(target);
+  if (!isMergeableObject(clonedTarget) || !isMergeableObject(source)) {
+    return clonedTarget;
   }
-  return result as T;
+  return mergeRecords(clonedTarget, source) as T;
 }
 
 /**
  * Recursively sorts an array of objects by their `weight` property.
  */
-type WeightedItem = {
-  weight?: number | null;
-  children?: WeightedItem[];
-  menus?: WeightedItem[];
-  [key: string]: any;
-};
-export function sortByWeight<T extends WeightedItem>(array: T[]): T[] {
-  return array
-    .slice() // Shallow copy to avoid mutating the original array reference
+export function sortByWeight<T extends WeightedItem>(items: readonly T[]): T[] {
+  return [...items]
     .sort((a, b) => {
       const aWeight = a.weight ?? Infinity;
       const bWeight = b.weight ?? Infinity;
       return aWeight - bWeight;
     })
-    .map((item) => ({
-      ...item,
-      ...(item.children ? { children: sortByWeight(item.children) } : {}),
-      ...(item.menus ? { menus: sortByWeight(item.menus) } : {}),
-    }));
+    .map((item) => {
+      const sortedItem = {
+        ...item,
+        ...(item.children ? { children: sortByWeight(item.children) } : {}),
+        ...(item.menus ? { menus: sortByWeight(item.menus) } : {}),
+      };
+      return sortedItem as T;
+    });
 }
 
 /**
  * Recursively filters an array of objects, removing any where `enable: false`.
  */
 export function filteredEnabled<
-  T extends { enable?: boolean; children?: T[]; menus?: T[] },
->(menu: T[]): T[] {
-  const clonedMenu = safeClone(menu);
-  return clonedMenu
-    .filter((item) => item.enable !== false) // Keep items where enable is true or undefined
+  T extends {
+    enable?: boolean;
+    children?: T[];
+    menus?: T[];
+  },
+>(items: readonly T[]): T[] {
+  return safeClone(items)
+    .filter((item) => item.enable !== false)
     .map((item) => {
-      if (item.children) item.children = filteredEnabled(item.children);
-      if (item.menus) item.menus = filteredEnabled(item.menus);
-      return item;
+      const filteredItem = {
+        ...item,
+        ...(item.children ? { children: filteredEnabled(item.children) } : {}),
+        ...(item.menus ? { menus: filteredEnabled(item.menus) } : {}),
+      };
+      return filteredItem as T;
     });
 }
 
@@ -168,6 +184,5 @@ export function splitProtectedText(
     yearPlaceholder.replace(/\s+/g, "\\s*").replace(/[{}]/g, "\\$&"),
     "g",
   );
-  parts = parts.map((part) => part.replace(yearRegex, currentYear));
-  return parts;
+  return parts.map((part) => part.replace(yearRegex, currentYear));
 }

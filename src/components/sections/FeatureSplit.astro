@@ -7,6 +7,7 @@ import Subtitle from "@/components/ui/Subtitle.astro";
 import type { CollectionEntry } from "astro:content";
 
 type SectionData = CollectionEntry<"sections">["data"];
+
 type Props = {
   content?: SectionData;
   imagePosition?: "left" | "right";
@@ -15,10 +16,9 @@ type Props = {
   hasBackground?: boolean;
 };
 
-let defaultContent = (await fetchEntry("sections", "feature-gpu"))?.data;
-let actualContent =
-  Astro.props.content || defaultContent || ({} as SectionData);
-let {
+const defaultContent = (await fetchEntry("sections", "feature-gpu"))?.data;
+const actualContent: SectionData = Astro.props.content ?? defaultContent ?? {};
+const {
   enable = true,
   title,
   subtitle,
@@ -126,25 +126,25 @@ const {
 
   document.addEventListener("DOMContentLoaded", () => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const sections = document.querySelectorAll(".feature-split");
+    const sections = document.querySelectorAll<HTMLElement>(".feature-split");
     sections.forEach((section) => {
-      const textEl = section.querySelector(".motion-text");
-      const imageEl = section.querySelector(".motion-image");
+      const textElement = section.querySelector<HTMLElement>(".motion-text");
+      const imageElement = section.querySelector<HTMLElement>(".motion-image");
       const direction = section.getAttribute("data-direction");
       inView(
         section,
         () => {
-          if (textEl) {
+          if (textElement) {
             animate(
-              textEl,
+              textElement,
               { opacity: [0, 1], y: [30, 0] },
               { duration: 0.8, ease: "easeOut" },
             );
           }
-          if (imageEl) {
+          if (imageElement) {
             const xOffset = direction === "left" ? -40 : 40;
             animate(
-              imageEl,
+              imageElement,
               { opacity: [0, 1], scale: [1.04, 1], x: [xOffset, 0] },
               {
                 type: "spring",

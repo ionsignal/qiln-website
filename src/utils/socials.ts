@@ -1,25 +1,34 @@
 import config from ".astro/config.generated.json";
 import type { SocialLink } from "@/types";
 
-/**
- * Platforms that surface in the site header chip slot (both global marketing
- * header and docs header). The rest of the entries in `social.json` continue
- * to surface in the footer / share contexts.
- *
- * To add or remove a header chip, edit this list — not the consuming Astro
- * components. This is the single source of truth for "which socials live in
- * the header."
- */
 const HEADER_PLATFORMS = ["github", "discord"] as const;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isSocialLink(value: unknown): value is SocialLink {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.enable === "boolean" &&
+    typeof value.label === "string" &&
+    typeof value.icon === "string" &&
+    typeof value.url === "string"
+  );
+}
+
+function isHeaderPlatform(label: string): boolean {
+  const normalizedLabel = label.toLowerCase();
+  return HEADER_PLATFORMS.some((platform) => platform === normalizedLabel);
+}
 
 /**
  * Curated list of social links to render in the header chip slot.
  * Filters by enabled state and platform whitelist; preserves the order
  * defined in `config.toml`.
  */
-// Modified: Replaced social.json import with generated config and added fallback array
-export const headerSocials: SocialLink[] = (config.social?.main || []).filter(
-  (link: any) =>
-    link.enable &&
-    (HEADER_PLATFORMS as readonly string[]).includes(link.label.toLowerCase()),
-) as SocialLink[];
+export const headerSocials: SocialLink[] = (
+  Array.isArray(config.social?.main) ? config.social.main : []
+)
+  .filter(isSocialLink)
+  .filter((link) => link.enable && isHeaderPlatform(link.label));

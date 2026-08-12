@@ -3,20 +3,29 @@ import type { NavigationLink } from "@/types";
 import { formatUrl } from "@/utils/core";
 import LucideIcon from "@/components/helpers/LucideIcon.astro";
 
-const menu = Astro.props.menu as NavigationLink;
+interface Props {
+  menu: NavigationLink;
+}
+
+const { menu } = Astro.props;
 const { pathname } = Astro.url;
+
 const isUrlActive = (url?: string) =>
   url ? pathname === `${url}/` || pathname === url : false;
-const isChildActive = (m: NavigationLink) =>
-  m.menus?.some((child) => isUrlActive(child.url)) || false;
+
+const isChildActive = (item: NavigationLink) =>
+  item.menus?.some((child) => isUrlActive(child.url)) || false;
+
 const isActive = isUrlActive(menu.url) || isChildActive(menu);
-const getLinkAttrs = (url?: string, rel?: string, target?: string) => ({
-  rel: url?.startsWith("http")
-    ? rel || "noopener noreferrer"
-    : rel || undefined,
-  target: url?.startsWith("http") ? target || "_blank" : target || undefined,
-  href: formatUrl(url || Astro.url.origin),
-});
+
+const getLinkAttributes = (url?: string, rel?: string, target?: string) => {
+  const isExternal = url?.startsWith("http") ?? false;
+  return {
+    rel: isExternal ? rel || "noopener noreferrer" : rel || undefined,
+    target: isExternal ? target || "_blank" : target || undefined,
+    href: formatUrl(url || Astro.url.origin),
+  };
+};
 ---
 
 {
@@ -36,6 +45,7 @@ const getLinkAttrs = (url?: string, rel?: string, target?: string) => ({
             <LucideIcon
               icon="ChevronDown"
               class="hs-dropdown-open:-rotate-180 h-4 w-4 shrink-0 transition-transform duration-200"
+              aria-hidden="true"
             />
           </button>
           <div
@@ -48,11 +58,19 @@ const getLinkAttrs = (url?: string, rel?: string, target?: string) => ({
                     {menu.menus.map((child) => (
                       <a
                         role="menuitem"
-                        {...getLinkAttrs(child.url, child.rel, child.target)}
+                        {...getLinkAttributes(
+                          child.url,
+                          child.rel,
+                          child.target,
+                        )}
                         class="group hover:bg-primary/5 flex items-start gap-3 rounded-xl p-2 transition-colors">
                         {child.icon && (
                           <div class="bg-primary/10 text-primary group-hover:bg-primary/90 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors group-hover:text-white">
-                            <LucideIcon icon={child.icon} class="h-5 w-5" />
+                            <LucideIcon
+                              icon={child.icon}
+                              class="h-5 w-5"
+                              aria-hidden="true"
+                            />
                           </div>
                         )}
                         <div>
@@ -78,14 +96,6 @@ const getLinkAttrs = (url?: string, rel?: string, target?: string) => ({
                           {menu.cta.description}
                         </div>
                       </div>
-                      {/* {menu.cta.ctaBtn && menu.cta.ctaBtn.enable && (
-                        <a
-                          role="menuitem"
-                          {...getLinkAttrs(menu.cta.ctaBtn.url)}
-                          class="btn btn-sm btn-solid-primary w-full shrink-0 py-2 text-center text-xs lg:w-auto">
-                          {menu.cta.ctaBtn.label}
-                        </a>
-                      )} */}
                     </div>
                   )}
                 </div>
@@ -95,10 +105,18 @@ const getLinkAttrs = (url?: string, rel?: string, target?: string) => ({
                     <li>
                       <a
                         role="menuitem"
-                        {...getLinkAttrs(child.url, child.rel, child.target)}
+                        {...getLinkAttributes(
+                          child.url,
+                          child.rel,
+                          child.target,
+                        )}
                         class="hover:bg-primary/5 flex items-center gap-3 rounded-xl p-3 text-sm text-white/80 transition-colors hover:text-white">
                         {child.icon && (
-                          <LucideIcon icon={child.icon} class="h-4 w-4" />
+                          <LucideIcon
+                            icon={child.icon}
+                            class="h-4 w-4"
+                            aria-hidden="true"
+                          />
                         )}
                         {child.name}
                       </a>
@@ -112,7 +130,7 @@ const getLinkAttrs = (url?: string, rel?: string, target?: string) => ({
       ) : (
         <li class="nav-item" role="menuitem">
           <a
-            {...getLinkAttrs(menu.url, menu.rel, menu.target)}
+            {...getLinkAttributes(menu.url, menu.rel, menu.target)}
             class:list={["nav-link", { "nav-link-active": isActive }]}>
             {menu.badge && menu.badge.enable ? (
               menu.badge.type === "dot" ? (

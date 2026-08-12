@@ -7,12 +7,9 @@ import NavigationToggleButton from "@/components/chrome/header/NavigationToggleB
 import SocialChips from "@/components/social/SocialChips.astro";
 import { useTranslations, sortByWeight, filteredEnabled } from "@/utils/core";
 import { headerSocials } from "@/utils/socials";
-import type { NavigationLink } from "@/types";
 
 const t = useTranslations();
-let main = t("main");
-main = filteredEnabled(main);
-main = sortByWeight(main) as NavigationLink[];
+const main = sortByWeight(filteredEnabled(t("main")));
 const {
   site: { logoHoverAnimation },
   settings: { stickyHeader, navigationButton },
@@ -39,12 +36,10 @@ const {
           {
             navigationButton.enable && (
               <li class="max-lg:px-4 max-lg:py-2 lg:hidden" role="menuitem">
-                {navigationButton.enable && (
-                  <NavigationButton
-                    navigationButton={navigationButton}
-                    navigationbuttonLabel={t("navigation.buttonLabel")}
-                  />
-                )}
+                <NavigationButton
+                  navigationButton={navigationButton}
+                  label={t("navigation.buttonLabel")}
+                />
               </li>
             )
           }
@@ -80,7 +75,7 @@ const {
             {navigationButton.enable && (
               <NavigationButton
                 navigationButton={navigationButton}
-                navigationbuttonLabel={t("navigation.buttonLabel")}
+                label={t("navigation.buttonLabel")}
               />
             )}
           </div>
