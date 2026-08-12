@@ -85,22 +85,47 @@ const {
     </nav>
   </div>
 </header>
+
 <script>
-  document.addEventListener("click", (event: MouseEvent) => {
-    const navMenu = document.getElementById("nav-menu");
-    const navToggler = document.querySelector(
-      ".nav-toggler",
-    ) as HTMLElement | null;
-    if (navMenu && navMenu.classList.contains("open")) {
-      const target = event.target as Element;
-      const clickedLink = target.closest("a:not(.hs-dropdown-toggle)");
-      const isOutsideClick =
-        !navMenu.contains(target) && navToggler && !navToggler.contains(target);
-      const isInsideLinkClick =
-        navMenu.contains(target) && clickedLink !== null;
-      if (isOutsideClick || isInsideLinkClick) {
-        navToggler?.click();
-      }
-    }
-  });
+  let navigationController: AbortController | null = null;
+
+  function initializeHeaderNavigation() {
+    navigationController?.abort();
+    navigationController = null;
+    const header = document.querySelector<HTMLElement>(".header");
+    if (!header) return;
+    const controller = new AbortController();
+    navigationController = controller;
+    document.addEventListener(
+      "click",
+      (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const navMenu = document.getElementById("nav-menu");
+        const navToggler =
+          document.querySelector<HTMLButtonElement>(".nav-toggler");
+        if (!navMenu?.classList.contains("open")) return;
+        const clickedLink = target.closest("a:not(.hs-dropdown-toggle)");
+        const clickedOutsideMenu =
+          !navMenu.contains(target) &&
+          (!navToggler || !navToggler.contains(target));
+        const clickedMenuLink =
+          navMenu.contains(target) && clickedLink !== null;
+        if (clickedOutsideMenu || clickedMenuLink) {
+          navToggler?.click();
+        }
+      },
+      { signal: controller.signal },
+    );
+  }
+
+  function teardownHeaderNavigation() {
+    navigationController?.abort();
+    navigationController = null;
+  }
+
+  initializeHeaderNavigation();
+
+  window.addEventListener("pagehide", teardownHeaderNavigation);
+  window.addEventListener("pageshow", initializeHeaderNavigation);
 </script>

@@ -11,82 +11,138 @@
   import HSDropdown from "@preline/dropdown/non-auto";
   import { animate, inView } from "motion";
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    // Manually initialize Preline plugins
+  const animationMap = {
+    "fade-up-sm": { opacity: [0, 1], y: [30, 0] },
+    "fade-down-sm": { opacity: [0, 1], y: [-30, 0] },
+    "fade-right-sm": { opacity: [0, 1], x: [-30, 0] },
+    "fade-left-sm": { opacity: [0, 1], x: [30, 0] },
+    "fade-in": { opacity: [0, 1] },
+  };
+
+  const motionObserverCleanups: Array<() => void> = [];
+  const horizontalScrollCleanups: Array<() => void> = [];
+
+  let prelineInitialized = false;
+  let behaviorInitialized = false;
+
+  function isAnimationName(value: string): value is keyof typeof animationMap {
+    return Object.prototype.hasOwnProperty.call(animationMap, value);
+  }
+
+  function getNumericAttribute(
+    element: Element,
+    name: string,
+    fallback: number,
+    minimum: number,
+    maximum = Number.POSITIVE_INFINITY,
+  ): number {
+    const value = Number.parseFloat(element.getAttribute(name) || "");
+    if (!Number.isFinite(value)) {
+      return fallback;
+    }
+    return Math.min(Math.max(value, minimum), maximum);
+  }
+
+  function initializePreline() {
+    if (prelineInitialized) return;
     HSAccordion.autoInit();
     HSCollapse.autoInit();
     HSOverlay.autoInit();
     HSTabs.autoInit();
     HSScrollspy.autoInit();
     HSDropdown.autoInit();
+    prelineInitialized = true;
+  }
 
-    // Initialize Motion Engine
-    initMotionAnimations();
-    initHorizontalScroll();
-  });
-
-  function initMotionAnimations() {
+  function initializeMotionAnimations() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
-    const elements = document.querySelectorAll("[data-aos]");
-    const animationMap: Record<string, any> = {
-      "fade-up-sm": { opacity: [0, 1], y: [30, 0] },
-      "fade-down-sm": { opacity: [0, 1], y: [-30, 0] },
-      "fade-right-sm": { opacity: [0, 1], x: [-30, 0] },
-      "fade-left-sm": { opacity: [0, 1], x: [30, 0] },
-      "fade-in": { opacity: [0, 1] },
-    };
-    elements.forEach((el) => {
-      const animationType = el.getAttribute("data-aos") || "fade-in";
-      const keyframes = animationMap[animationType] || animationMap["fade-in"];
-      const durationMs = parseFloat(
-        el.getAttribute("data-aos-duration") || "700",
+    document.querySelectorAll<HTMLElement>("[data-aos]").forEach((element) => {
+      const animationName = element.getAttribute("data-aos") || "fade-in";
+      const keyframes = isAnimationName(animationName)
+        ? animationMap[animationName]
+        : animationMap["fade-in"];
+      const durationMs = getNumericAttribute(
+        element,
+        "data-aos-duration",
+        700,
+        0,
       );
-      const overlapVal = parseFloat(
-        el.getAttribute("data-aos-overlap") || "0.1",
+      const amount = getNumericAttribute(
+        element,
+        "data-aos-overlap",
+        0.1,
+        0,
+        1,
       );
-      const delayMs = parseFloat(el.getAttribute("data-aos-delay") || "0");
-      inView(
-        el,
+      const delayMs = getNumericAttribute(element, "data-aos-delay", 0, 0);
+      const stopObserving = inView(
+        element,
         () => {
-          animate(el, keyframes, {
+          animate(element, keyframes, {
             duration: durationMs / 1000,
             delay: delayMs / 1000,
             ease: "easeOut",
           });
         },
-        { amount: overlapVal },
+        { amount },
       );
+      motionObserverCleanups.push(stopObserving);
     });
   }
 
-  function isHeroProductFrameElement(element: Element) {
+  function isHeroProductFrameElement(element: Element): boolean {
     return element.closest(".hero-product-frame") !== null;
   }
 
-  function initHorizontalScroll() {
-    document.querySelectorAll<HTMLElement>("*").forEach((element) => {
+  function initializeHorizontalScroll() {
+    document.querySelectorAll("*").forEach((element) => {
       if (
+        !(element instanceof HTMLElement) ||
         isHeroProductFrameElement(element) ||
         element.scrollWidth <= element.clientWidth
       ) {
         return;
       }
-      element.addEventListener(
-        "wheel",
-        (event: Event) => {
-          const wheelEvent = event as WheelEvent;
-          if (wheelEvent.shiftKey) {
-            wheelEvent.preventDefault();
-            element.scrollBy({
-              left: wheelEvent.deltaY * 3,
-              behavior: "smooth",
-            });
-          }
-        },
-        { passive: false },
-      );
+      const handleWheel = (event: WheelEvent) => {
+        if (!event.shiftKey) return;
+        event.preventDefault();
+        element.scrollBy({
+          left: event.deltaY * 3,
+          behavior: "smooth",
+        });
+      };
+      element.addEventListener("wheel", handleWheel, { passive: false });
+      horizontalScrollCleanups.push(() => {
+        element.removeEventListener("wheel", handleWheel);
+      });
     });
   }
+
+  function initializeGlobalScripts() {
+    initializePreline();
+    if (behaviorInitialized) return;
+    behaviorInitialized = true;
+    initializeMotionAnimations();
+    initializeHorizontalScroll();
+  }
+
+  function teardownGlobalBehavior() {
+    motionObserverCleanups.forEach((cleanup) => cleanup());
+    motionObserverCleanups.length = 0;
+    horizontalScrollCleanups.forEach((cleanup) => cleanup());
+    horizontalScrollCleanups.length = 0;
+    behaviorInitialized = false;
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeGlobalScripts, {
+      once: true,
+    });
+  } else {
+    initializeGlobalScripts();
+  }
+
+  window.addEventListener("pagehide", teardownGlobalBehavior);
+  window.addEventListener("pageshow", initializeGlobalScripts);
 </script>

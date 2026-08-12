@@ -14,7 +14,9 @@ const copyrightParts = splitProtectedText(copyrightText);
 const { subscription } = config.settings;
 ---
 
-<footer class="to-primary/20 lg:to-primary/5 bg-linear-to-b from-transparent">
+<footer
+  data-site-footer
+  class="to-primary/20 lg:to-primary/5 bg-linear-to-b from-transparent">
   <div
     class="lg:bg-[radial-gradient(55%_55%_at_50%_130%,--theme(--color-primary/15%)_40%,transparent_120%)] xl:bg-[radial-gradient(55%_55%_at_50%_100%,--theme(--color-primary/10%)_0%,transparent_100%)]">
     <div class="container space-y-16 lg:space-y-28">
@@ -159,9 +161,9 @@ const { subscription } = config.settings;
 </footer>
 
 <script>
-  const ctaSection = document.querySelector(".cta-section");
-  const footer = document.querySelector("footer") as HTMLElement;
-  if (!ctaSection) {
+  const footer = document.querySelector<HTMLElement>("[data-site-footer]");
+  const callToAction = document.querySelector(".cta-section");
+  if (footer && !callToAction) {
     footer.classList.add("has-call-to-action");
   }
 </script>

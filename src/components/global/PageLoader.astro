@@ -4,14 +4,39 @@
 
 <div
   class="page-loader bg-body pointer-events-none fixed bottom-0 left-0 z-50 size-full transition duration-300 [&.inactive]:opacity-0">
-  <script>
-    const pageLoader = document.querySelector(".page-loader");
-    document.addEventListener("DOMContentLoaded", () => {
-      if (pageLoader) {
-        setTimeout(() => {
-          pageLoader.classList.add("inactive");
-        }, 100);
-      }
-    });
-  </script>
 </div>
+
+<script>
+  const pendingLoaders = new Map<HTMLElement, number>();
+
+  function revealPageLoaders() {
+    document.querySelectorAll<HTMLElement>(".page-loader").forEach((loader) => {
+      if (loader.classList.contains("inactive") || pendingLoaders.has(loader)) {
+        return;
+      }
+
+      const timeoutId = window.setTimeout(() => {
+        loader.classList.add("inactive");
+        pendingLoaders.delete(loader);
+      }, 100);
+
+      pendingLoaders.set(loader, timeoutId);
+    });
+  }
+
+  function clearPendingLoaderTimers() {
+    pendingLoaders.forEach((timeoutId) => {
+      window.clearTimeout(timeoutId);
+    });
+    pendingLoaders.clear();
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", revealPageLoaders, {
+      once: true,
+    });
+  } else {
+    revealPageLoaders();
+  }
+
+  window.addEventListener("pagehide", clearPendingLoaderTimers);
+</script>
