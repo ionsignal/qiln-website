@@ -1,56 +1,95 @@
 ---
 import { formatUrl } from "@/utils/core";
 import { markdownify } from "@/utils/text";
+import type { HTMLAttributes } from "astro/types";
 
-type Props = {
-  tag?: "button" | "a";
-  content: {
-    enable?: boolean;
-    label: string;
-    url?: string;
-    rel?: string;
-    target?: string;
-  };
+interface ActionContent {
+  enable?: boolean;
+  label: string;
+  url?: string;
+  rel?: string;
+  target?: string;
+}
+
+interface BaseProps {
+  content: ActionContent;
   class?: string;
-  [key: string]: any;
-};
+}
 
-const {
-  tag = "a",
-  content: { enable, label, url, rel, target },
-  ...rest
-} = Astro.props;
+type AnchorAttributes = Omit<
+  HTMLAttributes<"a">,
+  "class" | "href" | "rel" | "target"
+>;
+
+type ButtonAttributes = Omit<HTMLAttributes<"button">, "class">;
+
+type AnchorProps = BaseProps &
+  AnchorAttributes & {
+    tag?: "a";
+  };
+
+type ButtonProps = BaseProps &
+  ButtonAttributes & {
+    tag: "button";
+  };
+
+type Props = AnchorProps | ButtonProps;
+
+function isButtonProps(props: Props): props is ButtonProps {
+  return props.tag === "button";
+}
+
+function getAnchorAttributes(props: AnchorProps): AnchorAttributes {
+  const {
+    tag: _tag,
+    content: _content,
+    class: _className,
+    ...attributes
+  } = props;
+
+  return attributes;
+}
+
+function getButtonAttributes(props: ButtonProps): ButtonAttributes {
+  const {
+    tag: _tag,
+    content: _content,
+    class: _className,
+    ...attributes
+  } = props;
+
+  return attributes;
+}
+
+const props = Astro.props;
+const { enable, label, url, rel, target } = props.content;
+const className = props.class;
+const isButton = isButtonProps(props);
+const buttonAttributes = isButton ? getButtonAttributes(props) : {};
+const anchorAttributes = isButton ? {} : getAnchorAttributes(props);
+const isExternal = url?.startsWith("http") ?? false;
+const resolvedRel = isExternal ? rel || "noopener noreferrer" : rel;
+const resolvedTarget = isExternal ? target || "_blank" : target;
 ---
 
 {
   enable &&
-    (tag && tag === "button" ? (
+    (isButton ? (
       <button
         data-content={label}
-        class:list={["btn", Astro.props.class, "relative overflow-hidden"]}
-        {...rest}>
+        class:list={["btn", className, "relative overflow-hidden"]}
+        {...buttonAttributes}>
         <span class="label" set:html={markdownify(label)} />
         <slot />
       </button>
     ) : (
       <a
-        {...{
-          // Set `rel` attribute for external urls or use provided value
-          rel: url?.startsWith("http")
-            ? rel || "noopener noreferrer"
-            : rel || undefined,
-
-          // Set `target` to "_blank" for external urls unless otherwise specified
-          target: url?.startsWith("http")
-            ? target || "_blank"
-            : target || undefined,
-
-          // Set `href` attribute
-          href: url && formatUrl(url),
-        }}
+        rel={resolvedRel}
+        target={resolvedTarget}
+        href={url ? formatUrl(url) : undefined}
         data-content={label}
-        class:list={["btn", Astro.props.class, "relative overflow-hidden"]}
-        {...rest}>
+        class:list={["btn", className, "relative overflow-hidden"]}
+        {...anchorAttributes}>
         <span class="label" set:html={markdownify(label)} />
         <slot />
       </a>

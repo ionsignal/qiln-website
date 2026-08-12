@@ -1,31 +1,98 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 
-interface Props extends HTMLAttributes<"svg"> {
+type Props = Omit<HTMLAttributes<"svg">, "class"> & {
   icon: string;
   class?: string;
+};
+
+function escapeAttribute(value: string): string {
+  return value.replace(
+    /[&"<>]/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        '"': "&quot;",
+        "<": "&lt;",
+        ">": "&gt;",
+      })[character] ?? character,
+  );
 }
 
-const { icon, class: className, ...rest } = Astro.props;
+function toCssPropertyName(property: string): string {
+  if (property.startsWith("--")) return property;
+  return property.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+}
+
+function serializeStyle(value: unknown): string | undefined {
+  if (typeof value === "string") return value;
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return undefined;
+  }
+  const declarations = Object.entries(value)
+    .flatMap(([property, propertyValue]) => {
+      if (
+        typeof propertyValue !== "string" &&
+        typeof propertyValue !== "number"
+      ) {
+        return [];
+      }
+      const cssProperty = toCssPropertyName(property);
+      if (!/^--[A-Za-z0-9_-]+$|^-?[A-Za-z][A-Za-z0-9-]*$/.test(cssProperty)) {
+        return [];
+      }
+      return [`${cssProperty}:${String(propertyValue)}`];
+    })
+    .join(";");
+  return declarations || undefined;
+}
+
+function serializeAttribute(name: string, value: unknown): string | undefined {
+  if (!/^[A-Za-z_:][A-Za-z0-9:._-]*$/.test(name)) return undefined;
+  if (value === null || value === undefined) return undefined;
+
+  const serializedValue = name === "style" ? serializeStyle(value) : value;
+
+  if (
+    typeof serializedValue !== "string" &&
+    typeof serializedValue !== "number" &&
+    typeof serializedValue !== "boolean"
+  ) {
+    return undefined;
+  }
+
+  return `${name}="${escapeAttribute(String(serializedValue))}"`;
+}
+
+const { icon, class: className, ...attributes } = Astro.props;
 const svgFiles = import.meta.glob("/src/assets/images/icons/**/*.svg", {
   query: "?raw",
   import: "default",
 });
 const expectedPath = `/src/assets/images/icons/${icon}.svg`;
+const loadSvg = svgFiles[expectedPath];
 let svgContent = "";
-if (expectedPath in svgFiles) {
-  svgContent = (await svgFiles[expectedPath]()) as string;
+if (loadSvg) {
+  const loadedSvg = await loadSvg();
+  if (typeof loadedSvg === "string") {
+    svgContent = loadedSvg;
+  }
 } else if (import.meta.env.DEV) {
   console.warn(`[SvgIcon.astro] Icon not found: ${expectedPath}`);
 }
 if (svgContent) {
-  const attributes = Object.entries(rest)
-    .map(([key, value]) => `${key}="${value}"`)
+  const serializedAttributes = [
+    className ? serializeAttribute("class", className) : undefined,
+    ...Object.entries(attributes).map(([name, value]) =>
+      serializeAttribute(name, value),
+    ),
+    serializeAttribute("data-icon", icon),
+  ]
+    .filter((attribute): attribute is string => Boolean(attribute))
     .join(" ");
-  const classInjection = className ? `class="${className}"` : "";
   svgContent = svgContent.replace(
-    /^<svg/,
-    `<svg ${classInjection} ${attributes} data-icon="${icon}"`,
+    /^<svg\b/,
+    serializedAttributes ? `<svg ${serializedAttributes}` : "<svg",
   );
 }
 ---

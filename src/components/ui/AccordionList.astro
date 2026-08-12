@@ -1,25 +1,36 @@
 ---
-import Icons from "@/components/helpers/LucideIcon.astro";
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
 import { markdownify } from "@/utils/text";
+import type { HTMLAttributes } from "astro/types";
 
-interface Props {
-  content: any[];
-  groupId?: string;
-  class?: string;
-  [key: string]: any;
+interface AccordionItem {
+  active?: boolean;
+  title: string;
+  content: string;
 }
 
-const { content: list, groupId, ...rest } = Astro.props;
+type Props = Omit<HTMLAttributes<"div">, "class"> & {
+  content: AccordionItem[];
+  groupId?: string;
+  class?: string;
+};
+
+const {
+  content: items,
+  groupId,
+  class: className,
+  ...attributes
+} = Astro.props;
 ---
 
-<div {...rest}>
+<div class={className} {...attributes}>
   <div class="hs-accordion-group space-y-5">
     {
-      list.map((item, index) => {
-        const uniqueId = groupId
-          ? groupId + "-" + (index + 1)
-          : index + 1;
-
+      items.map((item, index) => {
+        const uniqueId = groupId ? `${groupId}-${index + 1}` : `${index + 1}`;
+        const accordionId = `faq-${uniqueId}`;
+        const toggleId = `faq-toggle-${uniqueId}`;
+        const contentId = `faq-content-${uniqueId}`;
         return (
           <div
             class:list={[
@@ -27,20 +38,24 @@ const { content: list, groupId, ...rest } = Astro.props;
               "hs-accordion hs-accordion-active:opacity-100 opacity-70",
               item.active && "active",
             ]}
-            id={"faq-" + uniqueId}>
+            id={accordionId}>
             <button
+              id={toggleId}
+              type="button"
               aria-expanded={item.active ? "true" : "false"}
               class="hs-accordion-toggle hs-accordion-active:border-b flex w-full items-center justify-between py-5 text-start text-lg text-white"
-              aria-controls={"faq-content-" + uniqueId}>
+              aria-controls={contentId}>
               <span set:html={item.title} />
-              <span class="hs-accordion-active:rotate-180 transition duration-300">
-                <Icons icon="ArrowUpRight" class="text-xl text-white" />
+              <span
+                class="hs-accordion-active:rotate-180 transition duration-300"
+                aria-hidden="true">
+                <LucideIcon icon="ArrowUpRight" class="text-xl text-white" />
               </span>
             </button>
             <div
               role="region"
-              id={"faq-content-" + uniqueId}
-              aria-labelledby={"faq-" + uniqueId}
+              id={contentId}
+              aria-labelledby={toggleId}
               class:list={[
                 "hs-accordion-content overflow-hidden transition-[height] duration-300",
                 !item.active && "hidden",

@@ -2,31 +2,26 @@
 import SvgIcon from "@/components/helpers/SvgIcon.astro";
 import { formatUrl } from "@/utils/core";
 import type { SocialLink } from "@/types";
+import type { HTMLAttributes } from "astro/types";
 
-interface BaseProps {
+interface Props extends Omit<HTMLAttributes<"ul">, "class" | "title"> {
   class?: string;
   size?: "sm" | "md" | "lg";
   list: SocialLink[];
   linkType?: "share" | "follow";
-  layout: "classic" | "minimal" | "modern";
-  [key: string]: any;
-}
-
-interface ShareProps extends BaseProps {
-  slug: string;
-  linkType?: "share";
+  layout?: "classic" | "minimal" | "modern";
+  slug?: string;
   title?: string;
   description?: string;
   disabled?: string[];
 }
 
-interface FollowProps extends BaseProps {
-  linkType?: "follow";
+interface SocialItem {
+  social: SocialLink;
+  href: string;
 }
 
-type Props = ShareProps | FollowProps;
-
-let {
+const {
   list,
   size = "md",
   title,
@@ -36,76 +31,88 @@ let {
   linkType = "follow",
   description,
   class: className,
-  ...rest
-} = Astro.props as Props;
-slug = slug ? formatUrl(slug) : "";
-list = linkType === "share" ? list : list.filter((social) => social.url);
-const baseURL = import.meta.env.SITE;
-const shareLinks: { [key: string]: string } = {
-  facebook: `https://www.facebook.com/sharer/sharer.php?u=${slug}`,
-  twitter: `https://twitter.com/intent/tweet/?text=${title || ""}&amp;url=${slug}`,
-  linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${slug}&title=${title || ""}&summary=${encodeURIComponent(description || "")}&source=${baseURL}`,
-  pinterest: `https://pinterest.com/pin/create/button/?url=${slug}&media=&description=${encodeURIComponent(description || "")}`,
+  ...attributes
+} = Astro.props;
+
+const formattedSlug = slug ? formatUrl(slug) : "";
+const encodedSlug = encodeURIComponent(formattedSlug);
+const encodedTitle = encodeURIComponent(title || "");
+const encodedDescription = encodeURIComponent(description || "");
+const baseUrl = encodeURIComponent(Astro.site?.href ?? Astro.url.origin);
+
+const shareLinks: Record<string, string> = {
+  facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedSlug}`,
+  twitter: `https://twitter.com/intent/tweet/?text=${encodedTitle}&url=${encodedSlug}`,
+  linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${encodedSlug}&title=${encodedTitle}&summary=${encodedDescription}&source=${baseUrl}`,
+  pinterest: `https://pinterest.com/pin/create/button/?url=${encodedSlug}&media=&description=${encodedDescription}`,
 };
 
+let visibleLinks =
+  linkType === "share" ? [...list] : list.filter((social) => social.url);
+
 if (disabled) {
-  list = list.filter((social) => !disabled.includes(social.label));
+  visibleLinks = visibleLinks.filter(
+    (social) => !disabled.includes(social.label),
+  );
 }
+
+const socialItems: SocialItem[] = visibleLinks.flatMap((social) => {
+  const href =
+    linkType === "share" ? shareLinks[social.label.toLowerCase()] : social.url;
+
+  return href ? [{ social, href }] : [];
+});
 ---
 
 {
-  list && list[0] && (
-    <ul class:list={["flex flex-wrap items-center gap-4", className]} {...rest}>
-      {list.map((social) => (
-        <>
-          <li>
-            <a
-              aria-label={social.label}
-              href={
-                linkType === "share" ? shareLinks[social.label] : social.url
-              }
-              target="_blank"
-              rel="noopener noreferrer nofollow"
-              class:list={[
-                "group relative flex items-center justify-center transition-all duration-300",
-                {
-                  /* Bioluminescent Glass for Classic Layout */
-                  "text-text-default hover:bg-primary/10 hover:border-primary/40 hover:text-primary hover:shadow-[0_0_15px_--theme(--color-primary/20%)] rounded-full border border-transparent bg-white/5 backdrop-blur-md":
-                    layout === "classic",
-                },
-                {
-                  "text-text-default hover:text-primary hover:scale-110":
-                    layout === "minimal",
-                },
-                {
-                  "hover:bg-primary text-text-default hover:text-light rounded-full bg-white/5":
-                    layout === "modern",
-                },
-                {
-                  "h-12 w-12": size === "sm",
-                  "h-14 w-14": size === "md",
-                  "h-16 w-16": size === "lg",
-                },
-              ]}>
-              <span class="sr-only">{social.label}</span>
-              {social.icon && (
-                <SvgIcon
-                  icon={social.icon}
-                  class:list={[
-                    /* Removed group-hover:text-light so it inherits the parent's hover:text-primary */
-                    "relative z-10 text-inherit transition-colors duration-300",
-                    {
-                      "h-4 w-4": size === "sm",
-                      "h-5 w-5": size === "md",
-                      "h-6 w-6": size === "lg",
-                    },
-                  ]}
-                />
-              )}
-            </a>
-          </li>
-          <li class="sr-only">gats-finzo</li>
-        </>
+  socialItems.length > 0 && (
+    <ul
+      class:list={["flex flex-wrap items-center gap-4", className]}
+      {...attributes}>
+      {socialItems.map(({ social, href }) => (
+        <li>
+          <a
+            aria-label={social.label}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            class:list={[
+              "group relative flex items-center justify-center transition-all duration-300",
+              {
+                "text-text-default hover:bg-primary/10 hover:border-primary/40 hover:text-primary hover:shadow-[0_0_15px_--theme(--color-primary/20%)] rounded-full border border-transparent bg-white/5 backdrop-blur-md":
+                  layout === "classic",
+              },
+              {
+                "text-text-default hover:text-primary hover:scale-110":
+                  layout === "minimal",
+              },
+              {
+                "hover:bg-primary text-text-default hover:text-light rounded-full bg-white/5":
+                  layout === "modern",
+              },
+              {
+                "h-12 w-12": size === "sm",
+                "h-14 w-14": size === "md",
+                "h-16 w-16": size === "lg",
+              },
+            ]}>
+            <span class="sr-only">{social.label}</span>
+            {social.icon && (
+              <SvgIcon
+                icon={social.icon}
+                class:list={[
+                  "relative z-10 text-inherit transition-colors duration-300",
+                  {
+                    "h-4 w-4": size === "sm",
+                    "h-5 w-5": size === "md",
+                    "h-6 w-6": size === "lg",
+                  },
+                ]}
+                aria-hidden="true"
+              />
+            )}
+          </a>
+        </li>
       ))}
     </ul>
   )

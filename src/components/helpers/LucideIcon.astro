@@ -1,15 +1,34 @@
 ---
 import * as LucideIcons from "@lucide/astro";
-interface Props {
+import type { ComponentProps } from "astro/types";
+
+type LucideIconComponent = typeof LucideIcons.Circle;
+type LucideIconProps = ComponentProps<LucideIconComponent>;
+
+type Props = Omit<LucideIconProps, "class"> & {
   icon: string;
   class?: string;
-  [key: string]: any;
+};
+
+function isLucideExportName(value: string): value is keyof typeof LucideIcons {
+  return Object.prototype.hasOwnProperty.call(LucideIcons, value);
 }
-const { icon, class: className, ...restProps } = Astro.props;
-const IconComponent = LucideIcons[icon as keyof typeof LucideIcons] as any;
+
+function isLucideIconComponent(value: unknown): value is LucideIconComponent {
+  return typeof value === "function";
+}
+
+const { icon, class: className, ...attributes } = Astro.props;
+const iconExport: unknown = isLucideExportName(icon)
+  ? LucideIcons[icon]
+  : undefined;
+const IconComponent = isLucideIconComponent(iconExport)
+  ? iconExport
+  : undefined;
+
 if (!IconComponent && import.meta.env.DEV) {
-  console.warn(`[Icons.astro] Lucide icon "${icon}" not found.`);
+  console.warn(`[LucideIcon.astro] Lucide icon "${icon}" not found.`);
 }
 ---
 
-{IconComponent ? <IconComponent class={className} {...restProps} /> : null}
+{IconComponent ? <IconComponent class={className} {...attributes} /> : null}
