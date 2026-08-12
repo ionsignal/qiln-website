@@ -5,28 +5,11 @@ type VisualizationCleanup = () => void;
 const MAX_PIXEL_RATIO = 1.5;
 const GEOMETRY_SEGMENTS = 96;
 const GRID_CELLS = 80;
-
-const PULSE_POOL_SIZE = 16;
-const PULSE_LIFETIME_SECONDS = 1.5;
-const PULSE_ATTACK_SECONDS = 0.15;
-const PULSE_SPAWN_INTERVAL_MIN_SECONDS = 0.05;
-const PULSE_SPAWN_INTERVAL_MAX_SECONDS = 0.3;
-const PULSE_RADIUS_UV = 0.05;
-const PULSE_MAX_GLOW_INTENSITY = 0.38;
-const GRID_LINE_ALPHA = 0.34;
-const PULSE_ALPHA_CONTRIBUTION = 0.2;
-const PULSE_SPAWN_ROW_MIN = Math.floor(0.34 * GRID_CELLS);
-const PULSE_SPAWN_ROW_MAX = Math.floor(0.64 * GRID_CELLS);
-const PULSE_SENTINEL_AGE = -1;
+const GRID_LINE_ALPHA = 0.44;
 const FRAME_DELTA_CLAMP_SECONDS = 0.1;
 
 const activeVisualizations = new WeakMap<HTMLElement, VisualizationCleanup>();
 const noOpCleanup: VisualizationCleanup = () => {};
-
-const getRandomSpawnInterval = () =>
-  PULSE_SPAWN_INTERVAL_MIN_SECONDS +
-  Math.random() *
-    (PULSE_SPAWN_INTERVAL_MAX_SECONDS - PULSE_SPAWN_INTERVAL_MIN_SECONDS);
 
 export async function initVisualization(
   target: string | HTMLElement,
@@ -63,16 +46,10 @@ export async function initVisualization(
   let intersectionObserver: IntersectionObserver | null = null;
   let animationFrameId: number | null = null;
   let lastFrameTime: number | null = null;
-  let timeUntilNextPulse = getRandomSpawnInterval();
   let isContainerVisible = false;
   let isDisposed = false;
   let isRestoringContext = false;
   let needsStaticFrame = true;
-
-  const pulseData = new Float32Array(PULSE_POOL_SIZE * 4);
-  for (let index = 0; index < PULSE_POOL_SIZE; index++) {
-    pulseData[index * 4 + 2] = PULSE_SENTINEL_AGE;
-  }
 
   const stopRenderLoop = () => {
     if (animationFrameId !== null) {
@@ -111,51 +88,11 @@ export async function initVisualization(
 
   activeVisualizations.set(container, cleanup);
 
-  const trySpawnPulse = () => {
-    let availableSlot = -1;
-    for (let index = 0; index < PULSE_POOL_SIZE; index++) {
-      if (pulseData[index * 4 + 2] < 0) {
-        availableSlot = index;
-        break;
-      }
-    }
-    if (availableSlot === -1) return false;
-    const gridColumn = Math.floor(Math.random() * (GRID_CELLS - 1)) + 1;
-    const gridRow =
-      Math.floor(
-        Math.random() * (PULSE_SPAWN_ROW_MAX - PULSE_SPAWN_ROW_MIN + 1),
-      ) + PULSE_SPAWN_ROW_MIN;
-    const pulseOffset = availableSlot * 4;
-    pulseData[pulseOffset] = gridColumn / GRID_CELLS;
-    pulseData[pulseOffset + 1] = gridRow / GRID_CELLS;
-    pulseData[pulseOffset + 2] = 0;
-    pulseData[pulseOffset + 3] = 0;
-    return true;
-  };
-
-  const updateAnimationState = (deltaSeconds: number) => {
+  const advanceGridTime = (deltaSeconds: number) => {
     if (!mesh?.uniforms.params || deltaSeconds <= 0) return;
     const params = mesh.uniforms.params;
     const currentTime = params.time.value as number;
     params.time.value = currentTime + deltaSeconds * 0.3;
-    let pulsesChanged = false;
-    for (let index = 0; index < PULSE_POOL_SIZE; index++) {
-      const ageOffset = index * 4 + 2;
-      if (pulseData[ageOffset] < 0) continue;
-      pulseData[ageOffset] += deltaSeconds;
-      pulsesChanged = true;
-      if (pulseData[ageOffset] >= PULSE_LIFETIME_SECONDS) {
-        pulseData[ageOffset] = PULSE_SENTINEL_AGE;
-      }
-    }
-    timeUntilNextPulse -= deltaSeconds;
-    if (timeUntilNextPulse <= 0) {
-      pulsesChanged = trySpawnPulse() || pulsesChanged;
-      timeUntilNextPulse = getRandomSpawnInterval();
-    }
-    if (pulsesChanged) {
-      params.pulses.shouldUpdate = true;
-    }
   };
 
   const shouldRender = () =>
@@ -182,7 +119,7 @@ export async function initVisualization(
           );
     lastFrameTime = timestamp;
     if (!prefersReducedMotion) {
-      updateAnimationState(deltaSeconds);
+      advanceGridTime(deltaSeconds);
     }
     gpuCurtains.render();
     if (prefersReducedMotion) {
@@ -266,63 +203,14 @@ export async function initVisualization(
         let lineAlpha = 1.0 - min(lineDistance, 1.0);
         let viewDistance = length(fsInput.viewDirection);
         let fogFactor = smoothstep(14.0, 28.0, viewDistance);
-
-        var pulseGlow: f32 = 0.0;
-        let pulseRadius = ${PULSE_RADIUS_UV.toFixed(4)};
-        let pulseRadiusSquared = pulseRadius * pulseRadius;
-        let pulseCutoffSquared = pulseRadiusSquared * 9.0;
-
-        for (
-          var pulseIndex: i32 = 0;
-          pulseIndex < ${PULSE_POOL_SIZE};
-          pulseIndex = pulseIndex + 1
-        ) {
-          let pulse = params.pulses[pulseIndex];
-          let pulseAge = pulse.z;
-
-          if (pulseAge < 0.0) {
-            continue;
-          }
-
-          let pulseDelta = fsInput.uv - pulse.xy;
-          let pulseDistanceSquared = dot(pulseDelta, pulseDelta);
-
-          if (pulseDistanceSquared > pulseCutoffSquared) {
-            continue;
-          }
-
-          let spatialFalloff =
-            exp(-pulseDistanceSquared / pulseRadiusSquared);
-          let attack = smoothstep(
-            0.0,
-            ${PULSE_ATTACK_SECONDS.toFixed(4)},
-            pulseAge
-          );
-          let decay = 1.0 - smoothstep(
-            ${PULSE_ATTACK_SECONDS.toFixed(4)},
-            ${PULSE_LIFETIME_SECONDS.toFixed(4)},
-            pulseAge
-          );
-
-          pulseGlow += spatialFalloff * attack * decay;
-        }
-
-        pulseGlow =
-          min(pulseGlow, ${PULSE_MAX_GLOW_INTENSITY.toFixed(4)}) *
-          (1.0 - fogFactor);
-
         let finalColor =
-          mix(params.gridColor, params.bgColor, fogFactor) +
-          params.gridColor * pulseGlow;
-        let finalAlpha = min(
+          mix(params.gridColor, params.bgColor, fogFactor);
+        let finalAlpha =
           mix(
             lineAlpha * ${GRID_LINE_ALPHA.toFixed(4)},
             0.0,
             fogFactor
-          ) +
-          pulseGlow * ${PULSE_ALPHA_CONTRIBUTION.toFixed(4)},
-          1.0
-        );
+          );
 
         return vec4f(finalColor, finalAlpha);
       }
@@ -346,10 +234,6 @@ export async function initVisualization(
             bgColor: {
               type: "vec3f",
               value: new Vec3(6 / 255, 9 / 255, 19 / 255),
-            },
-            pulses: {
-              type: "array<vec4f>",
-              value: pulseData,
             },
           },
         },
