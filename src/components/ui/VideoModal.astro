@@ -1,12 +1,23 @@
 ---
-import Icons from "@/components/helpers/LucideIcon.astro";
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
 import type { VideoConfig } from "@/types";
+
 interface Props {
   video: VideoConfig;
 }
+
 const { video } = Astro.props;
-let { src, provider = "youtube", poster, autoplay = true, type, id } = video;
-const config = {
+const {
+  src,
+  provider: configuredProvider = "youtube",
+  poster,
+  autoplay = true,
+  type,
+} = video;
+const modalId = video.id?.trim() || "qiln-video-modal";
+const provider = configuredProvider.trim().toLowerCase() || "youtube";
+const isHtml5Video = provider === "html5";
+const playerConfig = {
   hideControls: false,
   debug: false,
   iconUrl: "/plyr/plyr.svg",
@@ -15,51 +26,51 @@ const config = {
     noCookie: true,
   },
 };
-const isLocalHostedVideo = src?.includes("/videos/") && provider === "html5";
 ---
 
 {
   src && (
     <div
-      id={id}
+      id={modalId}
       class="hs-overlay pointer-events-none fixed inset-s-0 top-0 z-60 hidden size-full overflow-x-hidden overflow-y-auto"
       role="dialog"
+      aria-modal="true"
+      aria-label="Video player"
       tabindex="-1">
       <div class="hs-overlay-animation-target hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 flex min-h-[calc(100%-3.5rem)] items-center opacity-0 transition-[margin,opacity] ease-out sm:mx-auto sm:w-full sm:max-w-4xl">
         <div class="has-video-player pointer-events-auto container flex flex-col">
           <button
             type="button"
-            aria-label="Close"
-            data-hs-overlay={`#${id}`}
-            data-hs-overlay-options={`{"emulateScrollbarSpace" : true}`}
+            aria-label="Close video"
+            data-hs-overlay={`#${modalId}`}
+            data-hs-overlay-options='{"emulateScrollbarSpace" : true}'
             class="mb-2 ml-auto flex h-10 w-10 items-center justify-center rounded-full bg-white ring-0 ring-white/50 duration-300 hover:rotate-90 hover:ring-4">
-            <span class="sr-only">Close</span>
-            <Icons icon="X" class="text-dark/80 h-6 w-6" />
+            <LucideIcon
+              icon="X"
+              class="text-dark/80 h-6 w-6"
+              aria-hidden="true"
+            />
           </button>
-          {isLocalHostedVideo ? (
+          {isHtml5Video ? (
             <video
               class="video-player"
               playsinline
               controls
-              {...{
-                "data-id": `${id}`,
-                "data-autoplay": `${autoplay === true ? "true" : "false"}`,
-                "data-poster": poster || undefined,
-                "data-plyr-config": `${JSON.stringify(config)}`,
-              }}>
+              data-id={modalId}
+              data-autoplay={autoplay ? "true" : "false"}
+              data-poster={poster}
+              data-plyr-config={JSON.stringify(playerConfig)}>
               <source src={src} type={type} />
             </video>
           ) : (
             <div
               class="video-player"
-              {...{
-                "data-autoplay": `${autoplay === true ? "true" : "false"}`,
-                "data-id": `${id}`,
-                "data-plyr-provider": provider || undefined,
-                "data-plyr-embed-id": src || undefined,
-                "data-plyr-poster": poster || undefined,
-                "data-plyr-config": `${JSON.stringify(config)}`,
-              }}
+              data-autoplay={autoplay ? "true" : "false"}
+              data-id={modalId}
+              data-plyr-provider={provider}
+              data-plyr-embed-id={src}
+              data-plyr-poster={poster}
+              data-plyr-config={JSON.stringify(playerConfig)}
             />
           )}
         </div>
@@ -69,34 +80,42 @@ const isLocalHostedVideo = src?.includes("/videos/") && provider === "html5";
 }
 
 <script>
-  // @ts-nocheck
   const videoButtons = document.querySelectorAll(
     "[data-hs-overlay].video-modal-toggle",
   );
+
   videoButtons.forEach((button) => {
     button.addEventListener("click", async () => {
       try {
-        // Dynamically import Plyr and its css
-        const { default: Plyr } = await import("plyr");
-        await import("plyr/dist/plyr.css");
-        const players = Plyr.setup(".video-player") as Plyr[];
-        players?.forEach((player) => {
-          let videoElem = player.elements.original as HTMLVideoElement;
-          const autoplayAttr = videoElem?.getAttribute("data-autoplay");
-          const id = videoElem?.getAttribute("data-id");
-          const isAutoplay = autoplayAttr === "true" ? true : false;
-          const overlayElement = document.getElementById(id);
-          if (overlayElement) {
-            // Play Video when Modal Open
-            overlayElement.addEventListener("open.hs.overlay", function () {
-              if (isAutoplay) player.ready && player.play();
-            });
-            // Pause Video when Modal Close
-            overlayElement.addEventListener("close.hs.overlay", function () {
-              if (!player.pip) player.ready && player.pause();
-            });
-          }
-        });
+        // const { default: Plyr } = await import("plyr");
+        // await import("plyr/dist/plyr.css");
+
+        // const players = Plyr.setup(".video-player");
+
+        alert("needs fixes");
+
+        // players.forEach((player) => {
+        //   const originalElement = player.elements.original;
+        //   const autoplay = originalElement.dataset.autoplay === "true";
+        //   const modalId = originalElement.dataset.id;
+
+        //   if (!modalId) return;
+
+        //   const overlayElement = document.getElementById(modalId);
+        //   if (!overlayElement) return;
+
+        //   overlayElement.addEventListener("open.hs.overlay", () => {
+        //     if (autoplay && player.ready) {
+        //       void player.play();
+        //     }
+        //   });
+
+        //   overlayElement.addEventListener("close.hs.overlay", () => {
+        //     if (!player.pip && player.ready) {
+        //       player.pause();
+        //     }
+        //   });
+        // });
       } catch (error) {
         console.error("Failed to load Plyr", error);
       }

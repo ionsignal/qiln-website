@@ -14,9 +14,22 @@ type Props = {
   content?: SectionData;
 };
 
-let defaultContent = (await fetchEntry("sections", "call-to-action"))?.data;
-let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
-let { enable = true, title, features, ctaBtn, image } = actualContent;
+const defaultContent = (await fetchEntry("sections", "call-to-action"))?.data;
+const actualContent = overrideObjects<SectionData>(
+  defaultContent ?? {},
+  Astro.props.content,
+);
+const { enable = true, title, features, ctaBtn, image } = actualContent;
+const videoModalId =
+  ctaBtn?.type === "video" && ctaBtn.video
+    ? ctaBtn.video.id?.trim() ||
+      `video-modal-${
+        ctaBtn.label
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "") || "cta"
+      }`
+    : undefined;
 ---
 
 {
@@ -61,7 +74,7 @@ let { enable = true, title, features, ctaBtn, image } = actualContent;
             <div class="flex w-full flex-wrap items-center gap-x-8 gap-y-6 sm:gap-x-12 lg:max-w-lg lg:gap-x-16">
               {ctaBtn && ctaBtn.enable && (
                 <div>
-                  {ctaBtn.type === "video" ? (
+                  {ctaBtn.type === "video" && ctaBtn.video && videoModalId ? (
                     <ActionButton
                       tag={"button"}
                       content={ctaBtn}
@@ -69,8 +82,8 @@ let { enable = true, title, features, ctaBtn, image } = actualContent;
                       title="Play Video"
                       aria-haspopup="dialog"
                       aria-expanded="false"
-                      aria-controls={"#" + ctaBtn.video?.id}
-                      data-hs-overlay={"#" + ctaBtn.video?.id}
+                      aria-controls={videoModalId}
+                      data-hs-overlay={`#${videoModalId}`}
                       data-hs-overlay-options={`{"emulateScrollbarSpace" : true}`}
                       class="video-modal-toggle btn-md btn-primary btn-has-icon group after:bg-primary/25 relative z-0 flex items-center gap-4 after:pointer-events-none after:absolute after:inset-0 after:z-10 after:size-full [&>.label]:z-20">
                       <span class="has-animated-waves waves-white waves-sm relative z-20 flex h-6 w-6 items-center justify-center rounded-full">
@@ -80,7 +93,7 @@ let { enable = true, title, features, ctaBtn, image } = actualContent;
                           class="text-primary ml-0.5 h-3 w-3"
                         />
                       </span>
-                      {ctaBtn?.video?.src && (
+                      {ctaBtn.video.src && (
                         <video
                           autoplay
                           muted
@@ -92,8 +105,8 @@ let { enable = true, title, features, ctaBtn, image } = actualContent;
                               ? ctaBtn?.video?.src
                               : null,
                           }}>
-                          {!ctaBtn?.video?.src.startsWith("http") && (
-                            <source src={ctaBtn?.video?.src} type="video/mp4" />
+                          {!ctaBtn.video.src.startsWith("http") && (
+                            <source src={ctaBtn.video.src} type="video/mp4" />
                           )}
                           Your browser does not support the video tag.
                         </video>
@@ -117,12 +130,15 @@ let { enable = true, title, features, ctaBtn, image } = actualContent;
           </div>
         </div>
       </div>
-      {ctaBtn?.type === "video" && ctaBtn.video && (
+      {ctaBtn?.type === "video" && ctaBtn.video && videoModalId && (
         <VideoModal
           video={{
-            id: ctaBtn.video.id,
+            id: videoModalId,
             src: ctaBtn.video.src,
-            provider: ctaBtn.video.provider as any,
+            provider: ctaBtn.video.provider,
+            type: ctaBtn.video.type,
+            poster: ctaBtn.video.poster,
+            autoplay: ctaBtn.video.autoplay,
           }}
         />
       )}
