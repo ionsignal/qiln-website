@@ -1,48 +1,68 @@
 ---
 import generateJsonLd from "@/utils/jsonLd";
 import config from ".astro/config.generated.json";
+import type { SeoProps } from "@/types/seo";
+
+interface Props {
+  content?: SeoProps;
+}
 
 const { content } = Astro.props;
-let {
-  title = config.site.title,
-  metaTitle = title,
-  description = config.site.description,
-  metaDescription = description,
-  image = config.opengraph.image,
-  taglineSeparator = " - ",
-  disableTagline,
-  canonical,
-  lang,
-  author = config.seo.author,
-  structuredData,
-} = content;
-title =
-  !disableTagline && metaTitle ? metaTitle : title ? title : config.site.title;
-const alternateLangs: any[] = [];
-title += config.site.tagline ? taglineSeparator + config.site.tagline : "";
-description = metaDescription ? metaDescription : description;
-canonical = canonical ? canonical : Astro.url.href;
-lang = config.settings.multilingual.defaultLanguage || "en";
-image = image ? new URL(image, Astro.site ?? Astro.url.origin).href : "";
-const jsonLdData = generateJsonLd(
-  {
-    ...content,
-    ...structuredData,
+
+let jsonLdData = null;
+if (content) {
+  const {
     title,
+    metaTitle,
     description,
-    image,
+    metaDescription,
+    image = config.opengraph.image,
+    taglineSeparator = " - ",
+    disableTagline,
     canonical,
-    config,
-    author,
-    lang,
-    alternateLangs,
-  },
-  Astro,
-);
+    pageType,
+    structuredData,
+  } = content;
+  let resolvedTitle =
+    !disableTagline && metaTitle
+      ? metaTitle
+      : title
+        ? title
+        : config.site.title;
+  resolvedTitle += config.site.tagline
+    ? taglineSeparator + config.site.tagline
+    : "";
+  const resolvedDescription = metaDescription
+    ? metaDescription
+    : description
+      ? description
+      : config.site.description;
+  const resolvedCanonical = canonical
+    ? new URL(canonical, Astro.site ?? Astro.url.origin).href
+    : Astro.url.href;
+  const imageSrc = typeof image === "string" ? image : image.src;
+  const resolvedImage = imageSrc
+    ? new URL(imageSrc, Astro.site ?? Astro.url.origin).href
+    : "";
+  jsonLdData = generateJsonLd(
+    {
+      title: resolvedTitle,
+      description: resolvedDescription,
+      image: resolvedImage,
+      canonical: resolvedCanonical,
+      pageType,
+      structuredData,
+    },
+    {
+      site: Astro.site,
+      url: Astro.url,
+    },
+  );
+}
 ---
 
 {
-  content ? (
+  jsonLdData ? (
     <script
       type="application/ld+json"
       is:inline

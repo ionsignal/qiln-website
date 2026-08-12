@@ -1,11 +1,14 @@
 ---
 import config from ".astro/config.generated.json";
 import { plainify, removeWhitespace } from "@/utils/text";
+import type { SeoProps } from "@/types/seo";
 
-let {
-  title,
+type Props = SeoProps;
+
+const {
+  title: pageTitle,
   metaTitle,
-  description,
+  description: pageDescription,
   metaDescription,
   disableTagline,
   image = config.opengraph.image,
@@ -14,34 +17,35 @@ let {
   ogType = config.opengraph.ogType,
   ogLocale = config.opengraph.ogLocale,
 } = Astro.props;
-title = plainify(metaTitle ? metaTitle : title ? title : config.site.title);
-title = removeWhitespace(title);
-description = plainify(
-  metaDescription
-    ? metaDescription
-    : description
-      ? description
-      : config.site.description,
+
+let title = plainify(
+  metaTitle ? metaTitle : pageTitle ? pageTitle : config.site.title,
 );
-description = removeWhitespace(description);
-const pageUrl = new URL(Astro.url.pathname, Astro.site);
+
+title = removeWhitespace(title);
+
+const description = removeWhitespace(
+  plainify(
+    metaDescription
+      ? metaDescription
+      : pageDescription
+        ? pageDescription
+        : config.site.description,
+  ),
+);
 if (!disableTagline) {
   title =
     title +
     (config.site.tagline &&
       (config.site.taglineSeparator || " - ") + config.site.tagline);
 }
-const imageSrc = typeof image === "object" ? image.src : image;
+const baseUrl = Astro.site ?? new URL(Astro.url.origin);
+const pageUrl = new URL(Astro.url.pathname, baseUrl);
+const imageSrc = typeof image === "string" ? image : image.src;
+const absoluteImageUrl = imageSrc ? new URL(imageSrc, baseUrl).href : undefined;
 ---
 
-{
-  imageSrc && (
-    <meta
-      property="og:image"
-      content={new URL(imageSrc, Astro.site ?? Astro.url.origin).href}
-    />
-  )
-}
+{absoluteImageUrl && <meta property="og:image" content={absoluteImageUrl} />}
 {title && <meta property="og:title" content={removeWhitespace(title)} />}
 {
   config.site.title && (
@@ -51,27 +55,12 @@ const imageSrc = typeof image === "object" ? image.src : image;
     />
   )
 }
-{
-  description && (
-    <meta property="og:description" content={removeWhitespace(description)} />
-  )
-}
+{description && <meta property="og:description" content={description} />}
 {ogType && <meta property="og:type" content={ogType} />}
 {ogLocale && <meta property="og:locale" content={ogLocale} />}
-{pageUrl && <meta property="og:url" content={pageUrl} />}
+<meta property="og:url" content={pageUrl.href} />
 {twitter && <meta name="twitter:creator" content={removeWhitespace(twitter)} />}
 {title && <meta name="twitter:title" content={removeWhitespace(title)} />}
-{
-  description && (
-    <meta name="twitter:description" content={removeWhitespace(description)} />
-  )
-}
+{description && <meta name="twitter:description" content={description} />}
 {twitterCard && <meta name="twitter:card" content={twitterCard} />}
-{
-  imageSrc && (
-    <meta
-      name="twitter:image"
-      content={new URL(imageSrc, Astro.site ?? Astro.url.origin).href}
-    />
-  )
-}
+{absoluteImageUrl && <meta name="twitter:image" content={absoluteImageUrl} />}

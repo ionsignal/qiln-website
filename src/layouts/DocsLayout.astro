@@ -8,6 +8,7 @@ import Pagination from "@/components/docs/Pagination.astro";
 import { getDocsTree, getActiveTrail, getPrevNext } from "@/utils/docs";
 import { markdownify } from "@/utils/text";
 import type { DocEntry } from "@/types/docs";
+import type { SeoProps } from "@/types/seo";
 import type { MarkdownHeading } from "astro";
 
 interface Props {
@@ -20,6 +21,7 @@ const { data } = entry;
 const tree = await getDocsTree();
 const activeTrail = getActiveTrail(Astro.url.pathname, tree);
 const pagination = getPrevNext(entry.id, tree);
+
 const seoProps = {
   title: data.title,
   description: data.description,
@@ -30,7 +32,7 @@ const seoProps = {
   robots: data.robots,
   image: data.image,
   disableTagline: data.disableTagline,
-};
+} satisfies SeoProps;
 ---
 
 <BasicLayout {...seoProps} class="docs-layout">

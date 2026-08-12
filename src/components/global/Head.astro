@@ -5,6 +5,9 @@ import Favicons from "@/components/seo/Favicons.astro";
 import OpenGraph from "@/components/seo/OpenGraph.astro";
 import config from ".astro/config.generated.json";
 import { Font } from "astro:assets";
+import type { SeoProps } from "@/types/seo";
+
+type Props = SeoProps;
 ---
 
 <head>
@@ -29,14 +32,10 @@ import { Font } from "astro:assets";
     content="#000"
   />
   <meta name="generator" content={Astro.generator} />
-  {config.head?.content && <Fragment set:html={config.head?.content} />}
+  {config.head?.content && <Fragment set:html={config.head.content} />}
   <OpenGraph {...Astro.props} />
   <Favicons />
-  <JsonLD
-    content={{
-      ...Astro.props,
-    }}
-  />
+  <JsonLD content={Astro.props} />
   <Font cssVariable="--astro-font-secondary" preload />
   <Font cssVariable="--astro-font-tertiary" preload />
   <noscript>

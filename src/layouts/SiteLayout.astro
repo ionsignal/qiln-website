@@ -8,31 +8,16 @@ import BreakpointIndicator from "@/components/dev/BreakpointIndicator.astro";
 import GlobalScripts from "@/components/global/GlobalScripts.astro";
 import PageLoader from "@/components/global/PageLoader.astro";
 import config from ".astro/config.generated.json";
-import type { JSONLDProps } from "@/utils/jsonLd";
+import type { LayoutProps } from "@/types/seo";
 
-type Props = JSONLDProps & {
-  class?: string;
-  fitToScreen?: boolean;
-  draft?: boolean;
-  metaTitle?: string;
-  metaDescription?: string;
-  robots?: string;
-  excludeFromSitemap?: boolean;
-  customSlug?: string;
-  canonical?: string;
-  status?: number;
-  keywords?: string[];
-  disableTagline?: boolean;
-  structuredData?: Props;
-  sectionSpacing?: "md" | "lg";
-};
+type Props = LayoutProps;
 
-let { structuredData, class: className } = Astro.props;
+const { class: className } = Astro.props;
 ---
 
 <!doctype html>
 <html lang={config.settings.multilingual.defaultLanguage || "en"}>
-  <Head {...Astro.props} structuredData={structuredData} />
+  <Head {...Astro.props} />
   <body>
     {!Astro.props.homepage && <PageLoader />}
     <Header {...Astro.props} />

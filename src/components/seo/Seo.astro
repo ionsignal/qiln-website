@@ -2,11 +2,14 @@
 import { formatUrl } from "@/utils/core";
 import { plainify, removeWhitespace } from "@/utils/text";
 import config from ".astro/config.generated.json";
+import type { SeoProps } from "@/types/seo";
 
-let {
-  title,
+type Props = SeoProps;
+
+const {
+  title: pageTitle,
   metaTitle,
-  description,
+  description: pageDescription,
   metaDescription,
   canonical,
   keywords = config.seo.keywords,
@@ -14,22 +17,26 @@ let {
   author = config.seo.author,
   robots = config.seo.robots,
 } = Astro.props;
-title = plainify(metaTitle ? metaTitle : title ? title : config.site.title);
-keywords = keywords.join(", ");
+let title = plainify(
+  metaTitle ? metaTitle : pageTitle ? pageTitle : config.site.title,
+);
 if (!disableTagline) {
   title =
     title +
     (config.site.tagline &&
       (config.site.taglineSeparator || " - ") + config.site.tagline);
 }
-description = plainify(
+const description = plainify(
   metaDescription
     ? metaDescription
-    : description
-      ? description
+    : pageDescription
+      ? pageDescription
       : config.site.description,
 );
-canonical = formatUrl(new URL(Astro.url.href, Astro.site).href);
+const keywordContent = keywords.join(", ");
+const canonicalUrl = canonical
+  ? formatUrl(new URL(canonical, Astro.site ?? Astro.url.origin).href)
+  : formatUrl(Astro.url.href);
 ---
 
 {title && <title>{removeWhitespace(title)}</title>}
@@ -38,7 +45,11 @@ canonical = formatUrl(new URL(Astro.url.href, Astro.site).href);
     <meta name="description" content={removeWhitespace(description)} />
   )
 }
-{keywords && <meta name="keywords" content={removeWhitespace(keywords)} />}
+{
+  keywordContent && (
+    <meta name="keywords" content={removeWhitespace(keywordContent)} />
+  )
+}
 {author && <meta name="author" content={removeWhitespace(author)} />}
 {robots && <meta name="robots" content={removeWhitespace(robots)} />}
-{canonical && <link rel="canonical" href={canonical} item-prop="url" />}
+{canonicalUrl && <link rel="canonical" href={canonicalUrl} item-prop="url" />}

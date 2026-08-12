@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 const { enable, disallow } = config.seo.robotsTxt;
 
 const getRobotsTxt = (
-  sitemapURL: URL,
+  sitemapUrl: URL,
 ) => `# Robots.txt file for controlling web crawler access
 
 User-agent: *
@@ -13,15 +13,21 @@ User-agent: *
 Allow: /
 
 # Disallowed pages
-${disallow?.map((item: string) => `Disallow: ${item}`).join("\n") || ""}
+${disallow?.map((item) => `Disallow: ${item}`).join("\n") || ""}
 
 # Sitemap location
-Sitemap: ${sitemapURL.href}
+Sitemap: ${sitemapUrl.href}
 `;
 
 export const GET: APIRoute = ({ site }) => {
-  const sitemapURL = new URL("sitemap-index.xml", site);
-  return enable
-    ? new Response(getRobotsTxt(sitemapURL))
-    : new Response(null, { status: 404 });
+  if (!enable) {
+    return new Response(null, { status: 404 });
+  }
+  const siteUrl = site ?? new URL(config.site.baseUrl);
+  const sitemapUrl = new URL("sitemap-index.xml", siteUrl);
+  return new Response(getRobotsTxt(sitemapUrl), {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+    },
+  });
 };
