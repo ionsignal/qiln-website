@@ -1,0 +1,269 @@
+---
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+import type { CollectionEntry } from "astro:content";
+
+type HeroProblemContent = NonNullable<
+  CollectionEntry<"sections">["data"]["heroProblem"]
+>;
+
+interface Props {
+  content?: HeroProblemContent;
+}
+
+const { content } = Astro.props;
+---
+
+{
+  content && (
+    <div class="slide-problem px-4 py-8 md:px-8 md:py-10 lg:px-12 lg:py-12">
+      <header class="mx-auto max-w-4xl text-center">
+        <p class="text-primary text-xs font-medium tracking-[0.18em] uppercase">
+          {content.eyebrow}
+        </p>
+        <h2 class="mt-3 text-2xl/tight md:text-4xl/tight">{content.title}</h2>
+        <p class="text-text-default mx-auto mt-4 max-w-3xl text-sm leading-relaxed md:text-base">
+          {content.description}
+        </p>
+      </header>
+
+      <div class="problem-flow mx-auto mt-8 max-w-7xl lg:mt-10">
+        <article class="problem-change-card">
+          <div class="flex items-center gap-3">
+            <span class="problem-icon-wrap">
+              <LucideIcon
+                icon="PencilLine"
+                class="h-5 w-5"
+                aria-hidden="true"
+              />
+            </span>
+            <h3 class="text-base font-medium text-white">
+              {content.changeRequest.label}
+            </h3>
+          </div>
+          <ul class="mt-4 space-y-2">
+            {content.changeRequest.items.map((item) => (
+              <li class="problem-change-item">{item}</li>
+            ))}
+          </ul>
+        </article>
+
+        <div class="problem-transition">
+          <div class="problem-unsafe-path" aria-hidden="true" />
+          <ul
+            class="problem-question-list"
+            aria-label="Questions before production">
+            {content.questions.map((question) => (
+              <li class="problem-question">{question}</li>
+            ))}
+          </ul>
+          <p class="problem-warning" role="note">
+            <LucideIcon
+              icon="AlertTriangle"
+              class="h-4 w-4 shrink-0"
+              aria-hidden="true"
+            />
+            <span>{content.pathWarning}</span>
+          </p>
+        </div>
+
+        <article class="problem-workflow">
+          <div class="flex items-center gap-3">
+            <span class="problem-icon-wrap">
+              <LucideIcon icon="Workflow" class="h-5 w-5" aria-hidden="true" />
+            </span>
+            <h3 class="text-lg font-medium text-white">
+              {content.workflowLabel}
+            </h3>
+          </div>
+          <ul class="problem-artifact-grid mt-5">
+            {content.artifacts.map((artifact) => (
+              <li class="problem-artifact">
+                <LucideIcon
+                  icon={artifact.icon}
+                  class="text-primary h-4 w-4 shrink-0"
+                  aria-hidden="true"
+                />
+                <span>{artifact.label}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .slide-problem {
+    min-height: 42rem;
+    background:
+      radial-gradient(
+        circle at 72% 52%,
+        color-mix(in srgb, var(--color-primary) 9%, transparent),
+        transparent 44%
+      ),
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--color-theme-dark) 54%, transparent),
+        transparent
+      );
+  }
+
+  .problem-flow {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .problem-change-card,
+  .problem-workflow,
+  .problem-question {
+    border: 1px solid color-mix(in srgb, var(--color-light) 20%, transparent);
+    background: color-mix(in srgb, var(--color-theme-dark) 72%, transparent);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.035);
+  }
+
+  .problem-change-card {
+    align-self: center;
+    border-radius: 0.875rem;
+    padding: 1.25rem;
+  }
+
+  .problem-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 38%, transparent);
+    border-radius: 0.5rem;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 7%, transparent);
+  }
+
+  .problem-change-item {
+    border-radius: 0.375rem;
+    background: color-mix(in srgb, var(--color-body) 46%, transparent);
+    padding: 0.5rem 0.625rem;
+    color: var(--color-text-default);
+    font-size: 0.8125rem;
+    line-height: 1.25rem;
+  }
+
+  .problem-transition {
+    display: grid;
+    gap: 0.875rem;
+    align-content: center;
+  }
+
+  .problem-unsafe-path {
+    width: 1px;
+    height: 2.25rem;
+    margin: 0 auto;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(248 113 113 / 0.8),
+      transparent
+    );
+  }
+
+  .problem-question-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .problem-question {
+    display: flex;
+    min-height: 4rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.625rem;
+    padding: 0.75rem 0.5rem;
+    color: var(--color-light);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .problem-warning {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0;
+    color: rgb(252 165 165);
+    font-size: 0.75rem;
+    line-height: 1.125rem;
+    text-align: center;
+  }
+
+  .problem-warning :global(svg) {
+    margin-top: 0.0625rem;
+  }
+
+  .problem-workflow {
+    border-radius: 1rem;
+    padding: 1.25rem;
+  }
+
+  .problem-artifact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.625rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .problem-artifact {
+    display: flex;
+    min-width: 0;
+    align-items: flex-start;
+    gap: 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--color-light) 15%, transparent);
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--color-body) 40%, transparent);
+    padding: 0.625rem;
+    color: var(--color-text-default);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.125rem;
+  }
+
+  @media (min-width: 1024px) {
+    .problem-flow {
+      grid-template-columns: minmax(12rem, 0.8fr) minmax(17rem, 1fr) minmax(
+          27rem,
+          2fr
+        );
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .problem-unsafe-path {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(
+        to right,
+        transparent,
+        rgb(248 113 113 / 0.8),
+        transparent
+      );
+    }
+
+    .problem-question-list {
+      grid-template-columns: 1fr;
+    }
+
+    .problem-question {
+      min-height: 3.5rem;
+      font-size: 1rem;
+    }
+
+    .problem-artifact-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>

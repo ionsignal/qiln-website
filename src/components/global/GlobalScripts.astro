@@ -61,24 +61,32 @@
     });
   }
 
+  function isHeroProductFrameElement(element: Element) {
+    return element.closest(".hero-product-frame") !== null;
+  }
+
   function initHorizontalScroll() {
-    document.querySelectorAll("*").forEach((el) => {
-      if (el.scrollWidth > el.clientWidth) {
-        el.addEventListener(
-          "wheel",
-          (event: Event) => {
-            const wheelEvent = event as WheelEvent;
-            if (wheelEvent.shiftKey) {
-              wheelEvent.preventDefault();
-              el.scrollBy({
-                left: wheelEvent.deltaY * 3,
-                behavior: "smooth",
-              });
-            }
-          },
-          { passive: false },
-        );
+    document.querySelectorAll<HTMLElement>("*").forEach((element) => {
+      if (
+        isHeroProductFrameElement(element) ||
+        element.scrollWidth <= element.clientWidth
+      ) {
+        return;
       }
+      element.addEventListener(
+        "wheel",
+        (event: Event) => {
+          const wheelEvent = event as WheelEvent;
+          if (wheelEvent.shiftKey) {
+            wheelEvent.preventDefault();
+            element.scrollBy({
+              left: wheelEvent.deltaY * 3,
+              behavior: "smooth",
+            });
+          }
+        },
+        { passive: false },
+      );
     });
   }
 </script>

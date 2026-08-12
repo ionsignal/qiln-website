@@ -1,0 +1,388 @@
+---
+// import Diagram from "@/components/sections/hero/Diagram.astro";
+import SlideProblem from "@/components/sections/hero/SlideProblem.astro";
+import SlideSolution from "@/components/sections/hero/SlideSolution.astro";
+import type { CollectionEntry } from "astro:content";
+
+type HeroProblemContent = NonNullable<
+  CollectionEntry<"sections">["data"]["heroProblem"]
+>;
+type HeroSolutionContent = NonNullable<
+  CollectionEntry<"sections">["data"]["heroSolution"]
+>;
+type HeroDiagramContent = NonNullable<
+  CollectionEntry<"sections">["data"]["heroDiagram"]
+>;
+
+interface Props {
+  problem?: HeroProblemContent;
+  solution?: HeroSolutionContent;
+  content?: HeroDiagramContent;
+  scale?: number;
+}
+
+// const { problem, solution, content, scale = 1 } = Astro.props as Props;
+const { problem, solution } = Astro.props;
+---
+
+<qiln-scene-deck class="hidden w-full md:block">
+  <div data-scene-deck-stage>
+    <div data-scene-deck-scene class="min-w-0">
+      <SlideProblem content={problem} />
+    </div>
+    <div data-scene-deck-scene class="min-w-0">
+      <SlideSolution content={solution} />
+    </div>
+    <!-- <div data-scene-deck-scene class="relative min-h-168 min-w-0">
+      <div class="flex min-h-168 w-full items-center">
+        <Diagram content={content} scale={scale} />
+      </div>
+    </div> -->
+  </div>
+</qiln-scene-deck>
+
+<script>
+  const sceneDurationMs = 6000;
+  const transitionWatchdogBufferMs = 100;
+
+  class QilnSceneDeck extends HTMLElement {
+    private sceneElements: HTMLElement[] = [];
+    private activeSceneIndex = 0;
+    private pendingSceneIndex: number | null = null;
+    private pendingScene: HTMLElement | null = null;
+    private sceneTimeoutId: number | null = null;
+    private transitionWatchdogId: number | null = null;
+    private revealFrameId: number | null = null;
+    private settleOutgoingFrameId: number | null = null;
+    private settleIncomingFrameId: number | null = null;
+    private visibilityObserver: IntersectionObserver | null = null;
+    private isVisible = false;
+    private isTransitioning = false;
+
+    connectedCallback() {
+      this.teardown();
+      this.sceneElements = Array.from(
+        this.querySelectorAll<HTMLElement>("[data-scene-deck-scene]"),
+      );
+      if (this.sceneElements.length < 2) {
+        return;
+      }
+      this.initializeSceneStates();
+      this.setAttribute("data-ready", "");
+      document.addEventListener(
+        "visibilitychange",
+        this.handleDocumentVisibilityChange,
+      );
+      if (typeof IntersectionObserver === "undefined") {
+        this.isVisible = true;
+        this.scheduleNextScene();
+        return;
+      }
+      this.visibilityObserver = new IntersectionObserver(
+        this.handleDeckIntersection,
+        { threshold: 0 },
+      );
+      this.visibilityObserver.observe(this);
+    }
+
+    disconnectedCallback() {
+      this.teardown();
+    }
+
+    private initializeSceneStates() {
+      this.activeSceneIndex = 0;
+      this.sceneElements.forEach((scene, index) => {
+        scene.dataset.sceneState =
+          index === this.activeSceneIndex ? "active" : "inactive";
+      });
+    }
+
+    private handleDocumentVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        this.scheduleNextScene();
+      } else {
+        this.clearSceneTimeout();
+      }
+    };
+
+    private handleDeckIntersection = (entries: IntersectionObserverEntry[]) => {
+      this.isVisible = entries[0]?.isIntersecting ?? false;
+      if (this.isVisible) {
+        this.scheduleNextScene();
+      } else {
+        this.clearSceneTimeout();
+      }
+    };
+
+    private handleTransitionEnd = (event: TransitionEvent) => {
+      if (
+        event.target !== this.pendingScene ||
+        !event.propertyName.endsWith("clip-path")
+      ) {
+        return;
+      }
+      this.beginTransitionSettlement();
+    };
+
+    private scheduleNextScene() {
+      if (
+        !this.canRotate() ||
+        this.isTransitioning ||
+        this.sceneTimeoutId !== null
+      ) {
+        return;
+      }
+      this.sceneTimeoutId = window.setTimeout(() => {
+        this.sceneTimeoutId = null;
+        this.advanceScene();
+      }, sceneDurationMs);
+    }
+
+    private advanceScene() {
+      if (!this.canRotate() || this.isTransitioning) {
+        return;
+      }
+      const nextSceneIndex =
+        (this.activeSceneIndex + 1) % this.sceneElements.length;
+      this.transitionToScene(nextSceneIndex);
+    }
+
+    private transitionToScene(nextSceneIndex: number) {
+      const activeScene = this.sceneElements[this.activeSceneIndex];
+      const nextScene = this.sceneElements[nextSceneIndex];
+      if (!activeScene || !nextScene || activeScene === nextScene) {
+        return;
+      }
+      this.isTransitioning = true;
+      this.pendingScene = nextScene;
+      this.pendingSceneIndex = nextSceneIndex;
+      nextScene.addEventListener("transitionend", this.handleTransitionEnd);
+      nextScene.dataset.sceneState = "prepared";
+      this.revealFrameId = window.requestAnimationFrame(() => {
+        this.revealFrameId = null;
+        if (
+          !this.isConnected ||
+          !this.isTransitioning ||
+          this.pendingScene !== nextScene
+        ) {
+          return;
+        }
+        void nextScene.offsetWidth;
+        nextScene.dataset.sceneState = "entering";
+        const transitionTotalMs = this.getTransitionTotalMs(
+          nextScene,
+          "clip-path",
+        );
+        if (transitionTotalMs <= 0) {
+          this.beginTransitionSettlement();
+          return;
+        }
+        this.transitionWatchdogId = window.setTimeout(
+          this.beginTransitionSettlement,
+          transitionTotalMs + transitionWatchdogBufferMs,
+        );
+      });
+    }
+
+    private beginTransitionSettlement = () => {
+      if (
+        !this.isTransitioning ||
+        !this.pendingScene ||
+        this.pendingSceneIndex === null
+      ) {
+        return;
+      }
+      const activeScene = this.sceneElements[this.activeSceneIndex];
+      const nextScene = this.pendingScene;
+      const nextSceneIndex = this.pendingSceneIndex;
+      this.clearPendingTransition();
+      if (!activeScene) {
+        this.isTransitioning = false;
+        this.scheduleNextScene();
+        return;
+      }
+      this.settleOutgoingFrameId = window.requestAnimationFrame(() => {
+        this.settleOutgoingFrameId = null;
+        if (!this.isConnected || !this.isTransitioning) {
+          return;
+        }
+        activeScene.dataset.sceneState = "inactive";
+        this.settleIncomingFrameId = window.requestAnimationFrame(() => {
+          this.settleIncomingFrameId = null;
+          if (!this.isConnected || !this.isTransitioning) {
+            return;
+          }
+          nextScene.dataset.sceneState = "active";
+          this.activeSceneIndex = nextSceneIndex;
+          this.isTransitioning = false;
+          this.scheduleNextScene();
+        });
+      });
+    };
+
+    private getTransitionTotalMs(
+      element: HTMLElement,
+      propertyName: string,
+    ): number {
+      const styles = window.getComputedStyle(element);
+      const properties = styles.transitionProperty
+        .split(",")
+        .map((property) => property.trim());
+      const durations = styles.transitionDuration
+        .split(",")
+        .map((duration) => this.parseCssTimeMs(duration));
+      const delays = styles.transitionDelay
+        .split(",")
+        .map((delay) => this.parseCssTimeMs(delay));
+      return properties.reduce((maximum, property, index) => {
+        if (property !== "all" && !property.endsWith(propertyName)) {
+          return maximum;
+        }
+        const duration = durations[index % durations.length] ?? 0;
+        const delay = delays[index % delays.length] ?? 0;
+        return Math.max(maximum, duration + delay, 0);
+      }, 0);
+    }
+
+    private parseCssTimeMs(value: string): number {
+      const normalizedValue = value.trim();
+      const numericValue = Number.parseFloat(normalizedValue);
+      if (!Number.isFinite(numericValue)) {
+        return 0;
+      }
+      if (normalizedValue.endsWith("ms")) {
+        return numericValue;
+      }
+      if (normalizedValue.endsWith("s")) {
+        return numericValue * 1000;
+      }
+      return 0;
+    }
+
+    private canRotate() {
+      return (
+        this.isConnected &&
+        this.isVisible &&
+        document.visibilityState === "visible"
+      );
+    }
+
+    private clearSceneTimeout() {
+      if (this.sceneTimeoutId === null) {
+        return;
+      }
+      window.clearTimeout(this.sceneTimeoutId);
+      this.sceneTimeoutId = null;
+    }
+
+    private clearPendingTransition() {
+      if (this.pendingScene) {
+        this.pendingScene.removeEventListener(
+          "transitionend",
+          this.handleTransitionEnd,
+        );
+      }
+      if (this.transitionWatchdogId !== null) {
+        window.clearTimeout(this.transitionWatchdogId);
+        this.transitionWatchdogId = null;
+      }
+      this.pendingScene = null;
+      this.pendingSceneIndex = null;
+    }
+
+    private clearRevealFrame() {
+      if (this.revealFrameId === null) {
+        return;
+      }
+      window.cancelAnimationFrame(this.revealFrameId);
+      this.revealFrameId = null;
+    }
+
+    private clearSettleFrames() {
+      if (this.settleOutgoingFrameId !== null) {
+        window.cancelAnimationFrame(this.settleOutgoingFrameId);
+        this.settleOutgoingFrameId = null;
+      }
+      if (this.settleIncomingFrameId !== null) {
+        window.cancelAnimationFrame(this.settleIncomingFrameId);
+        this.settleIncomingFrameId = null;
+      }
+    }
+
+    private teardown() {
+      this.clearSceneTimeout();
+      this.clearPendingTransition();
+      this.clearRevealFrame();
+      this.clearSettleFrames();
+      this.visibilityObserver?.disconnect();
+      this.visibilityObserver = null;
+      document.removeEventListener(
+        "visibilitychange",
+        this.handleDocumentVisibilityChange,
+      );
+      this.removeAttribute("data-ready");
+      this.sceneElements = [];
+      this.activeSceneIndex = 0;
+      this.isVisible = false;
+      this.isTransitioning = false;
+    }
+  }
+
+  if (!customElements.get("qiln-scene-deck")) {
+    customElements.define("qiln-scene-deck", QilnSceneDeck);
+  }
+</script>
+
+<style>
+  qiln-scene-deck[data-ready] [data-scene-deck-stage] {
+    display: grid;
+    min-height: 42rem;
+    overflow: hidden;
+  }
+
+  qiln-scene-deck[data-ready] [data-scene-deck-scene] {
+    position: relative;
+    z-index: 0;
+    grid-area: 1 / 1;
+    min-width: 0;
+    background-color: var(--color-body);
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  qiln-scene-deck[data-ready] [data-scene-state="active"] {
+    z-index: 1;
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  qiln-scene-deck[data-ready] [data-scene-state="prepared"] {
+    z-index: 2;
+    visibility: visible;
+  }
+
+  qiln-scene-deck[data-ready] [data-scene-state="entering"] {
+    z-index: 2;
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @supports (clip-path: inset(0)) {
+    qiln-scene-deck[data-ready] [data-scene-deck-scene] {
+      opacity: 1;
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 500ms ease-out;
+      will-change: clip-path;
+    }
+    qiln-scene-deck[data-ready] [data-scene-state="inactive"],
+    qiln-scene-deck[data-ready] [data-scene-state="prepared"] {
+      clip-path: inset(0 100% 0 0);
+    }
+    qiln-scene-deck[data-ready] [data-scene-state="active"],
+    qiln-scene-deck[data-ready] [data-scene-state="entering"] {
+      clip-path: inset(0);
+    }
+  }
+</style>

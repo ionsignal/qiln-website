@@ -5,7 +5,7 @@ import ActionButton from "@/components/ui/ActionButton.astro";
 import Badge from "@/components/ui/Badge.astro";
 import AnimatedText from "@/components/sections/hero/AnimatedText.astro";
 import Subscription from "@/components/sections/hero/Subscription.astro";
-import Diagram from "@/components/sections/hero/Diagram.astro";
+import Slider from "@/components/sections/hero/Slider.astro";
 import Background from "@/components/sections/hero/Background.astro";
 import { overrideObjects } from "@/utils/core";
 import { markdownify } from "@/utils/text";
@@ -13,50 +13,67 @@ import { fetchEntry } from "@/utils/content";
 import type { CollectionEntry } from "astro:content";
 
 type SectionData = CollectionEntry<"sections">["data"];
+
 type Props = {
   content?: SectionData;
 };
 
-let defaultContent = (await fetchEntry("sections", "hero"))?.data;
-let actualContent = overrideObjects({ ...defaultContent }, Astro.props.content);
-let {
+type TickerTitle =
+  | {
+      isTicker: true;
+      prefix: string;
+      options: string[];
+      suffix: string;
+      longestOption: string;
+      fallbackTitle: string;
+    }
+  | {
+      isTicker: false;
+    };
+
+const defaultContent = (await fetchEntry("sections", "hero"))?.data;
+const actualContent = overrideObjects<SectionData>(
+  defaultContent ?? {},
+  Astro.props.content,
+);
+
+const {
   title,
   subtitle,
   badge,
   description,
   buttons,
   subscription,
+  heroProblem,
+  heroSolution,
   heroDiagram,
 } = actualContent;
 
-function parseTickerTitle(rawTitle: string | undefined) {
+function parseTickerTitle(rawTitle: string | undefined): TickerTitle {
   if (!rawTitle) return { isTicker: false };
   const match = rawTitle.match(/^(.*?)\[(.*?)\](.*)$/);
-  if (match) {
-    const prefix = match[1].trim();
-    const options = match[2]
-      .split("|")
-      .map((option) => option.trim())
-      .filter(Boolean);
-    const suffix = match[3].trim();
-    if (options.length > 1) {
-      const longestOption = options.reduce(
-        (currentLongest, option) =>
-          currentLongest.length > option.length ? currentLongest : option,
-        "",
-      );
-      const fallbackTitle = `${prefix} ${options[0]} ${suffix}`.trim();
-      return {
-        isTicker: true,
-        prefix,
-        options,
-        suffix,
-        longestOption,
-        fallbackTitle,
-      };
-    }
-  }
-  return { isTicker: false };
+  if (!match) return { isTicker: false };
+  const prefix = match[1].trim();
+  const options = match[2]
+    .split("|")
+    .map((option) => option.trim())
+    .filter(Boolean);
+  const suffix = match[3].trim();
+  if (options.length < 2) return { isTicker: false };
+  const longestOption = options.reduce(
+    (currentLongest, option) =>
+      currentLongest.length > option.length ? currentLongest : option,
+    "",
+  );
+  const fallbackTitle = `${prefix} ${options[0]} ${suffix}`.trim();
+  return {
+    isTicker: true,
+    prefix,
+    options,
+    suffix,
+    longestOption,
+    fallbackTitle,
+  };
 }
 
 const tickerTitle = parseTickerTitle(title);
@@ -67,7 +84,7 @@ const tickerTitle = parseTickerTitle(title);
     class="banner-gradient stretched-link relative pt-12 pb-12 md:pt-12 md:pb-16 lg:pt-12 lg:pb-20 xl:pt-16 xl:pb-24">
     <Background />
     <div class="container">
-      <div class="relative z-10 max-w-4xl space-y-10">
+      <div class="relative z-10 space-y-10">
         <div class="flex flex-col items-start gap-y-8 text-left md:gap-y-10">
           {
             badge && (
@@ -99,7 +116,7 @@ const tickerTitle = parseTickerTitle(title);
                             <span class="invisible col-start-1 row-start-1">
                               {tickerTitle.longestOption}
                             </span>
-                            {tickerTitle.options?.map((option, index) => (
+                            {tickerTitle.options.map((option, index) => (
                               <span
                                 class:list={[
                                   "ticker-item col-start-1 row-start-1 will-change-[transform,filter,opacity]",
@@ -116,11 +133,16 @@ const tickerTitle = parseTickerTitle(title);
                       </qiln-ticker>
                     </>
                   ) : (
-                    title && <span set:html={markdownify(title)} />
+                    title && (
+                      <span
+                        class="text-primary text-4xl font-bold md:text-5xl lg:text-6xl"
+                        set:html={markdownify(title)}
+                      />
+                    )
                   )}
                   {subtitle && (
                     <span
-                      class="text-xl/loose font-bold text-white/80 md:text-4xl lg:text-5xl"
+                      class="text-xl font-bold text-white/80 md:text-2xl lg:text-5xl"
                       set:html={markdownify(subtitle)}
                     />
                   )}
@@ -131,7 +153,7 @@ const tickerTitle = parseTickerTitle(title);
           {
             description && (
               <AnimatedText
-                class="hero-description [&_strong]:text-secondary [&_b]:text-secondary w-full max-w-4xl text-left text-lg/normal text-white/90 [&_strong]:font-medium md:[&_strong]:whitespace-nowrap"
+                class="hero-description [&_strong]:text-secondary [&_b]:text-secondary w-full max-w-2xl text-left text-lg/normal text-white/90 [&_strong]:font-medium md:[&_strong]:whitespace-nowrap"
                 stagger={0.03}
                 delay={0.4}
                 content={markdownify(description)}
@@ -150,31 +172,35 @@ const tickerTitle = parseTickerTitle(title);
             )
           }
           {
-            buttons &&
-              buttons.map((button) => (
-                <ActionButton
-                  content={button}
-                  class:list={[
-                    "btn-md btn-has-icon group relative z-0 flex w-full items-center justify-center gap-4 sm:w-auto [&>.label]:z-20",
-                    button.variant === "secondary"
-                      ? "text-light border border-white/15 bg-white/5 shadow-none backdrop-blur-md transition-all duration-300 hover:border-white/30 hover:bg-white/10 hover:text-white"
-                      : "btn-solid-primary",
-                  ]}>
-                  <span class="rounded-ful flex h-6 w-12 items-center justify-center">
-                    <SvgIcon
-                      icon={button.icon || "star"}
-                      class="h-5 w-5 transition-all duration-300 group-hover:rotate-180"
-                    />
-                  </span>
-                </ActionButton>
-              ))
+            buttons?.map((button) => (
+              <ActionButton
+                content={button}
+                class:list={[
+                  "btn-md btn-has-icon group relative z-0 flex w-full items-center justify-center gap-4 sm:w-auto [&>.label]:z-20",
+                  button.variant === "secondary"
+                    ? "text-light border border-white/15 bg-white/5 shadow-none backdrop-blur-md transition-all duration-300 hover:border-white/30 hover:bg-white/10 hover:text-white"
+                    : "btn-solid-primary",
+                ]}>
+                <span class="rounded-ful flex h-6 w-12 items-center justify-center">
+                  <SvgIcon
+                    icon={button.icon || "star"}
+                    class="h-5 w-5 transition-all duration-300 group-hover:rotate-180"
+                  />
+                </span>
+              </ActionButton>
+            ))
           }
         </div>
       </div>
     </div>
     <div class="relative container mt-12 px-4 md:px-8 lg:px-0 xl:mt-16 xl:px-4">
       <div class="hero-product-frame">
-        <Diagram content={heroDiagram} scale={0.94} />
+        <Slider
+          problem={heroProblem}
+          solution={heroSolution}
+          content={heroDiagram}
+          scale={0.94}
+        />
       </div>
     </div>
   </div>
@@ -191,7 +217,9 @@ const tickerTitle = parseTickerTitle(title);
 
     connectedCallback() {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      this.items = Array.from(this.querySelectorAll(".ticker-item"));
+      this.items = Array.from(
+        this.querySelectorAll<HTMLElement>(".ticker-item"),
+      );
       if (this.items.length < 2) return;
       this.observer = new IntersectionObserver(
         (entries) => {
@@ -210,10 +238,8 @@ const tickerTitle = parseTickerTitle(title);
 
     disconnectedCallback() {
       this.stopInterval();
-      if (this.observer) {
-        this.observer.disconnect();
-        this.observer = null;
-      }
+      this.observer?.disconnect();
+      this.observer = null;
     }
 
     private startInterval() {
@@ -233,6 +259,7 @@ const tickerTitle = parseTickerTitle(title);
       const outgoingItem = this.items[this.currentIndex];
       this.currentIndex = (this.currentIndex + 1) % this.items.length;
       const incomingItem = this.items[this.currentIndex];
+      if (!outgoingItem || !incomingItem) return;
       animate(
         outgoingItem,
         {

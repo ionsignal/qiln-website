@@ -6,13 +6,39 @@ type HeroDiagramContent = NonNullable<
   CollectionEntry<"sections">["data"]["heroDiagram"]
 >;
 
+type DiagramPoint = {
+  x: number;
+  y: number;
+};
+
+type DiagramCard = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  ports: Record<string, DiagramPoint>;
+};
+
+type DiagramLayout = {
+  canvas: {
+    width: number;
+    height: number;
+  };
+  cards: Record<string, DiagramCard>;
+  lanes: {
+    humansAgentsToForkedBranchX: number;
+    branchPolicyToForkedBranchY: number;
+    rollbackRouteY: number;
+  };
+};
+
 interface Props {
   class?: string;
   content?: HeroDiagramContent;
   scale?: number;
 }
 
-const { class: className, content, scale = 1 } = Astro.props as Props;
+const { class: className, content, scale = 1 } = Astro.props;
 const diagramScale = Number.isFinite(scale)
   ? Math.min(Math.max(scale, 0.5), 1)
   : 1;
@@ -21,7 +47,7 @@ const humansAgents = annotations?.humansAgents;
 const branchPolicy = annotations?.branchPolicy;
 const knownGood = content?.knownGood;
 const forkAction = content?.fork;
-const forkedBranchDetails = content?.forkedBranch;
+const forkedBranch = content?.forkedBranch;
 const goldenTest = content?.goldenTest;
 const capsuleDiff = content?.capsuleDiff;
 const promoteAction = content?.promote;
@@ -30,133 +56,147 @@ const rollback = content?.rollback;
 const processRail = content?.processRail;
 const knownGoodItemIcons = ["Workflow", "Database", "Route", "History"];
 
-const PROCESS_RAIL_BACKGROUND_Y = 752;
-const PROCESS_RAIL_BACKGROUND_HEIGHT = 48;
-const PROCESS_RAIL_STAGE_Y = 763;
-const PROCESS_RAIL_STAGE_WIDTH = 126;
-const PROCESS_RAIL_STAGE_HEIGHT = 26;
-const PROCESS_RAIL_STAGE_PADDING = 4;
-const PROCESS_RAIL_ICON_SIZE = 18;
-const PROCESS_RAIL_ICON_LABEL_GAP = 8;
-const PROCESS_RAIL_ICON_Y = 767;
-const PROCESS_RAIL_LABEL_Y = 781;
-const PROCESS_RAIL_CONNECTOR_Y = 776;
-
-const processRailStageDefinitions = processRail
-  ? ([
-      {
-        id: "fork",
-        label: processRail.fork,
-        icon: "GitFork",
-        tone: "activity",
-        iconX: 185,
+const diagramLayout = {
+  canvas: {
+    width: 1440,
+    height: 740,
+  },
+  cards: {
+    knownGood: {
+      x: 25,
+      y: 200,
+      width: 260,
+      height: 440,
+      ports: {
+        fork: { x: 260, y: 245 },
+        rollback: { x: 120, y: 440 },
       },
-      {
-        id: "edit",
-        label: processRail.edit,
-        icon: "PencilLine",
-        tone: "activity",
-        iconX: 355,
-      },
-      {
-        id: "test",
-        label: processRail.test,
-        icon: "FlaskConical",
-        tone: "activity",
-        iconX: 525,
-      },
-      {
-        id: "diff",
-        label: processRail.diff,
-        icon: "FileDiff",
-        tone: "production",
-        iconX: 695,
-      },
-      {
-        id: "promote",
-        label: processRail.promote,
-        icon: "ShieldCheck",
-        tone: "approval",
-        iconX: 865,
-      },
-      {
-        id: "rollback",
-        label: processRail.rollback,
-        icon: "RotateCcw",
-        tone: "rollback",
-        iconX: 1035,
-      },
-    ] as const)
-  : [];
-
-const processRailStages = processRailStageDefinitions.map((stage) => {
-  const cardX = stage.iconX - PROCESS_RAIL_STAGE_PADDING;
-  return {
-    ...stage,
-    cardX,
-    labelX: stage.iconX + PROCESS_RAIL_ICON_SIZE + PROCESS_RAIL_ICON_LABEL_GAP,
-  };
-});
-
-const firstProcessRailStage = processRailStages[0];
-const lastProcessRailStage = processRailStages[processRailStages.length - 1];
-const processRailBounds =
-  firstProcessRailStage && lastProcessRailStage
-    ? {
-        x: firstProcessRailStage.cardX,
-        width:
-          lastProcessRailStage.cardX +
-          PROCESS_RAIL_STAGE_WIDTH -
-          firstProcessRailStage.cardX,
-      }
-    : null;
-
-const processRailRelationships = processRailStages.flatMap((stage, index) => {
-  const nextStage = processRailStages[index + 1];
-  if (!nextStage) return [];
-  return [
-    {
-      id: `${stage.id}-to-${nextStage.id}`,
-      stage: nextStage.id,
-      tone: nextStage.tone,
-      fromX: stage.cardX + PROCESS_RAIL_STAGE_WIDTH,
-      toX: nextStage.cardX,
     },
-  ];
-});
+    humansAgents: {
+      x: 325,
+      y: 25,
+      width: 300,
+      height: 85,
+      ports: {
+        forkedBranch: { x: 300, y: 42.5 },
+      },
+    },
+    branchPolicy: {
+      x: 325,
+      y: 140,
+      width: 300,
+      height: 167,
+      ports: {
+        forkedBranch: { x: 150, y: 167 },
+      },
+    },
+    fork: {
+      x: 342,
+      y: 410,
+      width: 112,
+      height: 70,
+      ports: {
+        knownGood: { x: 0, y: 35 },
+        forkedBranch: { x: 112, y: 35 },
+      },
+    },
+    forkedBranch: {
+      x: 500,
+      y: 340,
+      width: 220,
+      height: 210,
+      ports: {
+        fork: { x: 0, y: 105 },
+        branchPolicy: { x: 0, y: 50 },
+        humansAgents: { x: 180, y: 0 },
+        goldenTest: { x: 220, y: 105 },
+      },
+    },
+    goldenTest: {
+      x: 760,
+      y: 380,
+      width: 140,
+      height: 130,
+      ports: {
+        forkedBranch: { x: 0, y: 65 },
+        capsuleDiff: { x: 140, y: 65 },
+      },
+    },
+    capsuleDiff: {
+      x: 930,
+      y: 380,
+      width: 140,
+      height: 130,
+      ports: {
+        goldenTest: { x: 0, y: 65 },
+        promote: { x: 140, y: 65 },
+      },
+    },
+    promote: {
+      x: 1119,
+      y: 410,
+      width: 112,
+      height: 70,
+      ports: {
+        capsuleDiff: { x: 0, y: 35 },
+        productionRoute: { x: 112, y: 35 },
+      },
+    },
+    productionRoute: {
+      x: 1280,
+      y: 360,
+      width: 140,
+      height: 170,
+      ports: {
+        promote: { x: 0, y: 85 },
+        rollback: { x: 70, y: 176 },
+      },
+    },
+    rollback: {
+      x: 600,
+      y: 620,
+      width: 250,
+      height: 95,
+      ports: {
+        productionRoute: { x: 258, y: 47 },
+        knownGood: { x: -6, y: 47 },
+      },
+    },
+  },
+  lanes: {
+    humansAgentsToForkedBranchX: 680,
+    branchPolicyToForkedBranchY: 390,
+    rollbackRouteY: 667,
+  },
+} satisfies DiagramLayout;
 
-const splitSvgTextLines = (content: string) =>
-  content
+const { cards, lanes } = diagramLayout;
+
+const splitLines = (value: string) =>
+  value
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean);
 
-const wrapSvgTextLines = (content: string, maxCharacters: number) => {
-  const wrappedLines: string[] = [];
-  for (const sourceLine of splitSvgTextLines(content)) {
-    let currentLine = "";
+const wrapLines = (value: string, maxCharacters: number) => {
+  const lines: string[] = [];
+  for (const sourceLine of splitLines(value)) {
+    let line = "";
     for (const word of sourceLine.split(/\s+/)) {
-      const candidate = currentLine ? `${currentLine} ${word}` : word;
-      if (currentLine && candidate.length > maxCharacters) {
-        wrappedLines.push(currentLine);
-        currentLine = word;
+      const candidate = line ? `${line} ${word}` : word;
+      if (line && candidate.length > maxCharacters) {
+        lines.push(line);
+        line = word;
       } else {
-        currentLine = candidate;
+        line = candidate;
       }
     }
-    if (currentLine) {
-      wrappedLines.push(currentLine);
-    }
+    if (line) lines.push(line);
   }
-  return wrappedLines;
+  return lines;
 };
 
-// Expanding the viewBox creates equal canvas padding without changing diagram coordinates.
-const createCenteredViewBox = (
-  width: number,
-  height: number,
-  scaleFactor: number,
-) => {
+const createViewBox = (width: number, height: number, scaleFactor: number) => {
   const scaledWidth = width / scaleFactor;
   const scaledHeight = height / scaleFactor;
   const offsetX = (width - scaledWidth) / 2;
@@ -166,1187 +206,722 @@ const createCenteredViewBox = (
     .join(" ");
 };
 
-const goldenTestTitleLines = goldenTest
-  ? wrapSvgTextLines(goldenTest.title, 16)
-  : [];
+const getCardTransform = ({ x, y }: DiagramCard) => `translate(${x} ${y})`;
+
+const toCanvasPoint = (
+  card: DiagramCard,
+  point: DiagramPoint,
+): DiagramPoint => ({
+  x: card.x + point.x,
+  y: card.y + point.y,
+});
+
+const buildConnectorPath = (start: DiagramPoint, ...segments: DiagramPoint[]) =>
+  [start, ...segments]
+    .map((point, index) => `${index === 0 ? "M" : "L"}${point.x} ${point.y}`)
+    .join(" ");
+
+const connectorPaths = {
+  knownGoodToFork: buildConnectorPath(
+    toCanvasPoint(cards.knownGood, cards.knownGood.ports.fork),
+    toCanvasPoint(cards.fork, cards.fork.ports.knownGood),
+  ),
+  forkToForkedBranch: buildConnectorPath(
+    toCanvasPoint(cards.fork, cards.fork.ports.forkedBranch),
+    toCanvasPoint(cards.forkedBranch, cards.forkedBranch.ports.fork),
+  ),
+  forkedBranchToGoldenTest: buildConnectorPath(
+    toCanvasPoint(cards.forkedBranch, cards.forkedBranch.ports.goldenTest),
+    toCanvasPoint(cards.goldenTest, cards.goldenTest.ports.forkedBranch),
+  ),
+  goldenTestToCapsuleDiff: buildConnectorPath(
+    toCanvasPoint(cards.goldenTest, cards.goldenTest.ports.capsuleDiff),
+    toCanvasPoint(cards.capsuleDiff, cards.capsuleDiff.ports.goldenTest),
+  ),
+  capsuleDiffToPromote: buildConnectorPath(
+    toCanvasPoint(cards.capsuleDiff, cards.capsuleDiff.ports.promote),
+    toCanvasPoint(cards.promote, cards.promote.ports.capsuleDiff),
+  ),
+  promoteToProductionRoute: buildConnectorPath(
+    toCanvasPoint(cards.promote, cards.promote.ports.productionRoute),
+    toCanvasPoint(cards.productionRoute, cards.productionRoute.ports.promote),
+  ),
+  humansAgentsToForkedBranch: buildConnectorPath(
+    toCanvasPoint(cards.humansAgents, cards.humansAgents.ports.forkedBranch),
+    {
+      x: lanes.humansAgentsToForkedBranchX,
+      y: toCanvasPoint(
+        cards.humansAgents,
+        cards.humansAgents.ports.forkedBranch,
+      ).y,
+    },
+    toCanvasPoint(cards.forkedBranch, cards.forkedBranch.ports.humansAgents),
+  ),
+  branchPolicyToForkedBranch: buildConnectorPath(
+    toCanvasPoint(cards.branchPolicy, cards.branchPolicy.ports.forkedBranch),
+    {
+      x: toCanvasPoint(
+        cards.branchPolicy,
+        cards.branchPolicy.ports.forkedBranch,
+      ).x,
+      y: lanes.branchPolicyToForkedBranchY,
+    },
+    toCanvasPoint(cards.forkedBranch, cards.forkedBranch.ports.branchPolicy),
+  ),
+  productionRouteToRollback: buildConnectorPath(
+    toCanvasPoint(cards.productionRoute, cards.productionRoute.ports.rollback),
+    {
+      x: toCanvasPoint(
+        cards.productionRoute,
+        cards.productionRoute.ports.rollback,
+      ).x,
+      y: lanes.rollbackRouteY,
+    },
+    toCanvasPoint(cards.rollback, cards.rollback.ports.productionRoute),
+  ),
+  rollbackToKnownGood: buildConnectorPath(
+    toCanvasPoint(cards.rollback, cards.rollback.ports.knownGood),
+    {
+      x: toCanvasPoint(cards.knownGood, cards.knownGood.ports.rollback).x,
+      y: lanes.rollbackRouteY,
+    },
+    toCanvasPoint(cards.knownGood, cards.knownGood.ports.rollback),
+  ),
+};
+
+const goldenTestTitleLines = goldenTest ? wrapLines(goldenTest.title, 16) : [];
 const capsuleDiffTitleLines = capsuleDiff
-  ? wrapSvgTextLines(capsuleDiff.title, 15)
+  ? wrapLines(capsuleDiff.title, 15)
   : [];
 const productionRouteTitleLines = productionRoute
-  ? wrapSvgTextLines(productionRoute.title, 14)
+  ? wrapLines(productionRoute.title, 14)
   : [];
-
-const desktopViewBox = createCenteredViewBox(1440, 810, diagramScale);
+const diagramViewBox = createViewBox(
+  diagramLayout.canvas.width,
+  diagramLayout.canvas.height,
+  diagramScale,
+);
 ---
 
-<svg
-  viewBox={desktopViewBox}
-  preserveAspectRatio="xMidYMid meet"
-  aria-hidden="true"
-  focusable="false"
+<div
   class:list={[
-    "hero-product-diagram relative z-30 hidden h-auto w-full rounded-t-2xl md:block md:rounded-t-3xl",
+    "hero-product-diagram relative z-30 hidden w-full md:block",
     className,
   ]}>
-  <defs>
-    <marker
-      id="diagram-arrow-base-desktop"
-      viewBox="0 0 10 10"
-      refX="10"
-      refY="5"
-      markerWidth="6"
-      markerHeight="6"
-      orient="auto">
-      <path class="diagram-arrow-base" d="M 0 0 L 10 5 L 0 10 z"></path>
-    </marker>
-    <marker
-      id="diagram-arrow-activity-desktop"
-      viewBox="0 0 10 10"
-      refX="10"
-      refY="5"
-      markerWidth="6"
-      markerHeight="6"
-      orient="auto">
-      <path class="diagram-arrow-activity" d="M 0 0 L 10 5 L 0 10 z"></path>
-    </marker>
-    <marker
-      id="diagram-arrow-production-desktop"
-      viewBox="0 0 10 10"
-      refX="10"
-      refY="5"
-      markerWidth="6"
-      markerHeight="6"
-      orient="auto">
-      <path class="diagram-arrow-production" d="M 0 0 L 10 5 L 0 10 z"></path>
-    </marker>
-    <marker
-      id="diagram-arrow-approval-desktop"
-      viewBox="0 0 10 10"
-      refX="10"
-      refY="5"
-      markerWidth="6"
-      markerHeight="6"
-      orient="auto">
-      <path class="diagram-arrow-approval" d="M 0 0 L 10 5 L 0 10 z"></path>
-    </marker>
-    <marker
-      id="diagram-arrow-rollback-desktop"
-      viewBox="0 0 10 10"
-      refX="10"
-      refY="5"
-      markerWidth="6"
-      markerHeight="6"
-      orient="auto">
-      <path class="diagram-arrow-rollback" d="M 0 0 L 10 5 L 0 10 z"></path>
-    </marker>
-    <filter
-      id="diagram-branch-glow-desktop"
-      x="-30%"
-      y="-30%"
-      width="160%"
-      height="160%">
-      <feGaussianBlur stdDeviation="9"></feGaussianBlur>
-    </filter>
-  </defs>
+  <svg
+    viewBox={diagramViewBox}
+    preserveAspectRatio="xMidYMid meet"
+    aria-hidden="true"
+    focusable="false"
+    class="block h-auto w-full rounded-t-2xl md:rounded-t-3xl">
+    <defs>
+      <marker
+        id="diagram-arrow"
+        viewBox="0 0 10 10"
+        refX="10"
+        refY="5"
+        markerWidth="6"
+        markerHeight="6"
+        orient="auto">
+        <path class="diagram-arrow" d="M 0 0 L 10 5 L 0 10 z"></path>
+      </marker>
+    </defs>
 
-  <g class="diagram-connector-layer" data-diagram-layer="connectors">
-    <g
-      class="diagram-relationship"
-      data-relationship="known-good-to-fork"
-      data-storyboard-stage="fork">
+    <g class="diagram-connectors">
       <path
-        d="M285 445H342"
-        class="diagram-connector-base"
-        marker-end="url(#diagram-arrow-base-desktop)">
+        d={connectorPaths.knownGoodToFork}
+        class="diagram-connector"
+        marker-end="url(#diagram-arrow)">
       </path>
       <path
-        d="M285 445H342"
-        class="diagram-signal diagram-signal-activity"
-        marker-end="url(#diagram-arrow-activity-desktop)"
-        pathLength="1">
-      </path>
-    </g>
-    <g
-      class="diagram-relationship"
-      data-relationship="fork-to-branch"
-      data-storyboard-stage="fork">
-      <path
-        d="M454 445H500"
-        class="diagram-connector-base"
-        marker-end="url(#diagram-arrow-base-desktop)">
+        d={connectorPaths.forkToForkedBranch}
+        class="diagram-connector"
+        marker-end="url(#diagram-arrow)">
       </path>
       <path
-        d="M454 445H500"
-        class="diagram-signal diagram-signal-activity"
-        marker-end="url(#diagram-arrow-activity-desktop)"
-        pathLength="1">
-      </path>
-    </g>
-    <g
-      class="diagram-relationship"
-      data-relationship="branch-to-test"
-      data-storyboard-stage="test">
-      <path
-        d="M720 445H760"
-        class="diagram-connector-base"
-        marker-end="url(#diagram-arrow-base-desktop)">
+        d={connectorPaths.forkedBranchToGoldenTest}
+        class="diagram-connector"
+        marker-end="url(#diagram-arrow)">
       </path>
       <path
-        d="M720 445H760"
-        class="diagram-signal diagram-signal-activity"
-        marker-end="url(#diagram-arrow-activity-desktop)"
-        pathLength="1">
-      </path>
-    </g>
-    <g
-      class="diagram-relationship"
-      data-relationship="test-to-diff"
-      data-storyboard-stage="diff">
-      <path
-        d="M900 445H930"
-        class="diagram-connector-base"
-        marker-end="url(#diagram-arrow-base-desktop)">
+        d={connectorPaths.goldenTestToCapsuleDiff}
+        class="diagram-connector"
+        marker-end="url(#diagram-arrow)">
       </path>
       <path
-        d="M900 445H930"
-        class="diagram-signal diagram-signal-production"
-        marker-end="url(#diagram-arrow-production-desktop)"
-        pathLength="1">
+        d={connectorPaths.capsuleDiffToPromote}
+        class="diagram-connector"
+        marker-end="url(#diagram-arrow)">
+      </path>
+      <path
+        d={connectorPaths.promoteToProductionRoute}
+        class="diagram-connector"
+        marker-end="url(#diagram-arrow)">
+      </path>
+      <path
+        d={connectorPaths.humansAgentsToForkedBranch}
+        class="diagram-connector diagram-connector-dashed"
+        marker-end="url(#diagram-arrow)">
+      </path>
+      <path
+        d={connectorPaths.branchPolicyToForkedBranch}
+        class="diagram-connector diagram-connector-dashed"
+        marker-end="url(#diagram-arrow)">
+      </path>
+      <path
+        d={connectorPaths.productionRouteToRollback}
+        class="diagram-connector diagram-connector-dashed"
+        marker-end="url(#diagram-arrow)">
+      </path>
+      <path
+        d={connectorPaths.rollbackToKnownGood}
+        class="diagram-connector diagram-connector-dashed"
+        marker-end="url(#diagram-arrow)">
       </path>
     </g>
-    <g
-      class="diagram-relationship"
-      data-relationship="diff-to-promote"
-      data-storyboard-stage="promote">
-      <path
-        d="M1070 445H1119"
-        class="diagram-connector-base"
-        marker-end="url(#diagram-arrow-base-desktop)">
-      </path>
-      <path
-        d="M1070 445H1119"
-        class="diagram-signal diagram-signal-approval"
-        marker-end="url(#diagram-arrow-approval-desktop)"
-        pathLength="1">
-      </path>
-    </g>
-    <g
-      class="diagram-relationship"
-      data-relationship="promote-to-production"
-      data-storyboard-stage="route-move">
-      <path
-        d="M1231 445H1280"
-        class="diagram-connector-base"
-        marker-end="url(#diagram-arrow-base-desktop)">
-      </path>
-      <path
-        d="M1231 445H1280"
-        class="diagram-signal diagram-signal-activity"
-        marker-end="url(#diagram-arrow-activity-desktop)"
-        pathLength="1">
-      </path>
-    </g>
-    <g
-      class="diagram-relationship"
-      data-relationship="humans-agents-to-branch"
-      data-storyboard-stage="edit">
-      <path
-        d="M635 67.5H680V340"
-        class="diagram-connector-conditional"
-        marker-end="url(#diagram-arrow-base-desktop)">
-      </path>
-      <path
-        d="M635 67.5H680V340"
-        class="diagram-signal diagram-signal-activity"
-        marker-end="url(#diagram-arrow-activity-desktop)"
-        pathLength="1">
-      </path>
-    </g>
-    <g
-      class="diagram-relationship"
-      data-relationship="branch-policy-to-branch"
-      data-storyboard-stage="edit">
-      <path
-        d="M485 307V390H500"
-        class="diagram-connector-conditional"
-        marker-end="url(#diagram-arrow-base-desktop)">
-      </path>
-      <path
-        d="M485 330V390H500"
-        class="diagram-signal diagram-signal-activity"
-        marker-end="url(#diagram-arrow-activity-desktop)"
-        pathLength="1">
-      </path>
-    </g>
-    <g
-      class="diagram-relationship"
-      data-relationship="production-to-rollback"
-      data-storyboard-stage="rollback">
-      <path
-        d="M1350 536V667H858"
-        class="diagram-connector-recovery"
-        marker-end="url(#diagram-arrow-base-desktop)">
-      </path>
-      <path
-        d="M1350 536V667H858"
-        class="diagram-signal diagram-signal-rollback"
-        marker-end="url(#diagram-arrow-rollback-desktop)"
-        pathLength="1">
-      </path>
-    </g>
-    <g
-      class="diagram-relationship"
-      data-relationship="rollback-to-known-good"
-      data-storyboard-stage="rollback">
-      <path
-        d="M594 667H145V668"
-        class="diagram-connector-recovery"
-        marker-end="url(#diagram-arrow-base-desktop)">
-      </path>
-      <path
-        d="M594 667H145V668"
-        class="diagram-signal diagram-signal-rollback"
-        marker-end="url(#diagram-arrow-rollback-desktop)"
-        pathLength="1">
-      </path>
-    </g>
-  </g>
 
-  <g
-    class="diagram-resting-emphasis-layer"
-    data-diagram-layer="resting-emphasis">
-    <rect
-      x="500"
-      y="340"
-      width="220"
-      height="210"
-      rx="14"
-      class="diagram-branch-resting-glow"
-      filter="url(#diagram-branch-glow-desktop)">
-    </rect>
-  </g>
-
-  <g class="diagram-node-layer" data-diagram-layer="nodes">
-    <g
-      class="diagram-node diagram-node-known-good"
-      data-diagram-node="known-good"
-      data-storyboard-stage="initial">
-      <rect
-        x="25"
-        y="220"
-        width="260"
-        height="440"
-        rx="14"
-        class="diagram-card-surface">
-      </rect>
-      <rect
-        x="25"
-        y="220"
-        width="260"
-        height="440"
-        rx="14"
-        class="diagram-card-border">
-      </rect>
-      <rect
-        x="45"
-        y="305"
-        width="220"
-        height="55"
-        rx="8"
-        class="diagram-card-inset">
-      </rect>
-      <rect
-        x="45"
-        y="370"
-        width="220"
-        height="55"
-        rx="8"
-        class="diagram-card-inset">
-      </rect>
-      <rect
-        x="45"
-        y="435"
-        width="220"
-        height="55"
-        rx="8"
-        class="diagram-card-inset">
-      </rect>
-      <rect
-        x="45"
-        y="500"
-        width="220"
-        height="55"
-        rx="8"
-        class="diagram-card-inset">
-      </rect>
-      <path d="M45 286H265" class="diagram-divider"></path>
-      <path d="M45 575H265" class="diagram-divider"></path>
-      {
-        knownGood && (
-          <g class="diagram-node-content" data-diagram-part="content">
-            <text
-              x="45"
-              y="264"
-              class="diagram-content-title"
-              data-diagram-part="title">
-              {knownGood.title}
-            </text>
-            {knownGood.items.map((item, index) => {
-              const itemLines = splitSvgTextLines(item);
-              const labelY = itemLines.length > 1 ? 332 : 340;
-              return (
-                <g
-                  data-diagram-part="list-item"
-                  transform={`translate(0 ${index * 64})`}>
-                  <LucideIcon
-                    icon={knownGoodItemIcons[index] ?? "Circle"}
-                    x="58"
-                    y="322"
-                    width="22"
-                    height="22"
-                    class="diagram-content-icon diagram-content-icon-capsule"
-                  />
-                  <text
-                    x="88"
-                    y={labelY}
-                    class="diagram-content-row-label"
-                    data-diagram-part="row-label">
-                    {itemLines.map((line, lineIndex) => (
-                      <tspan
-                        x="88"
-                        dy={lineIndex === 0 ? 0 : 16}
-                        data-diagram-part="line">
-                        {line}
-                      </tspan>
-                    ))}
-                  </text>
-                </g>
-              );
-            })}
-            <g data-diagram-part="status">
-              <LucideIcon
-                icon="Power"
-                x="58"
-                y="594"
-                width="20"
-                height="20"
-                class="diagram-content-icon diagram-content-icon-runtime"
-              />
-              <text x="88" y="608" class="diagram-content-runtime-label">
-                {knownGood.runtime.label}
+    <g class="diagram-nodes">
+      <g transform={getCardTransform(cards.knownGood)}>
+        <rect
+          x="0"
+          y="0"
+          width={cards.knownGood.width}
+          height={cards.knownGood.height}
+          rx="14"
+          class="diagram-card">
+        </rect>
+        <rect
+          x="20"
+          y="85"
+          width="220"
+          height="55"
+          rx="8"
+          class="diagram-card-inset">
+        </rect>
+        <rect
+          x="20"
+          y="150"
+          width="220"
+          height="55"
+          rx="8"
+          class="diagram-card-inset">
+        </rect>
+        <rect
+          x="20"
+          y="215"
+          width="220"
+          height="55"
+          rx="8"
+          class="diagram-card-inset">
+        </rect>
+        <rect
+          x="20"
+          y="280"
+          width="220"
+          height="55"
+          rx="8"
+          class="diagram-card-inset">
+        </rect>
+        <path d="M20 66H240" class="diagram-divider"></path>
+        <path d="M20 355H240" class="diagram-divider"></path>
+        {
+          knownGood && (
+            <g>
+              <text x="20" y="44" class="diagram-content-title">
+                {knownGood.title}
               </text>
-              <text x="88" y="631" class="diagram-content-runtime-description">
-                {knownGood.runtime.description}
-              </text>
+              {knownGood.items.map((item, index) => {
+                const itemLines = splitLines(item);
+                const labelY = itemLines.length > 1 ? 112 : 120;
+                return (
+                  <g transform={`translate(0 ${index * 64})`}>
+                    <LucideIcon
+                      icon={knownGoodItemIcons[index] ?? "Circle"}
+                      x="33"
+                      y="102"
+                      width="22"
+                      height="22"
+                      class="diagram-content-icon diagram-icon-primary"
+                    />
+                    <text x="63" y={labelY} class="diagram-content-row-label">
+                      {itemLines.map((line, lineIndex) => (
+                        <tspan x="63" dy={lineIndex === 0 ? 0 : 16}>
+                          {line}
+                        </tspan>
+                      ))}
+                    </text>
+                  </g>
+                );
+              })}
+              <g>
+                <LucideIcon
+                  icon="Power"
+                  x="33"
+                  y="374"
+                  width="20"
+                  height="20"
+                  class="diagram-content-icon diagram-icon-primary"
+                />
+                <text x="63" y="388" class="diagram-content-runtime-label">
+                  {knownGood.runtime.label}
+                </text>
+                <text
+                  x="63"
+                  y="411"
+                  class="diagram-content-runtime-description">
+                  {knownGood.runtime.description}
+                </text>
+              </g>
             </g>
-          </g>
-        )
-      }
-    </g>
+          )
+        }
+      </g>
 
-    <g
-      class="diagram-node diagram-node-annotation"
-      data-diagram-node="humans-agents"
-      data-storyboard-stage="edit">
-      <rect
-        x="335"
-        y="25"
-        width="300"
-        height="85"
-        rx="12"
-        class="diagram-card-surface">
-      </rect>
-      <rect
-        x="335"
-        y="25"
-        width="300"
-        height="85"
-        rx="12"
-        class="diagram-card-border">
-      </rect>
-      {
-        humansAgents && (
-          <g class="diagram-node-content" data-diagram-part="content">
-            <LucideIcon
-              icon="UsersRound"
-              x="360"
-              y="40"
-              width="38"
-              height="38"
-              class="diagram-content-icon diagram-content-icon-production"
-            />
-            <text
-              x="415"
-              y="64"
-              class="diagram-content-title"
-              data-diagram-part="title">
-              {splitSvgTextLines(humansAgents.title).map((line, lineIndex) => (
-                <tspan
-                  x="420"
-                  dy={lineIndex === 0 ? 0 : 16}
-                  data-diagram-part="line">
-                  {line}
-                </tspan>
-              ))}
-            </text>
-            <text
-              x="415"
-              y="86"
-              class="diagram-content-supporting"
-              data-diagram-part="body">
-              {splitSvgTextLines(humansAgents.description).map(
-                (line, lineIndex) => (
-                  <tspan
-                    x="420"
-                    dy={lineIndex === 0 ? 0 : 16}
-                    data-diagram-part="line">
+      <g transform={getCardTransform(cards.humansAgents)}>
+        <rect
+          x="0"
+          y="0"
+          width={cards.humansAgents.width}
+          height={cards.humansAgents.height}
+          rx="12"
+          class="diagram-card">
+        </rect>
+        {
+          humansAgents && (
+            <g>
+              <LucideIcon
+                icon="UsersRound"
+                x="25"
+                y="15"
+                width="38"
+                height="38"
+                class="diagram-content-icon diagram-icon-primary"
+              />
+              <text x="85" y="39" class="diagram-content-title">
+                {splitLines(humansAgents.title).map((line, lineIndex) => (
+                  <tspan x="85" dy={lineIndex === 0 ? 0 : 16}>
                     {line}
                   </tspan>
-                ),
-              )}
-            </text>
-          </g>
-        )
-      }
-    </g>
-
-    <g
-      class="diagram-node diagram-node-annotation"
-      data-diagram-node="branch-policy"
-      data-storyboard-stage="edit">
-      <rect
-        x="335"
-        y="140"
-        width="300"
-        height="167"
-        rx="12"
-        class="diagram-card-surface">
-      </rect>
-      <rect
-        x="335"
-        y="140"
-        width="300"
-        height="167"
-        rx="12"
-        class="diagram-card-border">
-      </rect>
-      {
-        branchPolicy && (
-          <g class="diagram-node-content" data-diagram-part="content">
-            <LucideIcon
-              icon="ShieldCheck"
-              x="360"
-              y="155"
-              width="38"
-              height="38"
-              class="diagram-content-icon diagram-content-icon-production"
-            />
-            <text
-              x="420"
-              y="180"
-              class="diagram-content-title"
-              data-diagram-part="title">
-              {splitSvgTextLines(branchPolicy.title).map((line, lineIndex) => (
-                <tspan
-                  x="415"
-                  dy={lineIndex === 0 ? 0 : 16}
-                  data-diagram-part="line">
-                  {line}
-                </tspan>
-              ))}
-            </text>
-            {branchPolicy.items.map((item, index) => {
-              const itemLines = splitSvgTextLines(item);
-              return (
-                <g
-                  data-diagram-part="list-item"
-                  transform={`translate(0 ${index * 32})`}>
-                  <LucideIcon
-                    icon="Check"
-                    x="367"
-                    y="202"
-                    width="24"
-                    height="24"
-                    class="diagram-content-icon diagram-content-icon-production"
-                  />
-                  <text
-                    x="415"
-                    y="218"
-                    class="diagram-content-list-item"
-                    data-diagram-part="row-label">
-                    {itemLines.map((line, lineIndex) => (
-                      <tspan
-                        x="416"
-                        dy={lineIndex === 0 ? 0 : 16}
-                        data-diagram-part="line">
-                        {line}
-                      </tspan>
-                    ))}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
-        )
-      }
-    </g>
-
-    <g
-      class="diagram-node diagram-node-fork"
-      data-diagram-node="fork"
-      data-storyboard-stage="fork">
-      <rect
-        x="342"
-        y="410"
-        width="112"
-        height="70"
-        rx="10"
-        class="diagram-card-surface">
-      </rect>
-      <rect
-        x="342"
-        y="410"
-        width="112"
-        height="70"
-        rx="10"
-        class="diagram-card-border">
-      </rect>
-      {
-        forkAction && (
-          <g class="diagram-node-content" data-diagram-part="content">
-            <g data-diagram-part="icon">
-              <LucideIcon
-                icon="GitFork"
-                x="365"
-                y="435"
-                width="21"
-                height="21"
-                class="diagram-content-icon diagram-content-icon-activity"
-              />
-            </g>
-            <text
-              x="395"
-              y="451"
-              class="diagram-content-action-label"
-              data-diagram-part="title">
-              {forkAction.label}
-            </text>
-          </g>
-        )
-      }
-    </g>
-
-    <g
-      class="diagram-node diagram-node-branch"
-      data-diagram-node="forked-branch"
-      data-storyboard-stage="fork edit test diff">
-      <rect
-        x="500"
-        y="340"
-        width="220"
-        height="210"
-        rx="14"
-        class="diagram-card-surface">
-      </rect>
-      <rect
-        x="500"
-        y="340"
-        width="220"
-        height="210"
-        rx="14"
-        class="diagram-card-border">
-      </rect>
-      <path d="M525 505H695" class="diagram-branch-divider"></path>
-      {
-        forkedBranchDetails && (
-          <g class="diagram-node-content" data-diagram-part="content">
-            <g data-diagram-part="icon">
-              <LucideIcon
-                icon="GitFork"
-                x="598"
-                y="360"
-                width="24"
-                height="24"
-                class="diagram-content-icon diagram-content-icon-activity"
-              />
-            </g>
-            <text
-              x="610"
-              y="414"
-              text-anchor="middle"
-              class="diagram-content-branch-title"
-              data-diagram-part="title">
-              {forkedBranchDetails.title}
-            </text>
-            <text
-              x="610"
-              y="446"
-              text-anchor="middle"
-              class="diagram-content-supporting"
-              data-diagram-part="body">
-              {forkedBranchDetails.isolationDescription}
-            </text>
-            <text
-              x="610"
-              y="470"
-              text-anchor="middle"
-              class="diagram-content-supporting"
-              data-diagram-part="candidate-version">
-              {forkedBranchDetails.candidateDescription}
-            </text>
-            <g data-diagram-part="status">
-              <LucideIcon
-                icon="Power"
-                x="525"
-                y="517"
-                width="19"
-                height="19"
-                class="diagram-content-icon diagram-content-icon-runtime"
-              />
-              <text x="554" y="532" class="diagram-content-runtime-label">
-                {forkedBranchDetails.runtimeStatus}
+                ))}
+              </text>
+              <text x="85" y="61" class="diagram-content-supporting">
+                {splitLines(humansAgents.description).map((line, lineIndex) => (
+                  <tspan x="85" dy={lineIndex === 0 ? 0 : 16}>
+                    {line}
+                  </tspan>
+                ))}
               </text>
             </g>
-          </g>
-        )
-      }
-    </g>
+          )
+        }
+      </g>
 
-    <g
-      class="diagram-node diagram-node-standard"
-      data-diagram-node="golden-test"
-      data-storyboard-stage="test">
-      <rect
-        x="760"
-        y="380"
-        width="140"
-        height="130"
-        rx="12"
-        class="diagram-card-surface">
-      </rect>
-      <rect
-        x="760"
-        y="380"
-        width="140"
-        height="130"
-        rx="12"
-        class="diagram-card-border">
-      </rect>
-      {
-        goldenTest && (
-          <g class="diagram-node-content" data-diagram-part="content">
-            <g data-diagram-part="icon">
-              <LucideIcon
-                icon="FlaskConical"
-                x="816"
-                y="405"
-                width="28"
-                height="28"
-                class="diagram-content-icon diagram-content-icon-diff"
-              />
-            </g>
-            <text
-              x="830"
-              y="460"
-              text-anchor="middle"
-              class="diagram-content-card-title"
-              data-diagram-part="title">
-              {goldenTestTitleLines.map((line, lineIndex) => (
-                <tspan
-                  x="830"
-                  dy={lineIndex === 0 ? 0 : 17}
-                  data-diagram-part="line">
-                  {line}
-                </tspan>
-              ))}
-            </text>
-          </g>
-        )
-      }
-    </g>
-
-    <g
-      class="diagram-node diagram-node-diff"
-      data-diagram-node="capsule-diff"
-      data-storyboard-stage="diff">
-      <rect
-        x="930"
-        y="380"
-        width="140"
-        height="130"
-        rx="12"
-        class="diagram-card-surface">
-      </rect>
-      <rect
-        x="930"
-        y="380"
-        width="140"
-        height="130"
-        rx="12"
-        class="diagram-card-border">
-      </rect>
-      {
-        capsuleDiff && (
-          <g class="diagram-node-content" data-diagram-part="content">
-            <g data-diagram-part="icon">
-              <LucideIcon
-                icon="FileDiff"
-                x="986"
-                y="405"
-                width="28"
-                height="28"
-                class="diagram-content-icon diagram-content-icon-diff"
-              />
-            </g>
-            <text
-              x="1000"
-              y="460"
-              text-anchor="middle"
-              class="diagram-content-card-title"
-              data-diagram-part="title">
-              {capsuleDiffTitleLines.map((line, lineIndex) => (
-                <tspan
-                  x="1000"
-                  dy={lineIndex === 0 ? 0 : 17}
-                  data-diagram-part="line">
-                  {line}
-                </tspan>
-              ))}
-            </text>
-          </g>
-        )
-      }
-    </g>
-
-    <g
-      class="diagram-node diagram-node-promote"
-      data-diagram-node="promote"
-      data-storyboard-stage="promote">
-      <rect
-        x="1119"
-        y="410"
-        width="112"
-        height="70"
-        rx="10"
-        class="diagram-card-surface">
-      </rect>
-      <rect
-        x="1119"
-        y="410"
-        width="112"
-        height="70"
-        rx="10"
-        class="diagram-card-border">
-      </rect>
-      {
-        promoteAction && (
-          <g class="diagram-node-content" data-diagram-part="content">
-            <g data-diagram-part="icon">
+      <g transform={getCardTransform(cards.branchPolicy)}>
+        <rect
+          x="0"
+          y="0"
+          width={cards.branchPolicy.width}
+          height={cards.branchPolicy.height}
+          rx="12"
+          class="diagram-card">
+        </rect>
+        {
+          branchPolicy && (
+            <g>
               <LucideIcon
                 icon="ShieldCheck"
-                x="1132"
-                y="435"
+                x="25"
+                y="15"
+                width="38"
+                height="38"
+                class="diagram-content-icon diagram-icon-primary"
+              />
+              <text x="80" y="40" class="diagram-content-title">
+                {splitLines(branchPolicy.title).map((line, lineIndex) => (
+                  <tspan x="80" dy={lineIndex === 0 ? 0 : 16}>
+                    {line}
+                  </tspan>
+                ))}
+              </text>
+              {branchPolicy.items.map((item, index) => {
+                const itemLines = splitLines(item);
+                return (
+                  <g transform={`translate(0 ${index * 32})`}>
+                    <LucideIcon
+                      icon="Check"
+                      x="32"
+                      y="62"
+                      width="24"
+                      height="24"
+                      class="diagram-content-icon diagram-icon-primary"
+                    />
+                    <text x="81" y="78" class="diagram-content-list-item">
+                      {itemLines.map((line, lineIndex) => (
+                        <tspan x="81" dy={lineIndex === 0 ? 0 : 16}>
+                          {line}
+                        </tspan>
+                      ))}
+                    </text>
+                  </g>
+                );
+              })}
+            </g>
+          )
+        }
+      </g>
+
+      <g transform={getCardTransform(cards.fork)}>
+        <rect
+          x="0"
+          y="0"
+          width={cards.fork.width}
+          height={cards.fork.height}
+          rx="10"
+          class="diagram-card diagram-card-action">
+        </rect>
+        {
+          forkAction && (
+            <g>
+              <LucideIcon
+                icon="GitFork"
+                x="23"
+                y="25"
                 width="21"
                 height="21"
-                class="diagram-content-icon diagram-content-icon-approval"
+                class="diagram-content-icon diagram-icon-action"
               />
-            </g>
-            <text
-              x="1160"
-              y="451"
-              class="diagram-content-action-label"
-              data-diagram-part="title">
-              {promoteAction.label}
-            </text>
-          </g>
-        )
-      }
-    </g>
-
-    <g
-      class="diagram-node diagram-node-production"
-      data-diagram-node="production-route"
-      data-storyboard-stage="route-move">
-      <rect
-        x="1280"
-        y="360"
-        width="140"
-        height="170"
-        rx="12"
-        class="diagram-card-surface">
-      </rect>
-      <rect
-        x="1280"
-        y="360"
-        width="140"
-        height="170"
-        rx="12"
-        class="diagram-card-border">
-      </rect>
-      {
-        productionRoute && (
-          <g class="diagram-node-content" data-diagram-part="content">
-            <g data-diagram-part="icon">
-              <LucideIcon
-                icon="Globe2"
-                x="1336"
-                y="382"
-                width="28"
-                height="28"
-                class="diagram-content-icon diagram-content-icon-production"
-              />
-            </g>
-            <g data-diagram-part="badge">
-              <LucideIcon
-                icon="LockKeyhole"
-                x="1392"
-                y="374"
-                width="14"
-                height="14"
-                class="diagram-content-icon diagram-content-icon-production"
-              />
-            </g>
-            <text
-              x="1350"
-              y="435"
-              text-anchor="middle"
-              class="diagram-content-card-title"
-              data-diagram-part="title">
-              {productionRouteTitleLines.map((line, lineIndex) => (
-                <tspan
-                  x="1350"
-                  dy={lineIndex === 0 ? 0 : 17}
-                  data-diagram-part="line">
-                  {line}
-                </tspan>
-              ))}
-            </text>
-            <text
-              x="1350"
-              y="480"
-              text-anchor="middle"
-              class="diagram-content-card-body"
-              data-diagram-part="route-alias">
-              {productionRoute.routeAliasDescription}
-            </text>
-            <text
-              x="1350"
-              y="503"
-              text-anchor="middle"
-              class="diagram-content-card-body"
-              data-diagram-part="version">
-              {productionRoute.versionDescription}
-            </text>
-          </g>
-        )
-      }
-    </g>
-
-    <g
-      class="diagram-node diagram-node-rollback"
-      data-diagram-node="rollback"
-      data-storyboard-stage="rollback">
-      <rect
-        x="600"
-        y="620"
-        width="250"
-        height="95"
-        rx="12"
-        class="diagram-card-surface">
-      </rect>
-      <rect
-        x="600"
-        y="620"
-        width="250"
-        height="95"
-        rx="12"
-        class="diagram-card-border">
-      </rect>
-      {
-        rollback && (
-          <g class="diagram-node-content" data-diagram-part="content">
-            <g data-diagram-part="icon">
-              <LucideIcon
-                icon="RotateCcw"
-                x="625"
-                y="638"
-                width="29"
-                height="29"
-                class="diagram-content-icon diagram-content-icon-rollback"
-              />
-            </g>
-            <text
-              x="665"
-              y="650"
-              class="diagram-content-card-title"
-              data-diagram-part="title">
-              {rollback.title}
-            </text>
-            <g data-diagram-part="status">
-              <text x="665" y="671" class="diagram-content-recovery-status">
-                {rollback.availabilityDescription}
+              <text
+                x="53"
+                y="41"
+                class="diagram-content-action-label diagram-action-label">
+                {forkAction.label}
               </text>
             </g>
-            <g data-diagram-part="route-alias">
-              <text x="625" y="695" class="diagram-content-recovery-action">
-                {rollback.routeAliasDescription}
+          )
+        }
+      </g>
+
+      <g transform={getCardTransform(cards.forkedBranch)}>
+        <rect
+          x="0"
+          y="0"
+          width={cards.forkedBranch.width}
+          height={cards.forkedBranch.height}
+          rx="14"
+          class="diagram-card">
+        </rect>
+        <path d="M25 165H195" class="diagram-divider"></path>
+        {
+          forkedBranch && (
+            <g>
+              <LucideIcon
+                icon="GitFork"
+                x="98"
+                y="20"
+                width="24"
+                height="24"
+                class="diagram-content-icon diagram-icon-primary"
+              />
+              <text
+                x="110"
+                y="74"
+                text-anchor="middle"
+                class="diagram-content-branch-title">
+                {forkedBranch.title}
               </text>
               <text
-                x="625"
-                y="710"
-                class="diagram-content-recovery-destination">
+                x="110"
+                y="106"
+                text-anchor="middle"
+                class="diagram-content-supporting">
+                {forkedBranch.isolationDescription}
+              </text>
+              <text
+                x="110"
+                y="130"
+                text-anchor="middle"
+                class="diagram-content-supporting">
+                {forkedBranch.candidateDescription}
+              </text>
+              <g>
+                <LucideIcon
+                  icon="Power"
+                  x="25"
+                  y="177"
+                  width="19"
+                  height="19"
+                  class="diagram-content-icon diagram-icon-primary"
+                />
+                <text x="54" y="192" class="diagram-content-runtime-label">
+                  {forkedBranch.runtimeStatus}
+                </text>
+              </g>
+            </g>
+          )
+        }
+      </g>
+
+      <g transform={getCardTransform(cards.goldenTest)}>
+        <rect
+          x="0"
+          y="0"
+          width={cards.goldenTest.width}
+          height={cards.goldenTest.height}
+          rx="12"
+          class="diagram-card">
+        </rect>
+        {
+          goldenTest && (
+            <g>
+              <LucideIcon
+                icon="FlaskConical"
+                x="56"
+                y="25"
+                width="28"
+                height="28"
+                class="diagram-content-icon diagram-icon-primary"
+              />
+              <text
+                x="70"
+                y="80"
+                text-anchor="middle"
+                class="diagram-content-card-title">
+                {goldenTestTitleLines.map((line, lineIndex) => (
+                  <tspan x="70" dy={lineIndex === 0 ? 0 : 17}>
+                    {line}
+                  </tspan>
+                ))}
+              </text>
+            </g>
+          )
+        }
+      </g>
+
+      <g transform={getCardTransform(cards.capsuleDiff)}>
+        <rect
+          x="0"
+          y="0"
+          width={cards.capsuleDiff.width}
+          height={cards.capsuleDiff.height}
+          rx="12"
+          class="diagram-card">
+        </rect>
+        {
+          capsuleDiff && (
+            <g>
+              <LucideIcon
+                icon="FileDiff"
+                x="56"
+                y="25"
+                width="28"
+                height="28"
+                class="diagram-content-icon diagram-icon-primary"
+              />
+              <text
+                x="70"
+                y="80"
+                text-anchor="middle"
+                class="diagram-content-card-title">
+                {capsuleDiffTitleLines.map((line, lineIndex) => (
+                  <tspan x="70" dy={lineIndex === 0 ? 0 : 17}>
+                    {line}
+                  </tspan>
+                ))}
+              </text>
+            </g>
+          )
+        }
+      </g>
+
+      <g transform={getCardTransform(cards.promote)}>
+        <rect
+          x="0"
+          y="0"
+          width={cards.promote.width}
+          height={cards.promote.height}
+          rx="10"
+          class="diagram-card diagram-card-action">
+        </rect>
+        {
+          promoteAction && (
+            <g>
+              <LucideIcon
+                icon="ShieldCheck"
+                x="13"
+                y="25"
+                width="21"
+                height="21"
+                class="diagram-content-icon diagram-icon-action"
+              />
+              <text
+                x="41"
+                y="41"
+                class="diagram-content-action-label diagram-action-label">
+                {promoteAction.label}
+              </text>
+            </g>
+          )
+        }
+      </g>
+
+      <g transform={getCardTransform(cards.productionRoute)}>
+        <rect
+          x="0"
+          y="0"
+          width={cards.productionRoute.width}
+          height={cards.productionRoute.height}
+          rx="12"
+          class="diagram-card">
+        </rect>
+        {
+          productionRoute && (
+            <g>
+              <LucideIcon
+                icon="Globe2"
+                x="56"
+                y="22"
+                width="28"
+                height="28"
+                class="diagram-content-icon diagram-icon-primary"
+              />
+              <LucideIcon
+                icon="LockKeyhole"
+                x="112"
+                y="14"
+                width="14"
+                height="14"
+                class="diagram-content-icon diagram-icon-primary"
+              />
+              <text
+                x="70"
+                y="75"
+                text-anchor="middle"
+                class="diagram-content-card-title">
+                {productionRouteTitleLines.map((line, lineIndex) => (
+                  <tspan x="70" dy={lineIndex === 0 ? 0 : 17}>
+                    {line}
+                  </tspan>
+                ))}
+              </text>
+              <text
+                x="70"
+                y="120"
+                text-anchor="middle"
+                class="diagram-content-card-body">
+                {productionRoute.routeAliasDescription}
+              </text>
+              <text
+                x="70"
+                y="143"
+                text-anchor="middle"
+                class="diagram-content-card-body">
+                {productionRoute.versionDescription}
+              </text>
+            </g>
+          )
+        }
+      </g>
+
+      <g transform={getCardTransform(cards.rollback)}>
+        <rect
+          x="0"
+          y="0"
+          width={cards.rollback.width}
+          height={cards.rollback.height}
+          rx="12"
+          class="diagram-card">
+        </rect>
+        {
+          rollback && (
+            <g>
+              <LucideIcon
+                icon="RotateCcw"
+                x="25"
+                y="18"
+                width="29"
+                height="29"
+                class="diagram-content-icon diagram-icon-primary"
+              />
+              <text x="65" y="30" class="diagram-content-card-title">
+                {rollback.title}
+              </text>
+              <text x="65" y="51" class="diagram-content-recovery-status">
+                {rollback.availabilityDescription}
+              </text>
+              <text x="25" y="75" class="diagram-content-recovery-action">
+                {rollback.routeAliasDescription}
+              </text>
+              <text x="25" y="90" class="diagram-content-recovery-destination">
                 {rollback.destinationDescription}
               </text>
             </g>
-          </g>
-        )
-      }
+          )
+        }
+      </g>
     </g>
-  </g>
+  </svg>
 
-  <g class="diagram-event-layer" data-diagram-layer="events">
-    <g class="diagram-event" data-storyboard-event="initial">
-      <rect
-        x="25"
-        y="220"
-        width="260"
-        height="440"
-        rx="14"
-        class="diagram-node-emphasis diagram-known-good-emphasis">
-      </rect>
-    </g>
-
-    <g class="diagram-event" data-storyboard-event="fork">
-      <rect
-        x="342"
-        y="410"
-        width="112"
-        height="70"
-        rx="10"
-        class="diagram-node-emphasis diagram-activity-emphasis">
-      </rect>
-      <rect
-        x="500"
-        y="340"
-        width="220"
-        height="210"
-        rx="14"
-        class="diagram-node-emphasis diagram-activity-emphasis">
-      </rect>
-    </g>
-
-    <g class="diagram-event" data-storyboard-event="edit">
-      <rect
-        x="500"
-        y="340"
-        width="220"
-        height="210"
-        rx="14"
-        class="diagram-node-emphasis diagram-activity-emphasis">
-      </rect>
-    </g>
-
-    <g class="diagram-event" data-storyboard-event="test">
-      <rect
-        x="760"
-        y="360"
-        width="140"
-        height="170"
-        rx="12"
-        class="diagram-node-emphasis diagram-activity-emphasis">
-      </rect>
-    </g>
-
-    <g class="diagram-event" data-storyboard-event="diff">
-      <rect
-        x="930"
-        y="360"
-        width="140"
-        height="170"
-        rx="12"
-        class="diagram-node-emphasis diagram-production-emphasis">
-      </rect>
-    </g>
-
-    <g class="diagram-event" data-storyboard-event="promote">
-      <rect
-        x="1119"
-        y="410"
-        width="112"
-        height="70"
-        rx="10"
-        class="diagram-node-emphasis diagram-approval-emphasis">
-      </rect>
-    </g>
-
-    <g class="diagram-event" data-storyboard-event="route-move">
-      <rect
-        x="1280"
-        y="360"
-        width="140"
-        height="170"
-        rx="12"
-        class="diagram-node-emphasis diagram-production-emphasis">
-      </rect>
-      <circle
-        cx="1264"
-        cy="445"
-        r="4"
-        class="diagram-route-token"
-        data-animation-token="production-route">
-      </circle>
-    </g>
-
-    <g class="diagram-event" data-storyboard-event="rollback">
-      <rect
-        x="600"
-        y="620"
-        width="250"
-        height="95"
-        rx="12"
-        class="diagram-node-emphasis diagram-rollback-emphasis">
-      </rect>
-    </g>
-  </g>
-
-  <g class="diagram-process-rail" data-diagram-layer="process-rail">
-    {
-      processRailBounds && (
-        <g
-          class="diagram-process-rail-background"
-          data-diagram-part="background">
-          <rect
-            x={processRailBounds.x}
-            y={PROCESS_RAIL_BACKGROUND_Y}
-            width={processRailBounds.width}
-            height={PROCESS_RAIL_BACKGROUND_HEIGHT}
-            rx="10"
-            class="diagram-card-surface"
-          />
-          <rect
-            x={processRailBounds.x}
-            y={PROCESS_RAIL_BACKGROUND_Y}
-            width={processRailBounds.width}
-            height={PROCESS_RAIL_BACKGROUND_HEIGHT}
-            rx="10"
-            class="diagram-card-border"
-          />
-        </g>
-      )
-    }
-
-    {
-      processRailRelationships.map((relationship) => (
-        <g
-          class="diagram-rail-relationship"
-          data-rail-relationship={relationship.id}
-          data-storyboard-stage={relationship.stage}>
-          <path
-            d={`M${relationship.fromX} ${PROCESS_RAIL_CONNECTOR_Y}H${relationship.toX}`}
-            class="diagram-rail-connector-base"
-            marker-end="url(#diagram-arrow-base-desktop)"
-          />
-          <path
-            d={`M${relationship.fromX} ${PROCESS_RAIL_CONNECTOR_Y}H${relationship.toX}`}
-            class:list={[
-              "diagram-signal",
-              `diagram-signal-${relationship.tone}`,
-            ]}
-            marker-end={`url(#diagram-arrow-${relationship.tone}-desktop)`}
-            pathLength="1"
-          />
-        </g>
-      ))
-    }
-
-    {
-      processRailStages.map((stage) => (
-        <g
-          class="diagram-rail-stage"
-          data-rail-stage={stage.id}
-          data-rail-tone={stage.tone}
-          data-storyboard-stage={stage.id}>
-          <rect
-            x={stage.cardX}
-            y={PROCESS_RAIL_STAGE_Y}
-            width={PROCESS_RAIL_STAGE_WIDTH}
-            height={PROCESS_RAIL_STAGE_HEIGHT}
-            rx="6"
-            class="diagram-rail-stage-surface"
-            data-diagram-part="surface"
-          />
-          <rect
-            x={stage.cardX}
-            y={PROCESS_RAIL_STAGE_Y}
-            width={PROCESS_RAIL_STAGE_WIDTH}
-            height={PROCESS_RAIL_STAGE_HEIGHT}
-            rx="6"
-            class="diagram-rail-stage-border"
-            data-diagram-part="border"
-          />
-          <g class="diagram-rail-stage-content" data-diagram-part="content">
-            <g data-diagram-part="icon">
-              <LucideIcon
-                icon={stage.icon}
-                x={stage.iconX}
-                y={PROCESS_RAIL_ICON_Y}
-                width={PROCESS_RAIL_ICON_SIZE}
-                height={PROCESS_RAIL_ICON_SIZE}
-                class:list={[
-                  "diagram-content-icon",
-                  `diagram-content-icon-${stage.tone}`,
-                ]}
-              />
-            </g>
-            <text
-              x={stage.labelX}
-              y={PROCESS_RAIL_LABEL_Y}
+  {
+    processRail && (
+      <div class="diagram-process-rail">
+        <ol class="diagram-process-list" aria-label={processRail.ariaLabel}>
+          {processRail.steps.map((step, index) => (
+            <li
               class:list={[
-                "diagram-rail-label",
-                `diagram-rail-label-${stage.tone}`,
-              ]}
-              data-diagram-part="title">
-              {stage.label}
-            </text>
-          </g>
-        </g>
-      ))
-    }
-  </g>
-</svg>
+                "diagram-process-step",
+                step.accent === "action" && "diagram-process-step-action",
+              ]}>
+              <span class="diagram-process-card">
+                <LucideIcon
+                  icon={step.icon}
+                  class="diagram-process-step-icon"
+                  aria-hidden="true"
+                  focusable="false"
+                />
+                <span class="diagram-process-step-label">{step.label}</span>
+              </span>
+              {index < processRail.steps.length - 1 && (
+                <LucideIcon
+                  icon="ArrowRight"
+                  class="diagram-process-arrow"
+                  aria-hidden="true"
+                  focusable="false"
+                />
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+    )
+  }
+</div>
 
 <style>
   .hero-product-diagram {
-    --diagram-activity: #1fcfbd;
-    --diagram-rollback: #2f82b8;
+    --diagram-action: var(--color-secondary);
     --diagram-text-primary: var(--color-light);
     --diagram-text-supporting: var(--color-text-default);
-    --diagram-text-label: var(--color-light);
-    --diagram-text-recovery-status: var(--diagram-rollback);
-    --diagram-text-recovery-action: var(--diagram-text-primary);
-    --diagram-text-recovery-destination: var(--diagram-text-supporting);
-    --diagram-icon-activity: var(--diagram-activity);
-    --diagram-icon-capsule: var(--color-primary);
-    --diagram-icon-diff: var(--color-primary);
-    --diagram-icon-production: var(--color-primary);
-    --diagram-icon-approval: var(--color-secondary);
-    --diagram-icon-rollback: var(--diagram-rollback);
-    --diagram-status-runtime: var(--diagram-activity);
-    --diagram-status-text: var(--diagram-activity);
-    --diagram-recovery-connector: var(--color-light);
-    --diagram-recovery-signal: var(--diagram-activity);
   }
 
-  .diagram-card-surface {
+  .hero-product-diagram svg {
+    font-family: var(--font-primary);
+    text-rendering: geometricPrecision;
+  }
+
+  .diagram-card {
     fill: var(--color-theme-dark);
     fill-opacity: 0.72;
-  }
-
-  .diagram-card-border {
-    fill: none;
     stroke: var(--color-light);
     stroke-opacity: 0.26;
     stroke-width: 1.2;
+  }
+
+  .diagram-card-action {
+    fill: var(--diagram-action);
+    fill-opacity: 0.07;
+    stroke: var(--diagram-action);
+    stroke-opacity: 0.9;
+    stroke-width: 1.4;
   }
 
   .diagram-card-inset {
@@ -1357,69 +932,7 @@ const desktopViewBox = createCenteredViewBox(1440, 810, diagramScale);
     stroke-width: 1;
   }
 
-  .diagram-node-annotation .diagram-card-surface {
-    fill-opacity: 0.55;
-  }
-
-  .diagram-node-annotation .diagram-card-border {
-    stroke-opacity: 0.18;
-  }
-
-  .diagram-node-known-good .diagram-card-surface {
-    fill-opacity: 0.76;
-  }
-
-  .diagram-node-known-good .diagram-card-border {
-    stroke-opacity: 0.32;
-  }
-
-  .diagram-node-fork .diagram-card-surface {
-    fill: var(--diagram-activity);
-    fill-opacity: 0.07;
-  }
-
-  .diagram-node-fork .diagram-card-border {
-    stroke: var(--diagram-activity);
-    stroke-opacity: 0.84;
-    stroke-width: 1.35;
-  }
-
-  .diagram-node-branch .diagram-card-border {
-    stroke: var(--diagram-activity);
-    stroke-opacity: 0.92;
-    stroke-width: 1.5;
-  }
-
-  .diagram-branch-resting-glow {
-    fill: none;
-    stroke: var(--diagram-activity);
-    stroke-opacity: 0.22;
-    stroke-width: 3;
-  }
-
-  .diagram-node-promote .diagram-card-surface {
-    fill: var(--color-secondary);
-    fill-opacity: 0.07;
-  }
-
-  .diagram-node-promote .diagram-card-border {
-    stroke: var(--color-secondary);
-    stroke-opacity: 0.88;
-    stroke-width: 1.5;
-  }
-
-  .diagram-node-rollback .diagram-card-surface {
-    fill-opacity: 0.76;
-  }
-
-  .diagram-node-rollback .diagram-card-border {
-    stroke: var(--diagram-rollback);
-    stroke-opacity: 0.7;
-    stroke-width: 1.35;
-  }
-
-  .diagram-connector-base,
-  .diagram-rail-connector-base {
+  .diagram-connector {
     fill: none;
     stroke: var(--color-light);
     stroke-linecap: round;
@@ -1428,85 +941,21 @@ const desktopViewBox = createCenteredViewBox(1440, 810, diagramScale);
     stroke-width: 1.4;
   }
 
-  .diagram-connector-conditional {
-    fill: none;
-    stroke: var(--color-light);
+  .diagram-connector-dashed {
     stroke-dasharray: 4 5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-opacity: 0.54;
-    stroke-width: 1.35;
   }
 
-  .diagram-connector-recovery {
-    fill: none;
-    stroke: var(--diagram-recovery-connector);
-    stroke-dasharray: 4 5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-opacity: 0.54;
-    stroke-width: 1.35;
-  }
-
-  .diagram-arrow-base {
+  .diagram-arrow {
     fill: var(--color-light);
     fill-opacity: 0.5;
   }
 
-  .diagram-arrow-activity {
-    fill: var(--diagram-activity);
-  }
-
-  .diagram-arrow-production {
-    fill: var(--color-primary);
-  }
-
-  .diagram-arrow-approval {
-    fill: var(--color-secondary);
-  }
-
-  .diagram-arrow-rollback {
-    fill: var(--diagram-recovery-signal);
-  }
-
-  .diagram-divider,
-  .diagram-muted-line {
+  .diagram-divider {
     fill: none;
     stroke: var(--color-light);
     stroke-linecap: round;
     stroke-opacity: 0.18;
     stroke-width: 1;
-  }
-
-  .diagram-branch-divider {
-    fill: none;
-    stroke: var(--diagram-activity);
-    stroke-linecap: round;
-    stroke-opacity: 0.46;
-    stroke-width: 1;
-  }
-
-  .diagram-node-content,
-  .diagram-rail-stage-content {
-    pointer-events: none;
-  }
-
-  .diagram-content-title,
-  .diagram-content-branch-title,
-  .diagram-content-action-label,
-  .diagram-content-supporting,
-  .diagram-content-list-item,
-  .diagram-content-row-label,
-  .diagram-content-runtime-label,
-  .diagram-content-runtime-description,
-  .diagram-content-card-title,
-  .diagram-content-card-body,
-  .diagram-content-recovery-status,
-  .diagram-content-recovery-action,
-  .diagram-content-recovery-destination,
-  .diagram-rail-label {
-    font-family: var(--font-primary);
-    text-rendering: geometricPrecision;
   }
 
   .diagram-content-title {
@@ -1529,26 +978,25 @@ const desktopViewBox = createCenteredViewBox(1440, 810, diagramScale);
     font-weight: 500;
   }
 
+  .diagram-action-label {
+    fill: var(--diagram-action);
+  }
+
   .diagram-content-supporting {
     fill: var(--diagram-text-supporting);
     font-size: 14px;
     font-weight: 500;
   }
 
-  .diagram-content-list-item {
+  .diagram-content-list-item,
+  .diagram-content-row-label {
     fill: var(--diagram-text-primary);
     font-size: 14px;
     font-weight: 500;
   }
 
-  .diagram-content-row-label {
-    fill: var(--diagram-text-label);
-    font-size: 14px;
-    font-weight: 500;
-  }
-
   .diagram-content-runtime-label {
-    fill: var(--diagram-status-runtime);
+    fill: var(--color-primary);
     font-size: 13px;
     font-weight: 500;
   }
@@ -1573,29 +1021,21 @@ const desktopViewBox = createCenteredViewBox(1440, 810, diagramScale);
   }
 
   .diagram-content-recovery-status {
-    fill: var(--diagram-text-recovery-status);
+    fill: var(--color-primary);
     font-size: 12.5px;
     font-weight: 500;
   }
 
   .diagram-content-recovery-action {
-    fill: var(--diagram-text-recovery-action);
+    fill: var(--diagram-text-primary);
     font-size: 12.5px;
     font-weight: 500;
   }
 
   .diagram-content-recovery-destination {
-    fill: var(--diagram-text-recovery-destination);
+    fill: var(--diagram-text-supporting);
     font-size: 12px;
     font-weight: 400;
-  }
-
-  .diagram-content-lock-badge {
-    fill: var(--color-primary);
-    fill-opacity: 0.14;
-    stroke: var(--color-primary);
-    stroke-opacity: 0.85;
-    stroke-width: 1;
   }
 
   .diagram-content-icon {
@@ -1607,160 +1047,98 @@ const desktopViewBox = createCenteredViewBox(1440, 810, diagramScale);
     stroke-width: 1.8;
   }
 
-  .diagram-content-icon-activity {
-    color: var(--diagram-icon-activity);
+  .diagram-icon-primary {
+    color: var(--color-primary);
   }
 
-  .diagram-content-icon-capsule {
-    color: var(--diagram-icon-capsule);
+  .diagram-icon-action {
+    color: var(--diagram-action);
   }
 
-  .diagram-content-icon-test {
-    color: var(--diagram-icon-diff);
+  .diagram-process-rail {
+    padding: 0.875rem clamp(1rem, 3vw, 2rem) 1.25rem;
   }
 
-  .diagram-content-icon-diff {
-    color: var(--diagram-icon-diff);
+  .diagram-process-list {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
   }
 
-  .diagram-content-icon-production {
-    color: var(--diagram-icon-production);
+  .diagram-process-step {
+    --diagram-process-accent: var(--color-light);
+    position: relative;
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    align-items: center;
+    padding-right: clamp(0.5rem, 2vw, 1.5rem);
   }
 
-  .diagram-content-icon-approval {
-    color: var(--diagram-icon-approval);
+  .diagram-process-step:last-child {
+    padding-right: 0;
   }
 
-  .diagram-content-icon-rollback {
-    color: var(--diagram-icon-rollback);
+  .diagram-process-step-action {
+    --diagram-process-accent: var(--diagram-action);
   }
 
-  .diagram-content-icon-runtime {
-    color: var(--diagram-status-runtime);
+  .diagram-process-card {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid
+      color-mix(in srgb, var(--diagram-process-accent) 26%, transparent);
+    border-radius: 0.375rem;
+    background: color-mix(in srgb, var(--color-theme-dark) 72%, transparent);
+    padding: 0.375rem 0.5rem;
+    color: var(--diagram-text-primary);
   }
 
-  .diagram-event {
-    opacity: 0;
-    pointer-events: none;
+  .diagram-process-step-action .diagram-process-card {
+    border-color: color-mix(in srgb, var(--diagram-action) 42%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--diagram-action) 7%,
+      var(--color-theme-dark)
+    );
   }
 
-  .diagram-node-emphasis {
-    fill: none;
-    stroke-width: 2;
+  .diagram-process-step-icon {
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+    color: var(--diagram-process-accent);
+    stroke-width: 1.8;
   }
 
-  .diagram-known-good-emphasis {
-    stroke: var(--color-light);
-    stroke-opacity: 0.7;
-  }
-
-  .diagram-activity-emphasis {
-    stroke: var(--diagram-activity);
-    stroke-opacity: 0.95;
-  }
-
-  .diagram-production-emphasis {
-    stroke: var(--color-primary);
-    stroke-opacity: 0.95;
-  }
-
-  .diagram-approval-emphasis {
-    stroke: var(--color-secondary);
-    stroke-opacity: 0.98;
-  }
-
-  .diagram-rollback-emphasis {
-    stroke: var(--diagram-rollback);
-    stroke-opacity: 0.9;
-  }
-
-  .diagram-route-token {
-    fill: var(--diagram-activity);
-    opacity: 0;
-  }
-
-  .diagram-signal {
-    fill: none;
-    opacity: 0;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
-  }
-
-  .diagram-signal-activity {
-    stroke: var(--diagram-activity);
-  }
-
-  .diagram-signal-production {
-    stroke: var(--color-primary);
-  }
-
-  .diagram-signal-approval {
-    stroke: var(--color-secondary);
-  }
-
-  .diagram-signal-rollback {
-    stroke: var(--diagram-recovery-signal);
-  }
-
-  .diagram-rail-stage-surface,
-  .diagram-rail-stage-border {
-    opacity: 0;
-  }
-
-  .diagram-rail-stage-surface {
-    fill: var(--color-theme-dark);
-    fill-opacity: 0.68;
-  }
-
-  .diagram-rail-stage-border {
-    fill: none;
-    stroke: var(--color-light);
-    stroke-opacity: 0.22;
-    stroke-width: 1;
-  }
-
-  .diagram-rail-stage[data-rail-tone="activity"] .diagram-rail-stage-border {
-    stroke: var(--diagram-activity);
-    stroke-opacity: 0.36;
-  }
-
-  .diagram-rail-stage[data-rail-tone="production"] .diagram-rail-stage-border {
-    stroke: var(--color-primary);
-    stroke-opacity: 0.36;
-  }
-
-  .diagram-rail-stage[data-rail-tone="approval"] .diagram-rail-stage-border {
-    stroke: var(--color-secondary);
-    stroke-opacity: 0.4;
-  }
-
-  .diagram-rail-stage[data-rail-tone="rollback"] .diagram-rail-stage-border {
-    stroke: var(--diagram-rollback);
-    stroke-opacity: 0.4;
-  }
-
-  .diagram-rail-label {
-    font-size: 14px;
+  .diagram-process-step-label {
+    overflow: hidden;
+    min-width: 0;
+    color: inherit;
+    font-size: 0.8125rem;
     font-weight: 500;
-    letter-spacing: -0.1px;
+    line-height: 1.25rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .diagram-rail-label-activity {
-    fill: var(--diagram-icon-activity);
-  }
-
-  .diagram-rail-label-production {
-    fill: var(--diagram-icon-production);
-  }
-
-  .diagram-rail-label-approval {
-    fill: var(--diagram-icon-approval);
-  }
-
-  .diagram-rail-label-rollback {
-    fill: var(--diagram-icon-rollback);
+  .diagram-process-arrow {
+    position: absolute;
+    top: 50%;
+    right: clamp(0.1rem, 0.4vw, 0.35rem);
+    width: 1rem;
+    height: 1rem;
+    color: var(--color-light);
+    opacity: 0.5;
+    transform: translateY(-50%);
+    stroke-width: 1.8;
   }
 </style>

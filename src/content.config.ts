@@ -2,6 +2,18 @@ import { defineCollection, reference } from "astro:content";
 import { glob, file } from "astro/loaders";
 import { z } from "astro/zod";
 
+const heroVisualIcon = z.enum([
+  "Workflow",
+  "Database",
+  "Folder",
+  "Settings2",
+  "Route",
+  "KeyRound",
+  "ClipboardCheck",
+  "ShieldAlert",
+  "Package",
+]);
+
 export const collections = {
   sections: defineCollection({
     loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/sections" }),
@@ -22,6 +34,52 @@ export const collections = {
             enable: z.boolean().optional(),
           })
           .optional(),
+        heroProblem: z
+          .object({
+            eyebrow: z.string().min(1),
+            title: z.string().min(1),
+            description: z.string().min(1),
+            workflowLabel: z.string().min(1),
+            artifacts: z
+              .array(
+                z.object({
+                  label: z.string().min(1),
+                  icon: heroVisualIcon,
+                }),
+              )
+              .length(8),
+            changeRequest: z.object({
+              label: z.string().min(1),
+              items: z.array(z.string().min(1)).length(4),
+            }),
+            questions: z.array(z.string().min(1)).length(3),
+            pathWarning: z.string().min(1),
+          })
+          .optional(),
+        heroSolution: z
+          .object({
+            eyebrow: z.string().min(1),
+            title: z.string().min(1),
+            description: z.string().min(1),
+            capsule: z.object({
+              label: z.string().min(1),
+              version: z.string().min(1),
+              groups: z
+                .array(
+                  z.object({
+                    label: z.string().min(1),
+                    icon: heroVisualIcon,
+                  }),
+                )
+                .length(4),
+            }),
+            route: z.object({
+              label: z.string().min(1),
+              mapping: z.string().min(1),
+              status: z.string().min(1),
+            }),
+          })
+          .optional(),
         heroDiagram: z
           .object({
             annotations: z.object({
@@ -35,7 +93,6 @@ export const collections = {
               }),
             }),
             knownGood: z.object({
-              badge: z.string(),
               title: z.string(),
               items: z.array(z.string()).length(4),
               runtime: z.object({
@@ -72,14 +129,27 @@ export const collections = {
               routeAliasDescription: z.string(),
               destinationDescription: z.string(),
             }),
-            processRail: z.object({
-              fork: z.string(),
-              edit: z.string(),
-              test: z.string(),
-              diff: z.string(),
-              promote: z.string(),
-              rollback: z.string(),
-            }),
+            processRail: z
+              .object({
+                ariaLabel: z.string().min(1),
+                steps: z
+                  .array(
+                    z.object({
+                      label: z.string().min(1),
+                      icon: z.enum([
+                        "GitFork",
+                        "PencilLine",
+                        "FlaskConical",
+                        "FileDiff",
+                        "ShieldCheck",
+                        "RotateCcw",
+                      ]),
+                      accent: z.enum(["action", "neutral"]),
+                    }),
+                  )
+                  .min(2),
+              })
+              .optional(),
           })
           .optional(),
         // Explicit Buttons Array (used by hero)
