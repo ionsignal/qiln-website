@@ -1,56 +1,87 @@
-import { execSync } from "child_process";
-import { statSync } from "fs";
+import { execFileSync } from "node:child_process";
+import { statSync } from "node:fs";
 import { toString } from "mdast-util-to-string";
 import getReadingTime from "reading-time";
+import type { Root } from "mdast";
+import type { RemarkMetadata } from "@/types";
 
-/**
- * Calculates reading time from the Markdown AST and injects it
- * into the frontmatter.
- */
-export function remarkReadingTime() {
-  return function (tree: any, file: any) {
-    const textOnPage = toString(tree);
-    const readingTime = getReadingTime(textOnPage);
-    file.data.astro = file.data.astro || {};
-    file.data.astro.frontmatter = file.data.astro.frontmatter || {};
-    file.data.astro.frontmatter.minutesRead = readingTime.text;
+type FrontmatterData = Record<string, unknown>;
+
+interface RemarkFile {
+  history?: string[];
+  data: {
+    astro?: {
+      frontmatter?: FrontmatterData;
+    };
+  };
+}
+
+function ensureFrontmatter(file: RemarkFile): FrontmatterData {
+  file.data.astro ??= {};
+  file.data.astro.frontmatter ??= {};
+  return file.data.astro.frontmatter;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+export function getRemarkMetadata(value: unknown): RemarkMetadata {
+  if (!isRecord(value)) return {};
+  return {
+    minutesRead:
+      typeof value.minutesRead === "string" ? value.minutesRead : undefined,
+    lastModified:
+      typeof value.lastModified === "string" ? value.lastModified : undefined,
   };
 }
 
 /**
- * Grabs the last modified time of the file using a Tri-State
- * fallback (Git -> FS -> Runtime Date) to ensure build stability
- * across different CI/CD environments.
+ * Calculates reading time from the Markdown AST and injects it into the
+ * frontmatter exposed by Astro's render result.
+ */
+export function remarkReadingTime() {
+  return (tree: Root, file: RemarkFile): void => {
+    const textOnPage = toString(tree);
+    const readingTime = getReadingTime(textOnPage);
+    const frontmatter = ensureFrontmatter(file);
+    frontmatter.minutesRead = readingTime.text;
+  };
+}
+
+/**
+ * Resolves the last modified time using Git, the filesystem, and finally the
+ * current build time so builds remain stable across CI environments.
  */
 export function remarkModifiedTime() {
-  return function (_: any, file: any) {
-    const filepath = file.history ? file.history[0] : undefined;
-    file.data.astro = file.data.astro || {};
-    file.data.astro.frontmatter = file.data.astro.frontmatter || {};
+  return (_tree: Root, file: RemarkFile): void => {
+    const filepath = file.history?.[0];
+    const frontmatter = ensureFrontmatter(file);
     if (!filepath) {
-      file.data.astro.frontmatter.lastModified = new Date().toISOString();
+      frontmatter.lastModified = new Date().toISOString();
       return;
     }
     try {
-      const result = execSync(
-        `git log -1 --pretty="format:%cI" "${filepath}"`,
+      const result = execFileSync(
+        "git",
+        ["log", "-1", "--pretty=format:%cI", "--", filepath],
         {
-          encoding: "utf-8",
-          stdio: ["pipe", "pipe", "ignore"],
+          encoding: "utf8",
+          stdio: ["ignore", "pipe", "ignore"],
         },
       ).trim();
       if (result) {
-        file.data.astro.frontmatter.lastModified = result;
+        frontmatter.lastModified = result;
         return;
       }
-    } catch (e) {
-      // Silently catch Git failures (e.g., shallow clones, uncommitted files)
+    } catch {
+      // Git metadata is not guaranteed in shallow or source-only builds.
     }
     try {
       const stats = statSync(filepath);
-      file.data.astro.frontmatter.lastModified = stats.mtime.toISOString();
-    } catch (e) {
-      file.data.astro.frontmatter.lastModified = new Date().toISOString();
+      frontmatter.lastModified = stats.mtime.toISOString();
+    } catch {
+      frontmatter.lastModified = new Date().toISOString();
     }
   };
 }

@@ -1,26 +1,18 @@
+import { toString } from "mdast-util-to-string";
 import { visit } from "unist-util-visit";
-
-function toString(node: any): string {
-  if (node.value) return node.value;
-  if (node.children) return node.children.map(toString).join("");
-  return "";
-}
+import type { Heading, Image, Root, Text } from "mdast";
 
 /**
- * Parse markdown content
- * Add classes in markdown heading by [.class .another-class]
- * Add loading="lazy" to images
- * @returns {any}
+ * Parses Markdown content, adds classes to headings using
+ * `[.class .another-class]`, and applies lazy loading to Markdown images.
  */
-export default function remarkParseContent(): any {
-  return (tree: any) => {
-    // Add options to add classes in markdown heading
-    // Use: [.class .another-class]
-    visit(tree, "heading", (node) => {
+export default function remarkParseContent() {
+  return (tree: Root): void => {
+    visit(tree, "heading", (node: Heading) => {
       const headingText = toString(node);
       const classRegex = /\[([^\]]+)\]/g;
-      let match;
-      let classes = [];
+      const classes: string[] = [];
+      let match: RegExpExecArray | null;
       while ((match = classRegex.exec(headingText)) !== null) {
         const classList = match[1].split(/\s+/);
         for (const word of classList) {
@@ -29,26 +21,25 @@ export default function remarkParseContent(): any {
           }
         }
       }
-      if (classes.length > 0) {
-        node.data = node.data || {};
-        node.data.hProperties = node.data.hProperties || {};
-        const newClass = classes.join(" ");
-        if (node.data.hProperties.class) {
-          node.data.hProperties.class += " " + newClass;
-        } else {
-          node.data.hProperties.class = newClass;
-        }
-        visit(node, "text", (textNode: any) => {
-          textNode.value = textNode.value
-            .replace(/\[([^\]]+)\]/g, "")
-            .replace(/\s{2,}/g, " ")
-            .trim();
-        });
-      }
+      if (classes.length === 0) return;
+      node.data ??= {};
+      node.data.hProperties ??= {};
+      const newClass = classes.join(" ");
+      const existingClass = node.data.hProperties.class;
+      node.data.hProperties.class =
+        typeof existingClass === "string" && existingClass
+          ? `${existingClass} ${newClass}`
+          : newClass;
+      visit(node, "text", (textNode: Text) => {
+        textNode.value = textNode.value
+          .replace(/\[([^\]]+)\]/g, "")
+          .replace(/\s{2,}/g, " ")
+          .trim();
+      });
     });
-    visit(tree, "image", (node: any) => {
-      node.data = node.data || {};
-      node.data.hProperties = node.data.hProperties || {};
+    visit(tree, "image", (node: Image) => {
+      node.data ??= {};
+      node.data.hProperties ??= {};
       node.data.hProperties.loading = "lazy";
     });
   };

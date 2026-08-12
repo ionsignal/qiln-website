@@ -4,12 +4,14 @@ import RelatedPosts from "@/components/blog/RelatedPosts.astro";
 import Image from "@/components/helpers/Image.astro";
 import LucideIcon from "@/components/helpers/LucideIcon.astro";
 import { getPublishedBlogPosts } from "@/utils/content";
+import { getRemarkMetadata } from "@/utils/remark/frontmatter";
 import { render, getEntry } from "astro:content";
 import type { CollectionEntry } from "astro:content";
-import type { RemarkPluginFrontmatter } from "@/types";
+import type { SeoProps } from "@/types/seo";
 
 export async function getStaticPaths() {
   const posts = await getPublishedBlogPosts();
+
   return posts.map((post) => ({
     params: { slug: post.id },
     props: { post },
@@ -20,15 +22,19 @@ interface Props {
   post: CollectionEntry<"blog">;
 }
 
-const { post }: Props = Astro.props;
-const { Content, remarkPluginFrontmatter } = await render(post);
-const { minutesRead, lastModified } =
-  remarkPluginFrontmatter as RemarkPluginFrontmatter;
-
-let authorData = null;
-if (post.data.author) {
-  authorData = await getEntry(post.data.author);
+function getUtcDayValue(date: Date): number {
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
 }
+
+const { post } = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(post);
+const { minutesRead, lastModified } = getRemarkMetadata(
+  remarkPluginFrontmatter,
+);
+
+const authorData = post.data.author
+  ? await getEntry(post.data.author)
+  : undefined;
 
 const formattedPubDate = post.data.pubDate.toLocaleDateString("en-US", {
   year: "numeric",
@@ -37,12 +43,15 @@ const formattedPubDate = post.data.pubDate.toLocaleDateString("en-US", {
   timeZone: "UTC",
 });
 
-const safeLastModified = lastModified
-  ? new Date(lastModified)
-  : post.data.pubDate;
-const actualUpdatedDate = post.data.updatedDate
-  ? post.data.updatedDate
-  : safeLastModified;
+const parsedLastModified = lastModified ? new Date(lastModified) : undefined;
+
+const safeLastModified =
+  parsedLastModified && Number.isFinite(parsedLastModified.valueOf())
+    ? parsedLastModified
+    : post.data.pubDate;
+
+const actualUpdatedDate = post.data.updatedDate ?? safeLastModified;
+
 const formattedModDate = actualUpdatedDate.toLocaleDateString("en-US", {
   year: "numeric",
   month: "long",
@@ -50,9 +59,8 @@ const formattedModDate = actualUpdatedDate.toLocaleDateString("en-US", {
   timeZone: "UTC",
 });
 
-const pubDateZeroed = new Date(post.data.pubDate).setHours(0, 0, 0, 0);
-const modDateZeroed = new Date(actualUpdatedDate).setHours(0, 0, 0, 0);
-const hasBeenUpdated = modDateZeroed > pubDateZeroed;
+const hasBeenUpdated =
+  getUtcDayValue(actualUpdatedDate) > getUtcDayValue(post.data.pubDate);
 
 const seoProps = {
   title: post.data.metaTitle || post.data.title,
@@ -62,7 +70,7 @@ const seoProps = {
   keywords: post.data.keywords,
   robots: post.data.robots,
   disableTagline: post.data.disableTagline,
-};
+} satisfies SeoProps;
 ---
 
 <SiteLayout {...seoProps}>
@@ -70,11 +78,11 @@ const seoProps = {
     <div class="container mx-auto max-w-3xl">
       <header class="mb-12 text-center" data-aos="fade-up-sm">
         {
-          post.data.categories && post.data.categories.length > 0 && (
+          post.data.categories.length > 0 && (
             <div class="mb-6 flex justify-center gap-2">
-              {post.data.categories.map((cat) => (
+              {post.data.categories.map((category) => (
                 <span class="bg-primary/10 text-primary ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset">
-                  {cat}
+                  {category}
                 </span>
               ))}
             </div>
@@ -89,10 +97,14 @@ const seoProps = {
           <time datetime={post.data.pubDate.toISOString()}>
             {formattedPubDate}
           </time>
-          <span class="flex items-center gap-1">
-            <LucideIcon icon="Clock" class="h-4 w-4" />
-            {minutesRead}
-          </span>
+          {
+            minutesRead && (
+              <span class="flex items-center gap-1">
+                <LucideIcon icon="Clock" class="h-4 w-4" aria-hidden="true" />
+                {minutesRead}
+              </span>
+            )
+          }
           {
             authorData && (
               <div class="flex items-center gap-2">

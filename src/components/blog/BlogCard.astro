@@ -3,25 +3,19 @@ import { render, getEntry } from "astro:content";
 import Image from "@/components/helpers/Image.astro";
 import LucideIcon from "@/components/helpers/LucideIcon.astro";
 import { formatUrl } from "@/utils/core";
+import { getRemarkMetadata } from "@/utils/remark/frontmatter";
 import type { CollectionEntry } from "astro:content";
-import type { RemarkPluginFrontmatter } from "@/types";
 
 interface Props {
   post: CollectionEntry<"blog">;
 }
 
 const { post } = Astro.props;
-
-// SSG Optimized: We call render() here to extract the injected remark frontmatter
 const { remarkPluginFrontmatter } = await render(post);
-const { minutesRead } = remarkPluginFrontmatter as RemarkPluginFrontmatter;
-
-// Resolve the relational author data
-let authorData = null;
-if (post.data.author) {
-  authorData = await getEntry(post.data.author);
-}
-
+const { minutesRead } = getRemarkMetadata(remarkPluginFrontmatter);
+const authorData = post.data.author
+  ? await getEntry(post.data.author)
+  : undefined;
 const formattedDate = post.data.pubDate.toLocaleDateString("en-US", {
   year: "numeric",
   month: "short",
@@ -41,10 +35,14 @@ const formattedDate = post.data.pubDate.toLocaleDateString("en-US", {
   </div>
   <div class="text-text-default/80 mb-3 flex items-center gap-x-4 text-xs">
     <time datetime={post.data.pubDate.toISOString()}>{formattedDate}</time>
-    <span class="flex items-center gap-1">
-      <LucideIcon icon="Clock" class="h-3 w-3" />
-      {minutesRead}
-    </span>
+    {
+      minutesRead && (
+        <span class="flex items-center gap-1">
+          <LucideIcon icon="Clock" class="h-3 w-3" aria-hidden="true" />
+          {minutesRead}
+        </span>
+      )
+    }
   </div>
   <h3
     class="group-hover:text-primary mb-2 text-xl font-semibold text-white transition-colors">
@@ -56,7 +54,6 @@ const formattedDate = post.data.pubDate.toLocaleDateString("en-US", {
   <p class="text-text-default mb-4 line-clamp-3 text-sm">
     {post.data.description}
   </p>
-
   {
     authorData && (
       <div class="relative mt-auto flex w-full items-center gap-x-3 border-t border-white/10 pt-4">

@@ -13,26 +13,32 @@ renderer.link = (link) => {
 
 marked.use({ renderer });
 
+function getSynchronousMarkdown(result: string | Promise<string>): string {
+  if (typeof result !== "string") {
+    throw new TypeError(
+      "Asynchronous Markdown rendering is not supported by this utility.",
+    );
+  }
+  return result;
+}
+
 export const markdownify = (content?: string, container?: boolean) => {
   if (!content) return "";
   return container
-    ? (marked.parse(content) as string)
-    : (marked.parseInline(content) as string);
+    ? getSynchronousMarkdown(marked.parse(content))
+    : getSynchronousMarkdown(marked.parseInline(content));
 };
 
-// humanize
 export const humanize = (content: string) => {
-  if (content)
+  if (content) {
     return content
       .replace(/^[\s_]+|[\s_]+$/g, "")
       .replace(/[_\s]+/g, " ")
       .replace(/[-\s]+/g, " ")
-      .replace(/^[a-z]/, function (m) {
-        return m.toUpperCase();
-      });
+      .replace(/^[a-z]/, (match) => match.toUpperCase());
+  }
 };
 
-// Function for converting string to capitalized words
 export const titleify = (content: string) => {
   if (!content) {
     console.warn("No content provided to titleify " + content);
@@ -45,19 +51,16 @@ export const titleify = (content: string) => {
     .join(" ");
 };
 
-// plainify
 export const plainify = (content?: string) => {
   if (!content) return "";
-  const parseMarkdown: any = marked.parse(content);
-  const filterBrackets = parseMarkdown.replace(/<\/?[^>]+(>|$)/gm, "");
-  const filterSpaces = filterBrackets.replace(/[\r\n]\s*[\r\n]/gm, "");
-  const stripHTML = htmlEntityDecoder(filterSpaces);
-  return stripHTML;
+  const parsedMarkdown = getSynchronousMarkdown(marked.parse(content));
+  const withoutTags = parsedMarkdown.replace(/<\/?[^>]+(>|$)/gm, "");
+  const withoutBlankLines = withoutTags.replace(/[\r\n]\s*[\r\n]/gm, "");
+  return htmlEntityDecoder(withoutBlankLines);
 };
 
-// strip entities for plainify
 const htmlEntityDecoder = (htmlWithEntities: string) => {
-  let entityList: { [key: string]: string } = {
+  const entityList: Record<string, string> = {
     "&nbsp;": " ",
     "&lt;": "<",
     "&gt;": ">",
@@ -65,16 +68,12 @@ const htmlEntityDecoder = (htmlWithEntities: string) => {
     "&quot;": '"',
     "&#39;": "'",
   };
-  let htmlWithoutEntities: string = htmlWithEntities.replace(
-    /(&amp;|&lt;|&gt;|&quot;|&#39;)/g,
-    (entity: string): string => {
-      return entityList[entity];
-    },
+  return htmlWithEntities.replace(
+    /(&nbsp;|&amp;|&lt;|&gt;|&quot;|&#39;)/g,
+    (entity) => entityList[entity] ?? entity,
   );
-  return htmlWithoutEntities;
 };
 
-// Convert to Sentence Case
 export const toSentenceCase = (content: string) => {
   if (!content) {
     console.warn("No content provided to toSentenceCase " + content);
@@ -84,7 +83,6 @@ export const toSentenceCase = (content: string) => {
   return lowercased.charAt(0).toUpperCase() + lowercased.slice(1);
 };
 
-// Remove whitespace characters
 export function removeWhitespace(text: string) {
   return text.replace(/\s+/g, " ").trim();
 }
