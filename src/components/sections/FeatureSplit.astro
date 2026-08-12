@@ -124,39 +124,94 @@ const {
 <script>
   import { animate, inView } from "motion";
 
-  document.addEventListener("DOMContentLoaded", () => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const sections = document.querySelectorAll<HTMLElement>(".feature-split");
-    sections.forEach((section) => {
-      const textElement = section.querySelector<HTMLElement>(".motion-text");
-      const imageElement = section.querySelector<HTMLElement>(".motion-image");
-      const direction = section.getAttribute("data-direction");
-      inView(
-        section,
-        () => {
-          if (textElement) {
-            animate(
-              textElement,
-              { opacity: [0, 1], y: [30, 0] },
-              { duration: 0.8, ease: "easeOut" },
-            );
-          }
-          if (imageElement) {
-            const xOffset = direction === "left" ? -40 : 40;
-            animate(
-              imageElement,
-              { opacity: [0, 1], scale: [1.04, 1], x: [xOffset, 0] },
-              {
-                type: "spring",
-                bounce: 0.3,
-                duration: 0.9,
-                delay: 0.1,
-              },
-            );
-          }
-        },
-        { amount: 0.2 },
-      );
+  const sectionCleanups = new Map<HTMLElement, () => void>();
+
+  function initializeFeatureSplit(section: HTMLElement) {
+    if (sectionCleanups.has(section)) return;
+
+    section.setAttribute("data-motion-initialized", "");
+
+    const textElement = section.querySelector<HTMLElement>(".motion-text");
+    const imageElement = section.querySelector<HTMLElement>(".motion-image");
+    const imagePosition = section.getAttribute("data-direction");
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (reducedMotion) {
+      [textElement, imageElement].forEach((element) => {
+        if (!element) return;
+
+        element.style.opacity = "1";
+        element.style.transform = "none";
+      });
+
+      sectionCleanups.set(section, () => {
+        section.removeAttribute("data-motion-initialized");
+      });
+      return;
+    }
+
+    const stopObserving = inView(
+      section,
+      () => {
+        if (textElement) {
+          animate(
+            textElement,
+            { opacity: [0, 1], y: [30, 0] },
+            { duration: 0.8, ease: "easeOut" },
+          );
+        }
+
+        if (imageElement) {
+          const xOffset = imagePosition === "left" ? -40 : 40;
+
+          animate(
+            imageElement,
+            {
+              opacity: [0, 1],
+              scale: [1.04, 1],
+              x: [xOffset, 0],
+            },
+            {
+              type: "spring",
+              bounce: 0.3,
+              duration: 0.9,
+              delay: 0.1,
+            },
+          );
+        }
+      },
+      { amount: 0.2 },
+    );
+
+    sectionCleanups.set(section, () => {
+      stopObserving();
+      section.removeAttribute("data-motion-initialized");
     });
-  });
+  }
+
+  function initializeFeatureSplits() {
+    document
+      .querySelectorAll<HTMLElement>(".feature-split")
+      .forEach(initializeFeatureSplit);
+  }
+
+  function teardownFeatureSplits() {
+    sectionCleanups.forEach((cleanup) => cleanup());
+    sectionCleanups.clear();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeFeatureSplits, {
+      once: true,
+    });
+  } else {
+    initializeFeatureSplits();
+  }
+
+  document.addEventListener("astro:page-load", initializeFeatureSplits);
+  document.addEventListener("astro:before-swap", teardownFeatureSplits);
+  window.addEventListener("pagehide", teardownFeatureSplits);
+  window.addEventListener("pageshow", initializeFeatureSplits);
 </script>

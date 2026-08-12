@@ -156,14 +156,16 @@ const { class: className } = Astro.props;
 <script>
   import { animate, inView } from "motion";
 
-  const cleanupCallbacks: Array<() => void> = [];
+  const sectionCleanups = new Map<HTMLElement, () => void>();
 
   function getTargetLines(value: string | null): number[] {
     try {
       const parsed: unknown = JSON.parse(value || "[]");
+
       if (!Array.isArray(parsed)) {
         return [];
       }
+
       return parsed.filter(
         (line): line is number =>
           typeof line === "number" &&
@@ -182,128 +184,187 @@ const { class: className } = Astro.props;
     }
   }
 
-  function initBlueprintSection() {
-    const sections =
-      document.querySelectorAll<HTMLElement>(".blueprint-section");
+  function initializeBlueprintSection(section: HTMLElement) {
+    if (sectionCleanups.has(section)) return;
 
-    sections.forEach((section) => {
-      if (section.hasAttribute("data-initialized")) return;
+    section.setAttribute("data-initialized", "");
 
-      section.setAttribute("data-initialized", "true");
+    const listenerController = new AbortController();
+    const cards = Array.from(
+      section.querySelectorAll<HTMLElement>(".spotlight-card"),
+    );
+    const codeWrapper = section.querySelector<HTMLElement>(".code-wrapper");
+    const lines = Array.from(
+      codeWrapper?.querySelectorAll<HTMLElement>(".line") || [],
+    );
+    const header = section.querySelector<HTMLElement>(".motion-header");
+    const leftColumn = section.querySelector<HTMLElement>(".motion-left");
+    const rightColumn = section.querySelector<HTMLElement>(".motion-right");
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
-      const cards = section.querySelectorAll<HTMLElement>(".spotlight-card");
-      const codeWrapper = section.querySelector<HTMLElement>(".code-wrapper");
-      const lines = codeWrapper?.querySelectorAll<HTMLElement>(".line");
-      let autopilotTimer: ReturnType<typeof setInterval> | null = null;
-      let currentIndex = 0;
-      let isManual = false;
+    let autopilotTimer: ReturnType<typeof setInterval> | null = null;
+    let activeIndex = 0;
+    let manuallySelected = false;
+    let stopVisibilityTracking: (() => void) | null = null;
 
-      const activateCard = (index: number) => {
-        if (!codeWrapper || !lines || lines.length === 0) return;
-        cards.forEach((card) => {
-          card.classList.remove("border-primary/50", "bg-primary/20");
-          card.setAttribute("aria-current", "false");
-        });
-        lines.forEach((line) => line.classList.remove("highlighted"));
-        const targetCard = cards[index];
-        if (!targetCard) return;
-        targetCard.classList.add("border-primary/50", "bg-primary/20");
-        targetCard.setAttribute("aria-current", "true");
-        codeWrapper.classList.add("is-interacting");
-        getTargetLines(targetCard.getAttribute("data-target-lines")).forEach(
-          (lineNumber) => {
-            lines[lineNumber - 1]?.classList.add("highlighted");
-          },
-        );
+    const activateCard = (index: number) => {
+      cards.forEach((card) => {
+        card.classList.remove("border-primary/50", "bg-primary/20");
+        card.setAttribute("aria-current", "false");
+      });
+
+      lines.forEach((line) => {
+        line.classList.remove("highlighted");
+      });
+
+      const targetCard = cards[index];
+      if (!targetCard) return;
+
+      activeIndex = index;
+      targetCard.classList.add("border-primary/50", "bg-primary/20");
+      targetCard.setAttribute("aria-current", "true");
+
+      if (!codeWrapper || lines.length === 0) return;
+
+      codeWrapper.classList.add("is-interacting");
+
+      getTargetLines(targetCard.getAttribute("data-target-lines")).forEach(
+        (lineNumber) => {
+          lines[lineNumber - 1]?.classList.add("highlighted");
+        },
+      );
+    };
+
+    const clearAutopilot = () => {
+      if (autopilotTimer === null) return;
+
+      clearInterval(autopilotTimer);
+      autopilotTimer = null;
+    };
+
+    const startAutopilot = () => {
+      if (manuallySelected || cards.length === 0 || reducedMotion) return;
+
+      clearAutopilot();
+      activateCard(activeIndex);
+
+      autopilotTimer = setInterval(() => {
+        activeIndex = (activeIndex + 1) % cards.length;
+        activateCard(activeIndex);
+      }, 4000);
+    };
+
+    const stopAutopilot = () => {
+      manuallySelected = true;
+      clearAutopilot();
+    };
+
+    cards.forEach((card, index) => {
+      const selectCard = () => {
+        stopAutopilot();
+        activateCard(index);
       };
 
-      const startAutopilot = () => {
-        if (isManual || cards.length === 0) return;
+      card.addEventListener("mouseenter", selectCard, {
+        signal: listenerController.signal,
+      });
 
-        if (autopilotTimer) {
-          clearInterval(autopilotTimer);
-        }
+      card.addEventListener("click", selectCard, {
+        signal: listenerController.signal,
+      });
 
+      card.addEventListener(
+        "keydown",
+        (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+
+          event.preventDefault();
+          selectCard();
+        },
+        { signal: listenerController.signal },
+      );
+    });
+
+    if (reducedMotion) {
+      [header, leftColumn, rightColumn].forEach((element) => {
+        if (!element) return;
+
+        element.style.opacity = "1";
+        element.style.transform = "none";
+      });
+
+      if (cards.length > 0) {
         activateCard(0);
-
-        autopilotTimer = setInterval(() => {
-          currentIndex = (currentIndex + 1) % cards.length;
-          activateCard(currentIndex);
-        }, 4000);
-      };
-
-      const stopAutopilot = () => {
-        if (autopilotTimer) {
-          clearInterval(autopilotTimer);
-          autopilotTimer = null;
-        }
-        isManual = true;
-      };
-
-      cleanupCallbacks.push(() => {
-        if (autopilotTimer) {
-          clearInterval(autopilotTimer);
-        }
-      });
-
-      cards.forEach((card, index) => {
-        const triggerManual = () => {
-          stopAutopilot();
-          activateCard(index);
-        };
-        card.addEventListener("mouseenter", triggerManual);
-        card.addEventListener("click", triggerManual);
-        card.addEventListener("keydown", (event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            triggerManual();
-          }
-        });
-      });
-
-      const header = section.querySelector<HTMLElement>(".motion-header");
-      const leftColumn = section.querySelector<HTMLElement>(".motion-left");
-      const rightColumn = section.querySelector<HTMLElement>(".motion-right");
-      const stopInView = inView(
+      }
+    } else {
+      stopVisibilityTracking = inView(
         section,
         () => {
           if (header) {
-            animate(header, { opacity: [0, 1], y: [30, 0] }, { duration: 0.6 });
+            animate(
+              header,
+              { opacity: [0, 1], y: [30, 0] },
+              { duration: 0.6, ease: "easeOut" },
+            );
           }
+
           if (leftColumn) {
             animate(
               leftColumn,
               { opacity: [0, 1], x: [-30, 0] },
-              { duration: 0.6, delay: 0.2 },
+              { duration: 0.6, delay: 0.2, ease: "easeOut" },
             );
           }
+
           if (rightColumn) {
             animate(
               rightColumn,
               { opacity: [0, 1], x: [30, 0] },
-              { duration: 0.6, delay: 0.4 },
+              { duration: 0.6, delay: 0.4, ease: "easeOut" },
             );
           }
+
           startAutopilot();
+
+          return () => {
+            clearAutopilot();
+          };
         },
         { amount: 0.2 },
       );
-      cleanupCallbacks.push(stopInView);
+    }
+
+    sectionCleanups.set(section, () => {
+      clearAutopilot();
+      stopVisibilityTracking?.();
+      listenerController.abort();
+      section.removeAttribute("data-initialized");
     });
   }
 
-  function teardownBlueprintSection() {
-    cleanupCallbacks.forEach((cleanup) => cleanup());
-    cleanupCallbacks.length = 0;
+  function initializeBlueprintSections() {
+    document
+      .querySelectorAll<HTMLElement>(".blueprint-section")
+      .forEach(initializeBlueprintSection);
+  }
+
+  function teardownBlueprintSections() {
+    sectionCleanups.forEach((cleanup) => cleanup());
+    sectionCleanups.clear();
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initBlueprintSection);
+    document.addEventListener("DOMContentLoaded", initializeBlueprintSections, {
+      once: true,
+    });
   } else {
-    initBlueprintSection();
+    initializeBlueprintSections();
   }
 
-  document.addEventListener("astro:page-load", initBlueprintSection);
-  document.addEventListener("astro:before-swap", teardownBlueprintSection);
-  window.addEventListener("pagehide", teardownBlueprintSection);
+  document.addEventListener("astro:page-load", initializeBlueprintSections);
+  document.addEventListener("astro:before-swap", teardownBlueprintSections);
+  window.addEventListener("pagehide", teardownBlueprintSections);
+  window.addEventListener("pageshow", initializeBlueprintSections);
 </script>

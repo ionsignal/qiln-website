@@ -86,17 +86,7 @@ const tickerTitle = parseTickerTitle(title);
     <div class="container">
       <div class="relative z-10 space-y-10">
         <div class="flex flex-col items-start gap-y-8 text-left md:gap-y-10">
-          {
-            badge && (
-              <div
-                class="animated-text"
-                data-duration="0.6"
-                data-delay="0.2"
-                data-stagger="0.1">
-                <Badge content={badge} href="/blog" class="word" />
-              </div>
-            )
-          }
+          {badge && <Badge content={badge} href="/blog" class="word" />}
           <div class="relative inline-block w-full">
             {
               (title || subtitle) && (
@@ -154,8 +144,9 @@ const tickerTitle = parseTickerTitle(title);
             description && (
               <AnimatedText
                 class="hero-description [&_strong]:text-secondary [&_b]:text-secondary w-full max-w-2xl text-left text-lg/normal text-white/90 [&_strong]:font-medium md:[&_strong]:whitespace-nowrap"
-                stagger={0.03}
-                delay={0.4}
+                duration={0.35}
+                delay={0.05}
+                stagger={0.01}
                 content={markdownify(description)}
               />
             )
@@ -210,56 +201,98 @@ const tickerTitle = parseTickerTitle(title);
   import { animate } from "motion";
 
   class QilnTicker extends HTMLElement {
-    private interval: ReturnType<typeof setInterval> | null = null;
-    private observer: IntersectionObserver | null = null;
-    private currentIndex = 0;
+    private intervalId: ReturnType<typeof setInterval> | null = null;
+    private visibilityObserver: IntersectionObserver | null = null;
+    private activeIndex = 0;
     private items: HTMLElement[] = [];
+    private isVisible = false;
+    private prefersReducedMotion = false;
 
     connectedCallback() {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      this.teardown();
+
       this.items = Array.from(
         this.querySelectorAll<HTMLElement>(".ticker-item"),
       );
+      this.activeIndex = 0;
+      this.resetItems();
+
       if (this.items.length < 2) return;
-      this.observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              this.startInterval();
-            } else {
-              this.stopInterval();
-            }
-          });
-        },
+
+      this.prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (this.prefersReducedMotion) return;
+
+      document.addEventListener(
+        "visibilitychange",
+        this.handleDocumentVisibilityChange,
+      );
+      if (typeof IntersectionObserver === "undefined") {
+        this.isVisible = true;
+        this.scheduleRotation();
+        return;
+      }
+      this.visibilityObserver = new IntersectionObserver(
+        this.handleIntersection,
         { threshold: 0 },
       );
-      this.observer.observe(this);
+      this.visibilityObserver.observe(this);
     }
 
     disconnectedCallback() {
-      this.stopInterval();
-      this.observer?.disconnect();
-      this.observer = null;
+      this.teardown();
+      this.resetItems();
+      this.items = [];
     }
 
-    private startInterval() {
-      if (!this.interval) {
-        this.interval = setInterval(() => this.runAnimation(), 3000);
+    private handleDocumentVisibilityChange = () => {
+      if (document.visibilityState === "visible" && this.isVisible) {
+        this.scheduleRotation();
+      } else {
+        this.stopRotation();
       }
-    }
+    };
 
-    private stopInterval() {
-      if (this.interval) {
-        clearInterval(this.interval);
-        this.interval = null;
+    private handleIntersection = (entries: IntersectionObserverEntry[]) => {
+      this.isVisible = entries[0]?.isIntersecting ?? false;
+
+      if (this.isVisible && document.visibilityState === "visible") {
+        this.scheduleRotation();
+      } else {
+        this.stopRotation();
       }
+    };
+
+    private scheduleRotation() {
+      if (
+        this.prefersReducedMotion ||
+        this.intervalId !== null ||
+        this.items.length < 2
+      ) {
+        return;
+      }
+      this.intervalId = setInterval(() => {
+        this.rotateItems();
+      }, 3000);
     }
 
-    private runAnimation() {
-      const outgoingItem = this.items[this.currentIndex];
-      this.currentIndex = (this.currentIndex + 1) % this.items.length;
-      const incomingItem = this.items[this.currentIndex];
+    private stopRotation() {
+      if (this.intervalId === null) return;
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+
+    private rotateItems() {
+      const outgoingItem = this.items[this.activeIndex];
+      const nextIndex = (this.activeIndex + 1) % this.items.length;
+      const incomingItem = this.items[nextIndex];
+
       if (!outgoingItem || !incomingItem) return;
+
+      this.activeIndex = nextIndex;
+
       animate(
         outgoingItem,
         {
@@ -269,6 +302,7 @@ const tickerTitle = parseTickerTitle(title);
         },
         { type: "spring", stiffness: 400, damping: 30 },
       );
+
       animate(
         incomingItem,
         {
@@ -278,6 +312,28 @@ const tickerTitle = parseTickerTitle(title);
         },
         { type: "spring", stiffness: 400, damping: 30 },
       );
+    }
+
+    private resetItems() {
+      this.items.forEach((item) => {
+        item.getAnimations().forEach((animation) => animation.cancel());
+        item.style.removeProperty("transform");
+        item.style.removeProperty("filter");
+        item.style.removeProperty("opacity");
+      });
+    }
+
+    private teardown() {
+      this.stopRotation();
+      this.visibilityObserver?.disconnect();
+      this.visibilityObserver = null;
+      document.removeEventListener(
+        "visibilitychange",
+        this.handleDocumentVisibilityChange,
+      );
+      this.isVisible = false;
+      this.prefersReducedMotion = false;
+      this.activeIndex = 0;
     }
   }
 

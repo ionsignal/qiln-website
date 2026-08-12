@@ -58,6 +58,7 @@ const { problem, solution } = Astro.props;
     private visibilityObserver: IntersectionObserver | null = null;
     private isVisible = false;
     private isTransitioning = false;
+    private prefersReducedMotion = false;
 
     connectedCallback() {
       this.teardown();
@@ -69,6 +70,12 @@ const { problem, solution } = Astro.props;
       }
       this.initializeSceneStates();
       this.setAttribute("data-ready", "");
+      this.prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (this.prefersReducedMotion) {
+        return;
+      }
       document.addEventListener(
         "visibilitychange",
         this.handleDocumentVisibilityChange,
@@ -262,6 +269,7 @@ const { problem, solution } = Astro.props;
     private canRotate() {
       return (
         this.isConnected &&
+        !this.prefersReducedMotion &&
         this.isVisible &&
         document.visibilityState === "visible"
       );
@@ -325,6 +333,7 @@ const { problem, solution } = Astro.props;
       this.activeSceneIndex = 0;
       this.isVisible = false;
       this.isTransitioning = false;
+      this.prefersReducedMotion = false;
     }
   }
 
