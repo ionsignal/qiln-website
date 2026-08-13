@@ -8,20 +8,27 @@ import PageLoader from "@/components/global/PageLoader.astro";
 import config from ".astro/config.generated.json";
 import type { LayoutProps } from "@/types/seo";
 
-type Props = LayoutProps;
+type Props = LayoutProps & {
+  includeGlobalScripts?: boolean;
+  includePageLoader?: boolean;
+};
 
-const { class: className } = Astro.props;
+const {
+  class: className,
+  includeGlobalScripts = true,
+  includePageLoader = true,
+} = Astro.props;
 ---
 
 <!doctype html>
 <html lang={config.settings.multilingual.defaultLanguage || "en"}>
   <Head {...Astro.props} />
   <body>
-    {!Astro.props.homepage && <PageLoader />}
+    {includePageLoader && !Astro.props.homepage && <PageLoader />}
     <main class:list={[className]}>
       <slot />
     </main>
-    <GlobalScripts />
+    {includeGlobalScripts && <GlobalScripts />}
     <BreakpointIndicator />
   </body>
 </html>

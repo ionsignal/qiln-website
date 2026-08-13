@@ -1,0 +1,136 @@
+---
+import defaultLogo from "@/assets/images/logo.svg";
+import Image from "@/components/helpers/Image.astro";
+import TitleDiagram from "@/components/deck/slides/diagrams/TitleDiagram.astro";
+import type { DeckSlideContent } from "@/types/deck";
+
+interface Props {
+  content: DeckSlideContent;
+  siteTitle: string;
+}
+
+const { content, siteTitle } = Astro.props;
+---
+
+<section
+  class="slide-title px-4 py-8 md:px-8 md:py-10 lg:px-12 lg:py-8"
+  aria-labelledby="title-card-heading">
+  <div class="title-layout mx-auto max-w-6xl">
+    <header class="title-copy">
+      <p
+        class="text-primary text-sm font-medium tracking-[0.16em] uppercase md:text-base">
+        {content.eyebrow}
+      </p>
+      <h2
+        id="title-card-heading"
+        class="title-brand mt-4 text-5xl/tight md:text-7xl/tight">
+        <Image
+          src={defaultLogo}
+          alt=""
+          aria-hidden="true"
+          class="title-brand-logo"
+          width={60}
+          height={60}
+        />
+        <span>{siteTitle}</span>
+      </h2>
+      <p class="title-statement mt-5">{content.title}</p>
+      <p
+        class="text-text-default mt-4 max-w-xl text-lg leading-relaxed md:text-xl">
+        {content.subtitle}
+      </p>
+    </header>
+    <div class="title-visual">
+      <TitleDiagram />
+    </div>
+  </div>
+  <footer class="title-footer">{content.footer}</footer>
+</section>
+
+<style>
+  .slide-title {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-height: 42rem;
+    background:
+      radial-gradient(
+        circle at 72% 45%,
+        color-mix(in srgb, var(--color-primary) 14%, transparent),
+        transparent 42%
+      ),
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--color-theme-dark) 58%, transparent),
+        transparent
+      );
+  }
+
+  .title-layout {
+    display: grid;
+    width: 100%;
+    gap: 3rem;
+    align-self: center;
+    align-items: center;
+  }
+
+  .title-copy,
+  .title-visual {
+    min-width: 0;
+  }
+
+  .title-visual {
+    min-height: 10rem;
+  }
+
+  .title-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .title-brand-logo {
+    flex: none;
+    display: block;
+    margin: 0.06em 0 0 0;
+    width: 1.18em;
+    height: 1.18em;
+  }
+
+  .title-statement {
+    max-width: 40rem;
+    color: var(--color-light);
+    font-family: var(--font-secondary);
+    font-size: clamp(2rem, 4.25vw, 3.5rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.08;
+  }
+
+  .title-footer {
+    align-self: end;
+    margin-top: 1.5rem;
+    color: color-mix(in srgb, var(--color-text-default) 76%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1rem;
+    text-align: center;
+  }
+
+  @media (min-width: 1024px) {
+    .title-layout {
+      grid-template-columns: minmax(0, 1.05fr) minmax(24rem, 0.95fr);
+      gap: 4rem;
+    }
+
+    .title-visual {
+      min-height: 18rem;
+    }
+
+    .title-footer {
+      margin-top: 1rem;
+      text-align: right;
+    }
+  }
+</style>

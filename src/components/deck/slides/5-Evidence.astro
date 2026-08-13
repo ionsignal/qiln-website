@@ -1,0 +1,206 @@
+---
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+---
+
+<div class="evidence-stage mx-auto w-full max-w-5xl">
+  <article class="evidence-metric" aria-labelledby="evidence-partner-heading">
+    <div class="evidence-metric-kicker">
+      <span class="evidence-icon-wrap">
+        <LucideIcon icon="UsersRound" class="h-5 w-5" aria-hidden="true" />
+      </span>
+      <span>Current partner signal</span>
+    </div>
+    <div class="evidence-metric-heading">
+      <strong class="evidence-metric-count">2</strong>
+      <h3 id="evidence-partner-heading" class="evidence-metric-label">
+        early design partners
+      </h3>
+    </div>
+    <p class="evidence-metric-description">
+      Mowie and GitHits are bringing revenue-relevant AI workflows into Qiln.
+    </p>
+  </article>
+  <ul class="evidence-partner-list" aria-label="Qiln design partners">
+    <li class="evidence-partner-card">
+      <span class="evidence-icon-wrap">
+        <LucideIcon icon="Workflow" class="h-5 w-5" aria-hidden="true" />
+      </span>
+      <div class="evidence-partner-copy">
+        <h3 class="evidence-partner-name">Mowie</h3>
+        <p class="evidence-partner-role">Design partner</p>
+      </div>
+      <span class="evidence-partner-status">
+        <LucideIcon icon="ShieldCheck" class="h-4 w-4" aria-hidden="true" />
+        Partner
+      </span>
+    </li>
+    <li class="evidence-partner-card">
+      <span class="evidence-icon-wrap">
+        <LucideIcon icon="GitFork" class="h-5 w-5" aria-hidden="true" />
+      </span>
+      <div class="evidence-partner-copy">
+        <h3 class="evidence-partner-name">GitHits</h3>
+        <p class="evidence-partner-role">Design partner</p>
+      </div>
+      <span class="evidence-partner-status">
+        <LucideIcon icon="ShieldCheck" class="h-4 w-4" aria-hidden="true" />
+        Partner
+      </span>
+    </li>
+  </ul>
+</div>
+
+<style>
+  .evidence-stage {
+    display: grid;
+    gap: 1.25rem;
+    align-items: stretch;
+  }
+
+  .evidence-metric,
+  .evidence-partner-card {
+    border: 1px solid color-mix(in srgb, var(--color-light) 20%, transparent);
+    background: color-mix(in srgb, var(--color-theme-dark) 76%, transparent);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.035);
+  }
+
+  .evidence-metric {
+    display: grid;
+    align-content: center;
+    border-color: color-mix(in srgb, var(--color-primary) 48%, transparent);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.035),
+      0 18px 42px rgb(0 0 0 / 0.16);
+  }
+
+  .evidence-metric-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-primary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .evidence-icon-wrap {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+    border-radius: 0.5rem;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+
+  .evidence-metric-heading {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .evidence-metric-count {
+    color: var(--color-light);
+    font-family: var(--font-secondary);
+    font-size: clamp(4.5rem, 10vw, 7.5rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+  }
+
+  .evidence-metric-label {
+    margin: 0;
+    color: var(--color-light);
+    font-family: var(--font-secondary);
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+  }
+
+  .evidence-metric-description {
+    max-width: 38rem;
+    margin: 1.5rem 0 0;
+    color: var(--color-text-default);
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+  }
+
+  .evidence-partner-list {
+    display: grid;
+    gap: 0.875rem;
+    align-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .evidence-partner-card {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.875rem;
+    border-radius: 0.875rem;
+    padding: 1rem;
+  }
+
+  .evidence-partner-copy {
+    min-width: 0;
+  }
+
+  .evidence-partner-name {
+    margin: 0;
+    color: var(--color-light);
+    font-family: var(--font-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+  }
+
+  .evidence-partner-role {
+    margin: 0.25rem 0 0;
+    color: var(--color-text-default);
+    font-size: 0.75rem;
+    line-height: 1.125rem;
+  }
+
+  .evidence-partner-status {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 0.375rem;
+    margin-left: auto;
+    border: 1px solid
+      color-mix(in srgb, var(--color-secondary) 36%, transparent);
+    border-radius: 9999px;
+    padding: 0.375rem 0.625rem;
+    color: var(--color-secondary);
+    background: color-mix(in srgb, var(--color-secondary) 7%, transparent);
+    font-size: 0.6875rem;
+    font-weight: 500;
+  }
+
+  @media (min-width: 1024px) {
+    .evidence-stage {
+      grid-template-columns: minmax(0, 1.35fr) minmax(17rem, 0.65fr);
+      gap: 1.5rem;
+    }
+
+    .evidence-metric {
+      min-height: 20rem;
+      padding: 2rem;
+    }
+
+    .evidence-partner-card {
+      min-height: 8rem;
+      padding: 1.25rem;
+    }
+  }
+</style>

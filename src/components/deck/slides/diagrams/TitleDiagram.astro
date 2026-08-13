@@ -1,0 +1,891 @@
+---
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+
+const artifactSatellites = [
+  {
+    label: "repo ×3",
+    icon: "FileCodeCorner",
+    className: "artifact-satellite-code",
+  },
+  {
+    label: "CUDA",
+    icon: "Cpu",
+    className: "artifact-satellite-runtime",
+  },
+  {
+    label: "weights",
+    icon: "Package",
+    className: "artifact-satellite-model",
+  },
+  {
+    label: "CSV / I-O",
+    icon: "FileSpreadsheet",
+    className: "artifact-satellite-data",
+  },
+  {
+    label: "/api",
+    icon: "Route",
+    className: "artifact-satellite-route",
+  },
+] as const;
+---
+
+<div
+  class="qiln-title-visual mx-auto w-full max-w-6xl"
+  role="img"
+  aria-labelledby="qiln-title-visual-description">
+  <p id="qiln-title-visual-description" class="sr-only">
+    Scattered code, runtime, model, data, and route state converges into a Qiln
+    version 1.0 known-good capsule. Production remains fixed at the protected
+    predict route while an agent receives only an isolated version 1.1 fork.
+  </p>
+  <div class="qiln-system-stage" aria-hidden="true">
+    <svg
+      class="system-connections"
+      viewBox="0 0 1000 420"
+      preserveAspectRatio="none">
+      <path
+        class="artifact-connection artifact-connection-code"
+        d="M58 54 C132 62 168 145 250 172"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="artifact-connection artifact-connection-runtime"
+        d="M143 135 C195 142 213 178 250 190"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="artifact-connection artifact-connection-model"
+        d="M52 220 C132 220 190 211 250 210"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="artifact-connection artifact-connection-data"
+        d="M150 294 C207 283 218 242 250 228"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="artifact-connection artifact-connection-route"
+        d="M76 365 C145 354 201 278 250 245"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="fork-connection"
+        d="M690 174 C732 174 740 112 790 112"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="route-connection"
+        d="M690 314 L744 314"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <circle class="capsule-input-node" cx="250" cy="210" r="3"></circle>
+      <circle class="fork-output-node" cx="790" cy="112" r="3"></circle>
+      <circle class="route-output-node" cx="744" cy="314" r="3"></circle>
+    </svg>
+    <section class="artifact-constellation">
+      <svg
+        class="artifact-mobile-links"
+        viewBox="0 0 500 104"
+        preserveAspectRatio="none">
+        <path
+          d="M48 24 C115 20 150 54 245 92"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          d="M170 18 C195 35 215 65 245 92"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          d="M96 80 C155 79 195 84 245 92"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          d="M362 76 C316 76 288 84 245 92"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          d="M446 24 C365 31 310 66 245 92"
+          vector-effect="non-scaling-stroke">
+        </path>
+      </svg>
+      <ul class="artifact-satellite-list">
+        {
+          artifactSatellites.map((artifact) => (
+            <li class:list={["artifact-satellite", artifact.className]}>
+              <LucideIcon
+                icon={artifact.icon}
+                class="h-3.5 w-3.5"
+                aria-hidden="true"
+              />
+              <span>{artifact.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+    <div class="capsule-zone">
+      <span class="capsule-layer capsule-layer-back"></span>
+      <span class="capsule-layer capsule-layer-middle"></span>
+      <article class="capsule-card">
+        <header class="capsule-header">
+          <span class="capsule-mark">
+            <LucideIcon icon="Layers3" class="h-4 w-4" aria-hidden="true" />
+          </span>
+          <span class="capsule-label">CAPSULE</span>
+        </header>
+        <div class="capsule-core">
+          <div class="capsule-release">
+            <code class="capsule-version">v1.0</code>
+            <span class="capsule-state">
+              <LucideIcon
+                icon="ShieldCheck"
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+              <strong>KNOWN GOOD</strong>
+            </span>
+          </div>
+          <span class="capsule-alignment">
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+        </div>
+      </article>
+    </div>
+    <div class="outcome-zone">
+      <div class="fork-system">
+        <span class="agent-node">
+          <LucideIcon icon="Bot" class="h-4 w-4" aria-hidden="true" />
+          <span>AGENT</span>
+        </span>
+        <span class="agent-fork-path"></span>
+        <div class="fork-capsule">
+          <span class="fork-layer"></span>
+          <article class="fork-card">
+            <span class="fork-label">
+              <LucideIcon
+                icon="GitFork"
+                class="h-3.5 w-3.5"
+                aria-hidden="true"
+              />
+              FORK
+            </span>
+            <code class="fork-version">v1.1</code>
+          </article>
+        </div>
+      </div>
+      <article class="route-card">
+        <span class="route-shield">
+          <LucideIcon icon="ShieldCheck" class="h-4 w-4" aria-hidden="true" />
+        </span>
+        <div class="route-content">
+          <span class="route-label">STABLE ROUTE</span>
+          <span class="route-mapping">
+            <code>/predict</code>
+            <span>v1.0</span>
+          </span>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<style>
+  .qiln-title-visual {
+    container-type: inline-size;
+  }
+
+  .qiln-system-stage {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    width: 100%;
+    gap: 1.5rem;
+    padding: 0.75rem 0.25rem;
+  }
+
+  .qiln-system-stage::before {
+    position: absolute;
+    z-index: -1;
+    inset: 10% 4%;
+    background: radial-gradient(
+      circle at 52% 54%,
+      color-mix(in srgb, var(--color-primary) 12%, transparent),
+      transparent 62%
+    );
+    filter: blur(18px);
+    content: "";
+  }
+
+  .system-connections {
+    display: none;
+  }
+
+  .artifact-constellation {
+    position: relative;
+    z-index: 2;
+    padding-bottom: 1.25rem;
+  }
+
+  .artifact-constellation::after {
+    position: absolute;
+    bottom: -1.5rem;
+    left: 50%;
+    width: 1px;
+    height: 1.5rem;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-light) 18%, transparent),
+      color-mix(in srgb, var(--color-primary) 55%, transparent)
+    );
+    content: "";
+  }
+
+  .artifact-mobile-links {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 6.5rem;
+    overflow: visible;
+    fill: none;
+    stroke: color-mix(in srgb, var(--color-light) 15%, transparent);
+    stroke-dasharray: 3 7;
+    stroke-linecap: round;
+    stroke-width: 1px;
+  }
+
+  .artifact-satellite-list {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 6.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .artifact-satellite {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border: 1px solid color-mix(in srgb, var(--color-light) 16%, transparent);
+    border-radius: 0.375rem;
+    background: color-mix(in srgb, var(--color-theme-dark) 82%, transparent);
+    padding: 0.375rem 0.5rem;
+    color: color-mix(in srgb, var(--color-text-default) 72%, transparent);
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.12);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    font-weight: 500;
+    line-height: 0.875rem;
+    white-space: nowrap;
+  }
+
+  .artifact-satellite-code {
+    top: 0.5rem;
+    left: 2%;
+    transform: rotate(-2deg);
+  }
+
+  .artifact-satellite-runtime {
+    top: 0;
+    left: 29%;
+    transform: rotate(1.5deg);
+  }
+
+  .artifact-satellite-model {
+    top: 3.75rem;
+    left: 15%;
+    transform: rotate(2deg);
+  }
+
+  .artifact-satellite-data {
+    top: 3.25rem;
+    right: 13%;
+    transform: rotate(-1.5deg);
+  }
+
+  .artifact-satellite-route {
+    top: 0.7rem;
+    right: 2%;
+    transform: rotate(2.5deg);
+  }
+
+  .capsule-zone {
+    position: relative;
+    z-index: 2;
+    width: min(calc(100% - 1.5rem), 30rem);
+    margin: 0 auto;
+  }
+
+  .capsule-zone::after {
+    position: absolute;
+    bottom: -3rem;
+    left: 50%;
+    width: 1px;
+    height: 3rem;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-primary) 68%, transparent),
+      color-mix(in srgb, var(--color-light) 18%, transparent)
+    );
+    content: "";
+  }
+
+  .capsule-layer {
+    position: absolute;
+    inset: 0;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 28%, transparent);
+    border-radius: 1.125rem;
+    background: color-mix(in srgb, var(--color-primary) 3%, transparent);
+    pointer-events: none;
+  }
+
+  .capsule-layer-back {
+    transform: translate(0.75rem, -0.75rem);
+  }
+
+  .capsule-layer-middle {
+    border-color: color-mix(in srgb, var(--color-primary) 42%, transparent);
+    transform: translate(0.375rem, -0.375rem);
+  }
+
+  .capsule-card {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    min-height: 12rem;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
+    border-radius: 1.125rem;
+    background:
+      radial-gradient(
+        circle at 78% 72%,
+        color-mix(in srgb, var(--color-primary) 14%, transparent),
+        transparent 42%
+      ),
+      color-mix(in srgb, var(--color-theme-dark) 94%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      0 24px 52px rgb(0 0 0 / 0.22),
+      0 0 32px color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+
+  .capsule-header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--color-primary) 22%, transparent);
+    padding: 0.875rem 1rem;
+  }
+
+  .capsule-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 46%, transparent);
+    border-radius: 0.5rem;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  }
+
+  .capsule-label {
+    color: var(--color-primary);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    line-height: 1rem;
+  }
+
+  .capsule-core {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1rem 1.25rem 1.25rem;
+  }
+
+  .capsule-release {
+    display: grid;
+    gap: 0.875rem;
+  }
+
+  .capsule-version {
+    color: var(--color-light);
+    font-family: var(--font-secondary);
+    font-size: clamp(2.5rem, 11cqw, 4.5rem);
+    font-weight: 500;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+  }
+
+  .capsule-state {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    gap: 0.375rem;
+    border: 1px solid
+      color-mix(in srgb, var(--color-secondary) 42%, transparent);
+    border-radius: 9999px;
+    padding: 0.375rem 0.625rem;
+    color: var(--color-secondary);
+    background: color-mix(in srgb, var(--color-secondary) 8%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .capsule-state strong {
+    color: inherit;
+    font-weight: inherit;
+  }
+
+  .capsule-alignment {
+    display: grid;
+    width: min(32%, 7rem);
+    gap: 0.75rem;
+  }
+
+  .capsule-alignment i {
+    position: relative;
+    display: block;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-primary) 78%, transparent),
+      color-mix(in srgb, var(--color-primary) 12%, transparent)
+    );
+  }
+
+  .capsule-alignment i::before {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0.375rem;
+    height: 0.375rem;
+    border: 1px solid var(--color-primary);
+    border-radius: 9999px;
+    background: var(--color-theme-dark);
+    transform: translateY(-50%);
+    content: "";
+  }
+
+  .capsule-alignment i:nth-child(2) {
+    width: 78%;
+    margin-left: auto;
+  }
+
+  .capsule-alignment i:nth-child(3) {
+    width: 58%;
+  }
+
+  .outcome-zone {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.75rem;
+    padding-top: 2.5rem;
+  }
+
+  .outcome-zone::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 1.5rem;
+    background: color-mix(in srgb, var(--color-light) 20%, transparent);
+    content: "";
+  }
+
+  .outcome-zone::after {
+    position: absolute;
+    top: 1.5rem;
+    right: 25%;
+    left: 25%;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-primary) 52%, transparent),
+      color-mix(in srgb, var(--color-light) 18%, transparent) 50%,
+      color-mix(in srgb, var(--color-secondary) 52%, transparent)
+    );
+    content: "";
+  }
+
+  .fork-system {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    grid-template-columns: auto 1rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .fork-system::before,
+  .route-card::before {
+    position: absolute;
+    top: -1rem;
+    left: 50%;
+    width: 1px;
+    height: 1rem;
+    content: "";
+  }
+
+  .fork-system::before {
+    background: color-mix(in srgb, var(--color-primary) 52%, transparent);
+  }
+
+  .agent-node {
+    display: inline-grid;
+    flex: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 38%, transparent);
+    border-radius: 0.625rem;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, var(--color-body));
+  }
+
+  .agent-node span {
+    margin-top: -0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.4375rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 0.5rem;
+  }
+
+  .agent-fork-path {
+    display: block;
+    width: 100%;
+    border-top: 1px dashed
+      color-mix(in srgb, var(--color-primary) 74%, transparent);
+  }
+
+  .fork-capsule {
+    position: relative;
+    min-width: 0;
+  }
+
+  .fork-layer {
+    position: absolute;
+    inset: 0;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
+    border-radius: 0.75rem;
+    transform: translate(0.25rem, -0.25rem);
+  }
+
+  .fork-card {
+    position: relative;
+    display: grid;
+    min-height: 5rem;
+    align-content: center;
+    gap: 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 42%, transparent);
+    border-radius: 0.75rem;
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--color-primary) 9%, transparent),
+        transparent
+      ),
+      color-mix(in srgb, var(--color-theme-dark) 90%, transparent);
+    padding: 0.75rem;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  }
+
+  .fork-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--color-primary);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+
+  .fork-version {
+    color: var(--color-light);
+    font-family: var(--font-secondary);
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .route-card {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.625rem;
+    border: 1px solid
+      color-mix(in srgb, var(--color-secondary) 38%, transparent);
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--color-theme-dark) 88%, transparent);
+    padding: 0.75rem;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.04),
+      0 12px 28px rgb(0 0 0 / 0.14);
+  }
+
+  .route-card::before {
+    background: color-mix(in srgb, var(--color-secondary) 52%, transparent);
+  }
+
+  .route-shield {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid
+      color-mix(in srgb, var(--color-secondary) 38%, transparent);
+    border-radius: 0.5rem;
+    color: var(--color-secondary);
+    background: color-mix(in srgb, var(--color-secondary) 8%, transparent);
+  }
+
+  .route-content {
+    display: grid;
+    min-width: 0;
+    gap: 0.375rem;
+  }
+
+  .route-label {
+    color: var(--color-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  .route-mapping {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.375rem;
+  }
+
+  .route-mapping code {
+    color: var(--color-light);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .route-mapping span {
+    color: var(--color-text-default);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    white-space: nowrap;
+  }
+
+  @container (min-width: 31rem) {
+    .qiln-system-stage {
+      display: block;
+      height: clamp(20rem, 42cqw, 26.25rem);
+      padding: 0;
+    }
+
+    .system-connections {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .artifact-connection,
+    .fork-connection,
+    .route-connection {
+      fill: none;
+      stroke-linecap: round;
+    }
+
+    .artifact-connection {
+      stroke: color-mix(in srgb, var(--color-light) 15%, transparent);
+      stroke-dasharray: 3 7;
+      stroke-width: 1px;
+    }
+
+    .artifact-connection-runtime,
+    .artifact-connection-data {
+      stroke-dasharray: 2 6;
+    }
+
+    .artifact-connection-model {
+      stroke-dasharray: 5 9;
+    }
+
+    .fork-connection {
+      stroke: color-mix(in srgb, var(--color-primary) 46%, transparent);
+      stroke-width: 1.25px;
+    }
+
+    .route-connection {
+      stroke: color-mix(in srgb, var(--color-secondary) 58%, transparent);
+      stroke-width: 1.5px;
+    }
+
+    .capsule-input-node {
+      fill: var(--color-primary);
+    }
+
+    .fork-output-node {
+      fill: color-mix(in srgb, var(--color-primary) 72%, transparent);
+    }
+
+    .route-output-node {
+      fill: var(--color-secondary);
+    }
+
+    .artifact-constellation {
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      left: 0;
+      width: 23%;
+      height: 100%;
+      padding: 0;
+    }
+
+    .artifact-constellation::after,
+    .artifact-mobile-links {
+      display: none;
+    }
+
+    .artifact-satellite-list {
+      height: 100%;
+    }
+
+    .artifact-satellite-code {
+      top: 10%;
+      left: 1%;
+    }
+
+    .artifact-satellite-runtime {
+      top: 29%;
+      left: 34%;
+    }
+
+    .artifact-satellite-model {
+      top: 50%;
+      left: 0;
+    }
+
+    .artifact-satellite-data {
+      top: 68%;
+      right: 2%;
+      left: auto;
+    }
+
+    .artifact-satellite-route {
+      top: 84%;
+      right: auto;
+      left: 8%;
+    }
+
+    .capsule-zone {
+      position: absolute;
+      z-index: 2;
+      top: 22%;
+      left: 25%;
+      width: 44%;
+      height: 63%;
+      margin: 0;
+    }
+
+    .capsule-zone::after {
+      display: none;
+    }
+
+    .capsule-card {
+      height: 100%;
+      min-height: 0;
+    }
+
+    .capsule-version {
+      font-size: clamp(2.25rem, 6cqw, 4.25rem);
+    }
+
+    .outcome-zone {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      display: block;
+      padding: 0;
+    }
+
+    .outcome-zone::before,
+    .outcome-zone::after,
+    .fork-system::before,
+    .route-card::before {
+      display: none;
+    }
+
+    .fork-system {
+      position: absolute;
+      top: 3%;
+      left: 69%;
+      display: block;
+      width: 31%;
+      height: 38%;
+    }
+
+    .agent-node {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .agent-fork-path {
+      position: absolute;
+      top: 2.1rem;
+      left: 2.25rem;
+      width: clamp(1.5rem, 5cqw, 4rem);
+      transform: rotate(15deg);
+      transform-origin: left center;
+    }
+
+    .fork-capsule {
+      position: absolute;
+      top: 22%;
+      right: 0;
+      width: 70%;
+    }
+
+    .fork-card {
+      min-height: 6rem;
+    }
+
+    .route-card {
+      position: absolute;
+      top: 67%;
+      left: 74%;
+      width: 25%;
+      min-height: 5rem;
+    }
+  }
+</style>

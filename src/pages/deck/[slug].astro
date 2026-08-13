@@ -1,0 +1,51 @@
+---
+import config from ".astro/config.generated.json";
+import Deck from "@/components/deck/Deck.astro";
+import BasicLayout from "@/layouts/BasicLayout.astro";
+import { fetchRequiredEntry } from "@/utils/content";
+import { formatUrl } from "@/utils/core";
+
+interface Props {
+  variantKey: string;
+}
+
+export async function getStaticPaths() {
+  const deckEntry = await fetchRequiredEntry("decks", "qiln");
+  return Object.keys(deckEntry.data.variants).map((variantKey) => ({
+    params: { slug: variantKey },
+    props: { variantKey },
+  }));
+}
+
+const { variantKey } = Astro.props;
+const deckEntry = await fetchRequiredEntry("decks", "qiln");
+const variant = deckEntry.data.variants[variantKey];
+
+if (!variant) {
+  throw new Error(
+    `[deck] Deck variant "${variantKey}" was not found in the "qiln" deck entry.`,
+  );
+}
+
+const { description, title: titleSuffix } = deckEntry.data;
+const deckTitle = `${config.site.title} ${titleSuffix}`;
+const canonical =
+  variantKey === "explainer"
+    ? formatUrl("/deck")
+    : formatUrl(`/deck/${variantKey}`);
+---
+
+<BasicLayout
+  title={deckTitle}
+  description={description}
+  canonical={canonical}
+  includeGlobalScripts={false}
+  includePageLoader={false}
+  class="min-h-svh">
+  <Deck
+    content={deckEntry.data}
+    slideKeys={variant.slides}
+    deckTitle={deckTitle}
+    deckId={`qiln-${variantKey}-deck`}
+  />
+</BasicLayout>

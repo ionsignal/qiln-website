@@ -1,0 +1,34 @@
+---
+import config from ".astro/config.generated.json";
+import Deck from "@/components/deck/Deck.astro";
+import BasicLayout from "@/layouts/BasicLayout.astro";
+import { fetchRequiredEntry } from "@/utils/content";
+import { formatUrl } from "@/utils/core";
+
+const deckEntry = await fetchRequiredEntry("decks", "qiln");
+const explainerVariant = deckEntry.data.variants.explainer;
+
+if (!explainerVariant) {
+  throw new Error(
+    '[deck] Required deck variant "explainer" was not found in the "qiln" deck entry.',
+  );
+}
+
+const { description, title: titleSuffix } = deckEntry.data;
+const deckTitle = `${config.site.title} ${titleSuffix}`;
+---
+
+<BasicLayout
+  title={deckTitle}
+  description={description}
+  canonical={formatUrl("/deck")}
+  includeGlobalScripts={false}
+  includePageLoader={false}
+  class="min-h-svh">
+  <Deck
+    content={deckEntry.data}
+    slideKeys={explainerVariant.slides}
+    deckTitle={deckTitle}
+    deckId="qiln-explainer-deck"
+  />
+</BasicLayout>

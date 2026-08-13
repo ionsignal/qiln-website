@@ -1,0 +1,206 @@
+---
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+---
+
+<div class="beachhead-grid mx-auto w-full max-w-6xl">
+  <article class="beachhead-qualification">
+    <div class="flex items-center gap-3">
+      <span class="beachhead-icon-wrap">
+        <LucideIcon icon="Crosshair" class="h-5 w-5" aria-hidden="true" />
+      </span>
+      <h3 class="text-lg font-medium text-white">
+        Commercial AI builders with workflows that:
+      </h3>
+    </div>
+    <ul class="beachhead-list mt-6">
+      <li>
+        <LucideIcon
+          icon="CircleDollarSign"
+          class="text-primary h-5 w-5 shrink-0"
+          aria-hidden="true"
+        />
+        <span>Make money or run operations</span>
+      </li>
+      <li>
+        <LucideIcon
+          icon="Layers3"
+          class="text-primary h-5 w-5 shrink-0"
+          aria-hidden="true"
+        />
+        <span>Span models, assets, services, and routes</span>
+      </li>
+      <li>
+        <LucideIcon
+          icon="ShieldAlert"
+          class="text-primary h-5 w-5 shrink-0"
+          aria-hidden="true"
+        />
+        <span>Cannot afford unsafe change</span>
+      </li>
+    </ul>
+  </article>
+  <article class="beachhead-migration">
+    <div class="flex items-center gap-3">
+      <span class="beachhead-icon-wrap">
+        <LucideIcon icon="HandHeart" class="h-5 w-5" aria-hidden="true" />
+      </span>
+      <h3 class="text-lg font-medium text-white">Concierge migration</h3>
+    </div>
+    <ol class="migration-journey mt-6">
+      <li>
+        <span class="migration-step-number">01</span>
+        <div>
+          <p class="migration-step-title">Workflow migration</p>
+          <p class="migration-step-detail">
+            Capture the working system around the workflow.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="migration-step-number">02</span>
+        <div>
+          <p class="migration-step-title">
+            Known-good capsule + repeatable test
+          </p>
+          <p class="migration-step-detail">
+            Establish a runnable release unit and evidence.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span class="migration-step-number">03</span>
+        <div>
+          <p class="migration-step-title">
+            First safe change + verified rollback
+          </p>
+          <p class="migration-step-detail">
+            Prove the production path before expanding usage.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </article>
+</div>
+
+<style>
+  .beachhead-grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .beachhead-qualification,
+  .beachhead-migration {
+    border: 1px solid color-mix(in srgb, var(--color-light) 20%, transparent);
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--color-theme-dark) 76%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.035),
+      0 18px 42px rgb(0 0 0 / 0.16);
+    padding: 1.25rem;
+  }
+
+  .beachhead-migration {
+    border-color: color-mix(in srgb, var(--color-primary) 42%, transparent);
+  }
+
+  .beachhead-icon-wrap {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+    border-radius: 0.5rem;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+
+  .beachhead-list,
+  .migration-journey {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .beachhead-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-light) 15%, transparent);
+    border-radius: 0.625rem;
+    background: color-mix(in srgb, var(--color-body) 42%, transparent);
+    padding: 0.875rem;
+    color: var(--color-light);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+  }
+
+  .migration-journey li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .migration-journey li:not(:last-child)::after {
+    position: absolute;
+    top: 2rem;
+    bottom: -0.75rem;
+    left: 1rem;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-primary) 68%, transparent),
+      color-mix(in srgb, var(--color-primary) 12%, transparent)
+    );
+    content: "";
+  }
+
+  .migration-step-number {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+    border-radius: 9999px;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, var(--color-body));
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+  }
+
+  .migration-step-title {
+    margin: 0;
+    color: var(--color-light);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+  }
+
+  .migration-step-detail {
+    margin: 0.25rem 0 0;
+    color: var(--color-text-default);
+    font-size: 0.75rem;
+    line-height: 1.125rem;
+  }
+
+  @media (min-width: 1024px) {
+    .beachhead-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+
+    .beachhead-qualification,
+    .beachhead-migration {
+      padding: 1.5rem;
+    }
+  }
+</style>

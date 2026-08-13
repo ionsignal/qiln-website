@@ -11,7 +11,7 @@
   logoWidth          = "32px"               # Width of the logo
   logoHeight         = "32px"               # Height of the logo
 
-  # Add a trailing slash at the end of URLs (e.g., https://qiln.com/)
+  # Add a trailing slash at the end of URLs (e.g. https://qiln.com/)
   trailingSlash = true
 
   # Run "npm run generate-favicons" to generate favicons
@@ -28,10 +28,10 @@
   robots = "index, follow"                  # Instructs search engines on how to crawl and index the pages.
   [seo.robotsTxt]
     enable = true                           # Enables or disables robots.txt file generation on site build
-    disallow = ["/cdn-cgi/"]                # Disallow specific paths (e.g., "/_astro/", "/cdn-cgi/")
+    disallow = ["/cdn-cgi/"]                # Disallow specific paths (e.g. "/_astro/", "/cdn-cgi/")
   [seo.sitemap]
     enable = true                           # Enables or disables sitemap generation on site build
-    exclude = []                            # exclude all pages that include these folder names (e.g., "blog", "services")
+    exclude = ["deck/explainer", "deck/vc"] # Exclude unadvertised and canonical-alias deck routes
 
 [settings]
   pagination = 6                            # Number of posts displayed on each page blog list page

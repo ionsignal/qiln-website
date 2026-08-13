@@ -1,0 +1,111 @@
+---
+import config from ".astro/config.generated.json";
+import Background from "@/components/visualization/Background.astro";
+import Controls from "@/components/deck/Controls.astro";
+import Frame from "@/components/deck/Frame.astro";
+import Slider from "@/components/deck/Slider.astro";
+import Theme from "@/components/deck/Theme.astro";
+import TitleSlide from "@/components/deck/slides/0-Title.astro";
+import ProblemDiagram from "@/components/deck/slides/1-Problem.astro";
+import SolutionDiagram from "@/components/deck/slides/2-Solution.astro";
+import ProductDiagram from "@/components/deck/slides/3-Product.astro";
+import BeachheadDiagram from "@/components/deck/slides/4-Beachhead.astro";
+import EvidenceDiagram from "@/components/deck/slides/5-Evidence.astro";
+import RaiseDiagram from "@/components/deck/slides/6-Raise.astro";
+import type { DeckContent, DeckSlideKey } from "@/types/deck";
+
+interface Props {
+  content: DeckContent;
+  slideKeys: readonly DeckSlideKey[];
+  deckTitle: string;
+  deckId?: string;
+}
+
+const {
+  content,
+  slideKeys,
+  deckTitle,
+  deckId = "qiln-scene-deck",
+} = Astro.props;
+
+const slideDefinitions = {
+  title: {
+    type: "title",
+  },
+  problem: {
+    type: "themed",
+    headingId: "problem-slide-heading",
+    diagram: ProblemDiagram,
+  },
+  solution: {
+    type: "themed",
+    headingId: "solution-slide-heading",
+    diagram: SolutionDiagram,
+  },
+  product: {
+    type: "themed",
+    headingId: "product-slide-heading",
+    diagram: ProductDiagram,
+  },
+  beachhead: {
+    type: "themed",
+    headingId: "beachhead-slide-heading",
+    diagram: BeachheadDiagram,
+  },
+  evidence: {
+    type: "themed",
+    headingId: "evidence-slide-heading",
+    diagram: EvidenceDiagram,
+  },
+  raise: {
+    type: "themed",
+    headingId: "raise-slide-heading",
+    diagram: RaiseDiagram,
+  },
+} as const;
+
+const selectedSlides = slideKeys.map((slideKey) => ({
+  content: content.slides[slideKey],
+  definition: slideDefinitions[slideKey],
+}));
+---
+
+<section
+  class="relative isolate flex min-h-svh w-full items-center py-6 md:py-10"
+  aria-labelledby="deck-title">
+  <Background />
+  <h1 id="deck-title" class="sr-only">{deckTitle}</h1>
+  <div class="relative z-10 container w-full">
+    <div class="relative xl:mx-12">
+      <Frame class="w-full">
+        <Slider id={deckId} class="pitch-deck-slider block w-full">
+          {
+            selectedSlides.map(({ content: slideContent, definition }) => {
+              if (definition.type === "title") {
+                return (
+                  <div data-scene-deck-scene class="min-w-0">
+                    <TitleSlide
+                      content={slideContent}
+                      siteTitle={config.site.title}
+                    />
+                  </div>
+                );
+              }
+              const Diagram = definition.diagram;
+              return (
+                <div data-scene-deck-scene class="min-w-0">
+                  <Theme
+                    content={slideContent}
+                    headingId={definition.headingId}>
+                    <Diagram slot="diagram" />
+                  </Theme>
+                </div>
+              );
+            })
+          }
+        </Slider>
+      </Frame>
+      <Controls deckId={deckId} />
+    </div>
+  </div>
+</section>

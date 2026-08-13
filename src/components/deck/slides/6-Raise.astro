@@ -1,0 +1,300 @@
+---
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+---
+
+<div class="raise-diagram mx-auto w-full max-w-6xl">
+  <ol class="raise-milestones" aria-label="Eighteen-month proof milestones">
+    <li class="raise-milestone">
+      <span class="raise-proof-bar" aria-hidden="true"></span>
+      <div class="raise-milestone-header">
+        <span class="raise-icon-wrap">
+          <LucideIcon
+            icon="CircleDollarSign"
+            class="h-5 w-5"
+            aria-hidden="true"
+          />
+        </span>
+        <span class="raise-milestone-index">01</span>
+      </div>
+      <p class="raise-milestone-category">Production adoption</p>
+      <h3 class="raise-milestone-title">
+        <strong class="raise-milestone-value">30</strong>
+        <span>paid production capsules</span>
+      </h3>
+    </li>
+    <li class="raise-milestone">
+      <span class="raise-proof-bar" aria-hidden="true"></span>
+      <div class="raise-milestone-header">
+        <span class="raise-icon-wrap">
+          <LucideIcon icon="ShieldCheck" class="h-5 w-5" aria-hidden="true" />
+        </span>
+        <span class="raise-milestone-index">02</span>
+      </div>
+      <p class="raise-milestone-category">Safe change volume</p>
+      <h3 class="raise-milestone-title">
+        <strong class="raise-milestone-value">1,000</strong>
+        <span>completed safe change transactions</span>
+      </h3>
+    </li>
+    <li class="raise-milestone raise-milestone-commercial">
+      <span class="raise-proof-bar" aria-hidden="true"></span>
+      <div class="raise-milestone-header">
+        <span class="raise-icon-wrap">
+          <LucideIcon icon="Route" class="h-5 w-5" aria-hidden="true" />
+        </span>
+        <span class="raise-milestone-index">03</span>
+      </div>
+      <p class="raise-milestone-category">Commercial proof</p>
+      <h3 class="raise-milestone-title raise-milestone-title-outcome">
+        Migration → activation → renewal / expansion evidence
+      </h3>
+    </li>
+  </ol>
+  <div class="raise-footer">
+    <div class="raise-seeking">
+      <span class="raise-footer-icon">
+        <LucideIcon icon="UsersRound" class="h-5 w-5" aria-hidden="true" />
+      </span>
+      <div>
+        <p class="raise-footer-label">Seeking</p>
+        <p class="raise-footer-detail">
+          Lead investor + introductions to commercial AI workflow builders
+        </p>
+      </div>
+    </div>
+    <address class="raise-contact">
+      <a href="https://qiln.com">qiln.com</a>
+      <span aria-hidden="true">·</span>
+      <a href="mailto:admin@ionsignal.com">admin@ionsignal.com</a>
+    </address>
+  </div>
+</div>
+
+<style>
+  .raise-diagram {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .raise-milestones {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .raise-milestone {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    align-content: start;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-light) 20%, transparent);
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--color-theme-dark) 76%, transparent);
+    padding: 1.25rem;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.035),
+      0 18px 42px rgb(0 0 0 / 0.16);
+  }
+
+  .raise-milestone-commercial {
+    border-color: color-mix(in srgb, var(--color-secondary) 36%, transparent);
+  }
+
+  .raise-proof-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0.1875rem;
+    background: linear-gradient(
+      to bottom,
+      var(--color-primary),
+      color-mix(in srgb, var(--color-primary) 8%, transparent)
+    );
+  }
+
+  .raise-milestone-commercial .raise-proof-bar {
+    background: linear-gradient(
+      to bottom,
+      var(--color-secondary),
+      color-mix(in srgb, var(--color-secondary) 8%, transparent)
+    );
+  }
+
+  .raise-milestone-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .raise-icon-wrap,
+  .raise-footer-icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+    border-radius: 0.5rem;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+
+  .raise-milestone-commercial .raise-icon-wrap {
+    border-color: color-mix(in srgb, var(--color-secondary) 40%, transparent);
+    color: var(--color-secondary);
+    background: color-mix(in srgb, var(--color-secondary) 8%, transparent);
+  }
+
+  .raise-milestone-index {
+    color: var(--color-primary);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+  }
+
+  .raise-milestone-commercial .raise-milestone-index {
+    color: var(--color-secondary);
+  }
+
+  .raise-milestone-category {
+    margin: 1.5rem 0 0;
+    color: var(--color-text-default);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1rem;
+    text-transform: uppercase;
+  }
+
+  .raise-milestone-title {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0.75rem 0 0;
+    color: var(--color-light);
+    font-family: var(--font-secondary);
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+  }
+
+  .raise-milestone-value {
+    color: var(--color-light);
+    font-family: var(--font-secondary);
+    font-size: clamp(2.75rem, 5vw, 4.25rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+  }
+
+  .raise-milestone-title-outcome {
+    color: var(--color-light);
+    font-size: 1.4em;
+    line-height: 1.3;
+  }
+
+  .raise-footer {
+    display: grid;
+    gap: 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-light) 18%, transparent);
+    border-radius: 0.875rem;
+    background: color-mix(in srgb, var(--color-theme-dark) 72%, transparent);
+    padding: 1rem;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.035);
+  }
+
+  .raise-seeking {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .raise-footer-icon {
+    border-color: color-mix(in srgb, var(--color-secondary) 38%, transparent);
+    color: var(--color-secondary);
+    background: color-mix(in srgb, var(--color-secondary) 7%, transparent);
+  }
+
+  .raise-footer-label {
+    margin: 0;
+    color: var(--color-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1rem;
+    text-transform: uppercase;
+  }
+
+  .raise-footer-detail {
+    margin: 0.25rem 0 0;
+    color: var(--color-light);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+  }
+
+  .raise-contact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-default);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  .raise-contact a {
+    color: var(--color-light);
+    text-decoration: none;
+    transition: color 200ms ease;
+  }
+
+  .raise-contact a:hover {
+    color: var(--color-primary);
+  }
+
+  .raise-contact a:focus-visible {
+    border-radius: 0.25rem;
+    outline: 2px solid var(--color-primary);
+    outline-offset: 0.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .raise-milestones {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .raise-milestone {
+      min-height: 16rem;
+      padding: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .raise-milestone {
+      min-height: 14rem;
+      padding: 1.25rem;
+    }
+
+    .raise-footer {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      padding: 1rem 1.25rem;
+    }
+
+    .raise-contact {
+      justify-content: flex-end;
+    }
+  }
+</style>

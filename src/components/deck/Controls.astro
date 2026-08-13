@@ -1,0 +1,125 @@
+---
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+
+interface Props {
+  deckId: string;
+}
+
+const { deckId } = Astro.props;
+const controlButtonClass =
+  "border-divider bg-theme-dark/90 text-light hover:border-primary/60 hover:bg-theme-dark focus-visible:ring-primary/60 inline-flex h-11 w-11 items-center justify-center rounded-full border shadow-xl backdrop-blur-md transition-colors duration-200 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-40";
+---
+
+<div data-scene-deck-controls={deckId} class="contents">
+  <button
+    type="button"
+    class:list={[
+      controlButtonClass,
+      "absolute top-1/2 -left-6 z-30 hidden -translate-y-1/2 lg:inline-flex",
+    ]}
+    data-scene-deck-action="previous"
+    aria-controls={deckId}
+    aria-label="Previous slide"
+    title="Previous slide">
+    <LucideIcon icon="ChevronLeft" class="h-5 w-5" aria-hidden="true" />
+  </button>
+  <button
+    type="button"
+    class:list={[
+      controlButtonClass,
+      "absolute top-1/2 -right-6 z-30 hidden -translate-y-1/2 lg:inline-flex",
+    ]}
+    data-scene-deck-action="next"
+    aria-controls={deckId}
+    aria-label="Next slide"
+    title="Next slide">
+    <LucideIcon icon="ChevronRight" class="h-5 w-5" aria-hidden="true" />
+  </button>
+  <button
+    type="button"
+    class:list={[
+      controlButtonClass,
+      "absolute -bottom-5 left-1/2 z-30 hidden -translate-x-1/2 lg:inline-flex",
+    ]}
+    data-scene-deck-action="toggle-autoplay"
+    aria-controls={deckId}
+    aria-label="Pause automatic slide changes"
+    aria-pressed="false"
+    title="Pause automatic slide changes">
+    <span
+      data-scene-deck-icon="pause"
+      class="inline-flex items-center justify-center">
+      <LucideIcon icon="Pause" class="h-4 w-4" aria-hidden="true" />
+    </span>
+    <span
+      data-scene-deck-icon="resume"
+      class="inline-flex items-center justify-center"
+      hidden>
+      <LucideIcon icon="Play" class="h-4 w-4" aria-hidden="true" />
+    </span>
+    <span class="sr-only" data-scene-deck-toggle-label>
+      Pause automatic slide changes
+    </span>
+  </button>
+  <div
+    class="deck-mobile-controls from-body via-body/95 pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center bg-linear-to-t to-transparent px-4 pt-8 lg:hidden">
+    <div
+      class="border-divider bg-theme-dark/90 pointer-events-auto flex items-center gap-2 rounded-full border p-2 shadow-2xl backdrop-blur-md">
+      <button
+        type="button"
+        class={controlButtonClass}
+        data-scene-deck-action="previous"
+        aria-controls={deckId}
+        aria-label="Previous slide"
+        title="Previous slide">
+        <LucideIcon icon="ChevronLeft" class="h-5 w-5" aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        class={controlButtonClass}
+        data-scene-deck-action="toggle-autoplay"
+        aria-controls={deckId}
+        aria-label="Pause automatic slide changes"
+        aria-pressed="false"
+        title="Pause automatic slide changes">
+        <span
+          data-scene-deck-icon="pause"
+          class="inline-flex items-center justify-center">
+          <LucideIcon icon="Pause" class="h-4 w-4" aria-hidden="true" />
+        </span>
+        <span
+          data-scene-deck-icon="resume"
+          class="inline-flex items-center justify-center"
+          hidden>
+          <LucideIcon icon="Play" class="h-4 w-4" aria-hidden="true" />
+        </span>
+        <span class="sr-only" data-scene-deck-toggle-label>
+          Pause automatic slide changes
+        </span>
+      </button>
+      <button
+        type="button"
+        class={controlButtonClass}
+        data-scene-deck-action="next"
+        aria-controls={deckId}
+        aria-label="Next slide"
+        title="Next slide">
+        <LucideIcon icon="ChevronRight" class="h-5 w-5" aria-hidden="true" />
+      </button>
+    </div>
+  </div>
+</div>
+
+<noscript>
+  <style is:inline>
+    [data-scene-deck-controls] {
+      display: none !important;
+    }
+  </style>
+</noscript>
+
+<style>
+  .deck-mobile-controls {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+</style>
