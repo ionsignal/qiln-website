@@ -5,8 +5,11 @@ import ActionButton from "@/components/ui/ActionButton.astro";
 import Badge from "@/components/ui/Badge.astro";
 import AnimatedText from "@/components/sections/hero/AnimatedText.astro";
 import Subscription from "@/components/sections/hero/Subscription.astro";
-import Slider from "@/components/sections/hero/Slider.astro";
-import Background from "@/components/sections/hero/Background.astro";
+import SlideProblem from "@/components/sections/hero/SlideProblem.astro";
+import SlideSolution from "@/components/sections/hero/SlideSolution.astro";
+import Slider from "@/components/deck/Slider.astro";
+import Frame from "@/components/deck/Frame.astro";
+import Background from "@/components/visualization/Background.astro";
 import { overrideObjects } from "@/utils/core";
 import { markdownify } from "@/utils/text";
 import { fetchEntry } from "@/utils/content";
@@ -46,7 +49,6 @@ const {
   subscription,
   heroProblem,
   heroSolution,
-  heroDiagram,
 } = actualContent;
 
 function parseTickerTitle(rawTitle: string | undefined): TickerTitle {
@@ -82,7 +84,7 @@ const tickerTitle = parseTickerTitle(title);
 <section id="home" class="scroll-mt-24 lg:scroll-mt-32">
   <div
     class="banner-gradient stretched-link relative pt-12 pb-12 md:pt-12 md:pb-16 lg:pt-12 lg:pb-20 xl:pt-16 xl:pb-24">
-    <Background />
+    <Background id="hero-bg-canvas" />
     <div class="container">
       <div class="relative z-10 space-y-10">
         <div class="flex flex-col items-start gap-y-8 text-left md:gap-y-10">
@@ -185,14 +187,16 @@ const tickerTitle = parseTickerTitle(title);
       </div>
     </div>
     <div class="relative container mt-12 px-4 md:px-8 lg:px-0 xl:mt-16 xl:px-4">
-      <div class="hero-product-frame">
-        <Slider
-          problem={heroProblem}
-          solution={heroSolution}
-          content={heroDiagram}
-          scale={0.94}
-        />
-      </div>
+      <Frame class="hero-product-frame">
+        <Slider class="hidden w-full md:block">
+          <div data-scene-deck-scene class="min-w-0">
+            <SlideProblem content={heroProblem} />
+          </div>
+          <div data-scene-deck-scene class="min-w-0">
+            <SlideSolution content={heroSolution} />
+          </div>
+        </Slider>
+      </Frame>
     </div>
   </div>
 </section>
@@ -341,38 +345,3 @@ const tickerTitle = parseTickerTitle(title);
     customElements.define("qiln-ticker", QilnTicker);
   }
 </script>
-
-<style>
-  .hero-product-frame {
-    position: relative;
-    z-index: 10;
-    overflow: hidden;
-    border: solid color-mix(in srgb, var(--color-primary) 24%, transparent) 2px;
-    border-radius: 1rem;
-    background: color-mix(in srgb, var(--color-theme-dark) 58%, transparent);
-    box-shadow:
-      0 24px 60px rgb(0 0 0 / 0.24),
-      inset 0 1px 0 rgb(255 255 255 / 0.035);
-    -webkit-backdrop-filter: blur(24px);
-    backdrop-filter: blur(24px);
-  }
-
-  .hero-product-frame::after {
-    position: absolute;
-    z-index: 20;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(
-      to bottom,
-      transparent 0%,
-      color-mix(in srgb, var(--color-primary) 5%, transparent)
-    );
-    content: "";
-  }
-
-  @media (min-width: 768px) {
-    .hero-product-frame {
-      border-radius: 1.5rem;
-    }
-  }
-</style>

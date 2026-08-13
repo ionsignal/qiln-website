@@ -43,27 +43,26 @@ export async function initVisualization(
 
   const canvas = gpuCurtains.renderer?.canvas;
   let mesh: Mesh | null = null;
-  let intersectionObserver: IntersectionObserver | null = null;
-  let animationFrameId: number | null = null;
+  let renderFrameId: number | null = null;
   let lastFrameTime: number | null = null;
-  let isContainerVisible = false;
   let isDisposed = false;
   let isRestoringContext = false;
   let needsStaticFrame = true;
 
   const stopRenderLoop = () => {
-    if (animationFrameId !== null) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
+    if (renderFrameId !== null) {
+      cancelAnimationFrame(renderFrameId);
+      renderFrameId = null;
     }
     lastFrameTime = null;
   };
 
   const destroyResources = () => {
     stopRenderLoop();
-    intersectionObserver?.disconnect();
-    intersectionObserver = null;
-    document.removeEventListener("visibilitychange", handleVisibilityChange);
+    document.removeEventListener(
+      "visibilitychange",
+      handleDocumentVisibilityChange,
+    );
     try {
       gpuCurtains.destroy();
     } catch (error) {
@@ -95,18 +94,17 @@ export async function initVisualization(
     params.time.value = currentTime + deltaSeconds * 0.3;
   };
 
-  const shouldRender = () =>
-    !isDisposed && isContainerVisible && document.visibilityState === "visible";
+  const canRender = () => !isDisposed && document.visibilityState === "visible";
 
-  const requestRender = () => {
-    if (!shouldRender() || animationFrameId !== null) return;
+  const scheduleRenderFrame = () => {
+    if (!canRender() || renderFrameId !== null) return;
     if (prefersReducedMotion && !needsStaticFrame) return;
-    animationFrameId = requestAnimationFrame(renderFrame);
+    renderFrameId = requestAnimationFrame(renderFrame);
   };
 
   function renderFrame(timestamp: number) {
-    animationFrameId = null;
-    if (!shouldRender()) {
+    renderFrameId = null;
+    if (!canRender()) {
       lastFrameTime = null;
       return;
     }
@@ -125,14 +123,14 @@ export async function initVisualization(
     if (prefersReducedMotion) {
       needsStaticFrame = !mesh?.ready;
     }
-    requestRender();
+    scheduleRenderFrame();
   }
 
-  function handleVisibilityChange() {
+  function handleDocumentVisibilityChange() {
     lastFrameTime = null;
     if (document.visibilityState === "visible") {
       needsStaticFrame = true;
-      requestRender();
+      scheduleRenderFrame();
     } else {
       stopRenderLoop();
     }
@@ -253,7 +251,7 @@ export async function initVisualization(
     gpuCurtains.renderer.onAfterResize(() => {
       needsStaticFrame = true;
       lastFrameTime = null;
-      requestRender();
+      scheduleRenderFrame();
     });
 
     gpuCurtains.onContextLost(() => {
@@ -266,7 +264,7 @@ export async function initVisualization(
           if (isDisposed) return;
           needsStaticFrame = true;
           lastFrameTime = null;
-          requestRender();
+          scheduleRenderFrame();
         })
         .catch((error: unknown) => {
           if (import.meta.env.DEV) {
@@ -282,21 +280,12 @@ export async function initVisualization(
         });
     });
 
-    intersectionObserver = new IntersectionObserver(
-      ([entry]) => {
-        isContainerVisible = entry?.isIntersecting ?? false;
-        lastFrameTime = null;
-        if (isContainerVisible) {
-          needsStaticFrame = true;
-          requestRender();
-        } else {
-          stopRenderLoop();
-        }
-      },
-      { threshold: 0 },
+    document.addEventListener(
+      "visibilitychange",
+      handleDocumentVisibilityChange,
     );
-    intersectionObserver.observe(container);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    scheduleRenderFrame();
   } catch (error) {
     if (import.meta.env.DEV) {
       console.warn(

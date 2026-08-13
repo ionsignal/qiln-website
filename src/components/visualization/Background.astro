@@ -1,0 +1,51 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = Omit<HTMLAttributes<"div">, "aria-hidden" | "class" | "id"> & {
+  id?: string;
+  class?: string;
+};
+
+const { id, class: className, ...attributes } = Astro.props;
+---
+
+<qiln-visualization
+  {...attributes}
+  id={id}
+  class:list={[
+    "pointer-events-none absolute inset-0 z-0 block size-full overflow-hidden",
+    className,
+  ]}
+  aria-hidden="true">
+</qiln-visualization>
+
+<script>
+  import { initVisualization } from "@/utils/visualization";
+
+  class QilnVisualization extends HTMLElement {
+    private disposeVisualization: (() => void) | null = null;
+    private connectionVersion = 0;
+
+    connectedCallback() {
+      const connectionVersion = ++this.connectionVersion;
+      void initVisualization(this).then((disposeVisualization) => {
+        if (!this.isConnected || connectionVersion !== this.connectionVersion) {
+          disposeVisualization();
+          return;
+        }
+        this.disposeVisualization?.();
+        this.disposeVisualization = disposeVisualization;
+      });
+    }
+
+    disconnectedCallback() {
+      this.connectionVersion++;
+      this.disposeVisualization?.();
+      this.disposeVisualization = null;
+    }
+  }
+
+  if (!customElements.get("qiln-visualization")) {
+    customElements.define("qiln-visualization", QilnVisualization);
+  }
+</script>

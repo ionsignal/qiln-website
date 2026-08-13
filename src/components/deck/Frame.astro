@@ -1,0 +1,51 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = Omit<HTMLAttributes<"div">, "class"> & {
+  class?: string;
+};
+
+const { class: className, ...attributes } = Astro.props;
+---
+
+<div
+  {...attributes}
+  data-scene-deck-frame
+  class:list={["scene-deck-frame", className]}>
+  <slot />
+</div>
+
+<style>
+  .scene-deck-frame {
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    border: solid color-mix(in srgb, var(--color-primary) 24%, transparent) 2px;
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--color-theme-dark) 58%, transparent);
+    box-shadow:
+      0 24px 60px rgb(0 0 0 / 0.24),
+      inset 0 1px 0 rgb(255 255 255 / 0.035);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+  }
+
+  .scene-deck-frame::after {
+    position: absolute;
+    z-index: 20;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      color-mix(in srgb, var(--color-primary) 5%, transparent)
+    );
+    content: "";
+  }
+
+  @media (min-width: 768px) {
+    .scene-deck-frame {
+      border-radius: 1.5rem;
+    }
+  }
+</style>

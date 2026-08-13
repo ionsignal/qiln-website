@@ -1,0 +1,677 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = Omit<HTMLAttributes<"div">, "class"> & {
+  class?: string;
+};
+
+const { class: className, ...attributes } = Astro.props;
+---
+
+<qiln-scene-deck class={className} {...attributes}>
+  <div data-scene-deck-stage>
+    <slot />
+  </div>
+  <div data-scene-deck-progress aria-hidden="true">
+    <span data-scene-deck-progress-bar></span>
+  </div>
+</qiln-scene-deck>
+
+<noscript>
+  <style is:inline>
+    qiln-scene-deck [data-scene-deck-stage] {
+      display: block;
+      min-height: 0;
+      overflow: visible;
+    }
+    qiln-scene-deck [data-scene-deck-scene] {
+      position: static;
+      display: block;
+      visibility: visible;
+      pointer-events: auto;
+      clip-path: none;
+      transition: none;
+    }
+    qiln-scene-deck [data-scene-deck-progress] {
+      display: none;
+    }
+  </style>
+</noscript>
+
+<script>
+  const sceneDurationMs = 6000;
+  const transitionWatchdogBufferMs = 100;
+
+  type SceneDeckAction = "previous" | "toggle-autoplay" | "next";
+
+  function isSceneDeckAction(
+    value: string | undefined,
+  ): value is SceneDeckAction {
+    return (
+      value === "previous" || value === "toggle-autoplay" || value === "next"
+    );
+  }
+
+  class QilnSceneDeck extends HTMLElement {
+    private scenes: HTMLElement[] = [];
+    private controlRoots: HTMLElement[] = [];
+    private progressBar: HTMLElement | null = null;
+    private activeSceneIndex = 0;
+    private incomingSceneIndex: number | null = null;
+    private incomingScene: HTMLElement | null = null;
+    private sceneTimeoutId: number | null = null;
+    private progressFrameId: number | null = null;
+    private transitionWatchdogId: number | null = null;
+    private transitionStartFrameId: number | null = null;
+    private outgoingSettleFrameId: number | null = null;
+    private incomingSettleFrameId: number | null = null;
+    private sceneTimerStartedAtMs: number | null = null;
+    private remainingSceneDurationMs = sceneDurationMs;
+    private visibilityObserver: IntersectionObserver | null = null;
+    private controlsController: AbortController | null = null;
+    private isVisible = false;
+    private isTransitioning = false;
+    private isAutoplayPaused = false;
+    private prefersReducedMotion = false;
+
+    connectedCallback() {
+      this.teardown();
+      this.scenes = Array.from(
+        this.querySelectorAll<HTMLElement>("[data-scene-deck-scene]"),
+      );
+      this.progressBar = this.querySelector<HTMLElement>(
+        "[data-scene-deck-progress-bar]",
+      );
+      this.remainingSceneDurationMs = sceneDurationMs;
+      this.initializeSceneStates();
+      this.setProgress(0);
+      this.prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      this.isAutoplayPaused = this.prefersReducedMotion;
+      this.initializeControls();
+      this.updateControlStates();
+      if (this.scenes.length < 2 || this.prefersReducedMotion) {
+        return;
+      }
+      document.addEventListener(
+        "visibilitychange",
+        this.handleDocumentVisibilityChange,
+      );
+      if (typeof IntersectionObserver === "undefined") {
+        this.isVisible = true;
+        this.scheduleAutomaticAdvance();
+        return;
+      }
+      this.visibilityObserver = new IntersectionObserver(
+        this.handleDeckIntersection,
+        { threshold: 0 },
+      );
+      this.visibilityObserver.observe(this);
+    }
+
+    disconnectedCallback() {
+      this.teardown();
+    }
+
+    private initializeSceneStates() {
+      this.activeSceneIndex = 0;
+      this.scenes.forEach((scene, index) => {
+        scene.dataset.sceneState =
+          index === this.activeSceneIndex ? "active" : "inactive";
+      });
+    }
+
+    private initializeControls() {
+      if (!this.id) {
+        return;
+      }
+      this.controlRoots = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-scene-deck-controls]"),
+      ).filter(
+        (controlRoot) => controlRoot.dataset.sceneDeckControls === this.id,
+      );
+      if (this.controlRoots.length === 0) {
+        return;
+      }
+      this.controlsController = new AbortController();
+      this.controlRoots.forEach((controlRoot) => {
+        controlRoot.addEventListener("click", this.handleControlClick, {
+          signal: this.controlsController?.signal,
+        });
+      });
+    }
+
+    private handleControlClick = (event: Event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+      const button = target.closest<HTMLButtonElement>(
+        "[data-scene-deck-action]",
+      );
+      if (!button || button.disabled) {
+        return;
+      }
+      const action = button.dataset.sceneDeckAction;
+      if (!isSceneDeckAction(action)) {
+        return;
+      }
+      if (action === "toggle-autoplay") {
+        if (this.isAutoplayPaused) {
+          this.resumeAutoplay();
+        } else {
+          this.pauseAutoplay();
+        }
+        return;
+      }
+      this.pauseAutoplay();
+      this.showAdjacentScene(action === "previous" ? -1 : 1);
+    };
+
+    private handleDocumentVisibilityChange = () => {
+      if (document.visibilityState === "visible" && this.isVisible) {
+        this.scheduleAutomaticAdvance();
+      } else {
+        this.suspendSceneTimer();
+      }
+    };
+
+    private handleDeckIntersection = (entries: IntersectionObserverEntry[]) => {
+      this.isVisible = entries[0]?.isIntersecting ?? false;
+      if (this.isVisible) {
+        this.scheduleAutomaticAdvance();
+      } else {
+        this.suspendSceneTimer();
+      }
+    };
+
+    private handleTransitionEnd = (event: TransitionEvent) => {
+      if (
+        event.target !== this.incomingScene ||
+        !event.propertyName.endsWith("clip-path")
+      ) {
+        return;
+      }
+      this.finishSceneTransition();
+    };
+
+    private pauseAutoplay() {
+      if (this.isAutoplayPaused) {
+        return;
+      }
+      this.suspendSceneTimer();
+      this.isAutoplayPaused = true;
+      this.updateControlStates();
+    }
+
+    private resumeAutoplay() {
+      if (!this.isAutoplayPaused || this.prefersReducedMotion) {
+        return;
+      }
+      this.isAutoplayPaused = false;
+      this.updateControlStates();
+      this.scheduleAutomaticAdvance();
+    }
+
+    private scheduleAutomaticAdvance() {
+      if (
+        !this.canAutoplay() ||
+        this.isTransitioning ||
+        this.sceneTimeoutId !== null
+      ) {
+        return;
+      }
+      this.sceneTimerStartedAtMs = performance.now();
+      this.startProgressAnimation();
+      this.sceneTimeoutId = window.setTimeout(() => {
+        this.sceneTimeoutId = null;
+        this.sceneTimerStartedAtMs = null;
+        this.remainingSceneDurationMs = 0;
+        this.stopProgressAnimation();
+        this.setProgress(1);
+        this.showAdjacentScene(1);
+      }, this.remainingSceneDurationMs);
+    }
+
+    private showAdjacentScene(offset: number) {
+      if (this.scenes.length < 2 || this.isTransitioning) {
+        return;
+      }
+      const nextSceneIndex =
+        (this.activeSceneIndex + offset + this.scenes.length) %
+        this.scenes.length;
+      this.beginSceneTransition(nextSceneIndex);
+    }
+
+    private beginSceneTransition(nextSceneIndex: number) {
+      const activeScene = this.scenes[this.activeSceneIndex];
+      const nextScene = this.scenes[nextSceneIndex];
+      if (!activeScene || !nextScene || activeScene === nextScene) {
+        return;
+      }
+      this.isTransitioning = true;
+      this.incomingScene = nextScene;
+      this.incomingSceneIndex = nextSceneIndex;
+      this.updateControlStates();
+      nextScene.addEventListener("transitionend", this.handleTransitionEnd);
+      nextScene.dataset.sceneState = "prepared";
+      this.transitionStartFrameId = window.requestAnimationFrame(() => {
+        this.transitionStartFrameId = null;
+        if (
+          !this.isConnected ||
+          !this.isTransitioning ||
+          this.incomingScene !== nextScene
+        ) {
+          return;
+        }
+        void nextScene.offsetWidth;
+        nextScene.dataset.sceneState = "entering";
+        const transitionTotalMs = this.getTransitionTotalMs(
+          nextScene,
+          "clip-path",
+        );
+        if (transitionTotalMs <= 0) {
+          this.finishSceneTransition();
+          return;
+        }
+        this.transitionWatchdogId = window.setTimeout(
+          this.finishSceneTransition,
+          transitionTotalMs + transitionWatchdogBufferMs,
+        );
+      });
+    }
+
+    private finishSceneTransition = () => {
+      if (
+        !this.isTransitioning ||
+        !this.incomingScene ||
+        this.incomingSceneIndex === null
+      ) {
+        return;
+      }
+      const activeScene = this.scenes[this.activeSceneIndex];
+      const nextScene = this.incomingScene;
+      const nextSceneIndex = this.incomingSceneIndex;
+      this.clearPendingTransition();
+      if (!activeScene) {
+        this.isTransitioning = false;
+        this.resetSceneTimer();
+        this.updateControlStates();
+        this.scheduleAutomaticAdvance();
+        return;
+      }
+
+      this.outgoingSettleFrameId = window.requestAnimationFrame(() => {
+        this.outgoingSettleFrameId = null;
+        if (!this.isConnected || !this.isTransitioning) {
+          return;
+        }
+        activeScene.dataset.sceneState = "inactive";
+        this.incomingSettleFrameId = window.requestAnimationFrame(() => {
+          this.incomingSettleFrameId = null;
+          if (!this.isConnected || !this.isTransitioning) {
+            return;
+          }
+          nextScene.dataset.sceneState = "active";
+          this.activeSceneIndex = nextSceneIndex;
+          this.isTransitioning = false;
+          this.resetSceneTimer();
+          this.updateControlStates();
+          this.scheduleAutomaticAdvance();
+        });
+      });
+    };
+
+    private getTransitionTotalMs(
+      element: HTMLElement,
+      propertyName: string,
+    ): number {
+      const styles = window.getComputedStyle(element);
+      const properties = styles.transitionProperty
+        .split(",")
+        .map((property) => property.trim());
+      const durations = styles.transitionDuration
+        .split(",")
+        .map((duration) => this.parseCssTimeMs(duration));
+      const delays = styles.transitionDelay
+        .split(",")
+        .map((delay) => this.parseCssTimeMs(delay));
+      return properties.reduce((maximum, property, index) => {
+        if (property !== "all" && !property.endsWith(propertyName)) {
+          return maximum;
+        }
+        const duration = durations[index % durations.length] ?? 0;
+        const delay = delays[index % delays.length] ?? 0;
+        return Math.max(maximum, duration + delay, 0);
+      }, 0);
+    }
+
+    private parseCssTimeMs(value: string): number {
+      const normalizedValue = value.trim();
+      const numericValue = Number.parseFloat(normalizedValue);
+      if (!Number.isFinite(numericValue)) {
+        return 0;
+      }
+      if (normalizedValue.endsWith("ms")) {
+        return numericValue;
+      }
+      if (normalizedValue.endsWith("s")) {
+        return numericValue * 1000;
+      }
+      return 0;
+    }
+
+    private getElapsedSceneDuration(now = performance.now()): number {
+      const previouslyElapsedDuration =
+        sceneDurationMs - this.remainingSceneDurationMs;
+      const currentElapsedDuration =
+        this.sceneTimerStartedAtMs === null
+          ? 0
+          : now - this.sceneTimerStartedAtMs;
+      return Math.min(
+        Math.max(previouslyElapsedDuration + currentElapsedDuration, 0),
+        sceneDurationMs,
+      );
+    }
+
+    private startProgressAnimation() {
+      if (this.progressFrameId !== null) {
+        return;
+      }
+      const updateProgress = (now: number) => {
+        this.progressFrameId = null;
+        if (
+          this.sceneTimerStartedAtMs === null ||
+          !this.canAutoplay() ||
+          this.isTransitioning
+        ) {
+          return;
+        }
+        this.setProgress(this.getElapsedSceneDuration(now) / sceneDurationMs);
+        this.progressFrameId = window.requestAnimationFrame(updateProgress);
+      };
+      this.progressFrameId = window.requestAnimationFrame(updateProgress);
+    }
+
+    private stopProgressAnimation() {
+      if (this.progressFrameId === null) {
+        return;
+      }
+      window.cancelAnimationFrame(this.progressFrameId);
+      this.progressFrameId = null;
+    }
+
+    private setProgress(progress: number) {
+      const normalizedProgress = Math.min(Math.max(progress, 0), 1);
+      this.progressBar?.style.setProperty(
+        "transform",
+        `scaleX(${normalizedProgress})`,
+      );
+    }
+
+    private suspendSceneTimer() {
+      const elapsedSceneDuration = this.getElapsedSceneDuration();
+      this.remainingSceneDurationMs = Math.max(
+        sceneDurationMs - elapsedSceneDuration,
+        0,
+      );
+      this.clearSceneTimer();
+      this.setProgress(elapsedSceneDuration / sceneDurationMs);
+    }
+
+    private resetSceneTimer() {
+      this.clearSceneTimer();
+      this.remainingSceneDurationMs = sceneDurationMs;
+      this.setProgress(0);
+    }
+
+    private clearSceneTimer() {
+      if (this.sceneTimeoutId !== null) {
+        window.clearTimeout(this.sceneTimeoutId);
+        this.sceneTimeoutId = null;
+      }
+      this.sceneTimerStartedAtMs = null;
+      this.stopProgressAnimation();
+    }
+
+    private canAutoplay() {
+      return (
+        this.isConnected &&
+        this.scenes.length > 1 &&
+        !this.prefersReducedMotion &&
+        !this.isAutoplayPaused &&
+        this.isVisible &&
+        document.visibilityState === "visible"
+      );
+    }
+
+    private updateControlStates() {
+      const navigationDisabled = this.scenes.length < 2 || this.isTransitioning;
+      const autoplayUnavailable =
+        this.scenes.length < 2 || this.prefersReducedMotion;
+      const showResumeIcon =
+        this.isAutoplayPaused && !this.prefersReducedMotion;
+
+      this.controlRoots.forEach((controlRoot) => {
+        controlRoot
+          .querySelectorAll<HTMLButtonElement>("[data-scene-deck-action]")
+          .forEach((button) => {
+            const action = button.dataset.sceneDeckAction;
+            if (!isSceneDeckAction(action)) {
+              return;
+            }
+            if (action === "previous" || action === "next") {
+              button.disabled = navigationDisabled;
+              return;
+            }
+            button.disabled = autoplayUnavailable;
+            button.setAttribute("aria-pressed", String(this.isAutoplayPaused));
+            const label =
+              this.scenes.length < 2
+                ? "Automatic slide changes are unavailable"
+                : this.prefersReducedMotion
+                  ? "Automatic slide changes are disabled for reduced motion"
+                  : this.isAutoplayPaused
+                    ? "Resume automatic slide changes"
+                    : "Pause automatic slide changes";
+            button.setAttribute("aria-label", label);
+            button.title = label;
+            button
+              .querySelectorAll<HTMLElement>("[data-scene-deck-toggle-label]")
+              .forEach((labelElement) => {
+                labelElement.textContent = label;
+              });
+
+            button
+              .querySelectorAll<HTMLElement>('[data-scene-deck-icon="pause"]')
+              .forEach((icon) => {
+                icon.hidden = showResumeIcon;
+              });
+
+            button
+              .querySelectorAll<HTMLElement>('[data-scene-deck-icon="resume"]')
+              .forEach((icon) => {
+                icon.hidden = !showResumeIcon;
+              });
+          });
+      });
+    }
+
+    private clearPendingTransition() {
+      if (this.incomingScene) {
+        this.incomingScene.removeEventListener(
+          "transitionend",
+          this.handleTransitionEnd,
+        );
+      }
+
+      if (this.transitionWatchdogId !== null) {
+        window.clearTimeout(this.transitionWatchdogId);
+        this.transitionWatchdogId = null;
+      }
+
+      this.incomingScene = null;
+      this.incomingSceneIndex = null;
+    }
+
+    private clearTransitionStartFrame() {
+      if (this.transitionStartFrameId === null) {
+        return;
+      }
+
+      window.cancelAnimationFrame(this.transitionStartFrameId);
+      this.transitionStartFrameId = null;
+    }
+
+    private clearSettleFrames() {
+      if (this.outgoingSettleFrameId !== null) {
+        window.cancelAnimationFrame(this.outgoingSettleFrameId);
+        this.outgoingSettleFrameId = null;
+      }
+
+      if (this.incomingSettleFrameId !== null) {
+        window.cancelAnimationFrame(this.incomingSettleFrameId);
+        this.incomingSettleFrameId = null;
+      }
+    }
+
+    private teardown() {
+      this.clearSceneTimer();
+      this.clearPendingTransition();
+      this.clearTransitionStartFrame();
+      this.clearSettleFrames();
+
+      this.visibilityObserver?.disconnect();
+      this.visibilityObserver = null;
+      this.controlsController?.abort();
+      this.controlsController = null;
+
+      document.removeEventListener(
+        "visibilitychange",
+        this.handleDocumentVisibilityChange,
+      );
+
+      this.scenes = [];
+      this.controlRoots = [];
+      this.progressBar = null;
+      this.activeSceneIndex = 0;
+      this.remainingSceneDurationMs = sceneDurationMs;
+      this.isVisible = false;
+      this.isTransitioning = false;
+      this.isAutoplayPaused = false;
+      this.prefersReducedMotion = false;
+    }
+  }
+
+  if (!customElements.get("qiln-scene-deck")) {
+    customElements.define("qiln-scene-deck", QilnSceneDeck);
+  }
+</script>
+
+<style is:global>
+  qiln-scene-deck {
+    position: relative;
+  }
+
+  qiln-scene-deck [data-scene-deck-stage] {
+    display: grid;
+    min-height: 42rem;
+    overflow: hidden;
+  }
+
+  qiln-scene-deck [data-scene-deck-scene] {
+    position: relative;
+    z-index: 0;
+    grid-area: 1 / 1;
+    min-width: 0;
+    background-color: var(--color-body);
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  qiln-scene-deck [data-scene-deck-scene]:not([data-scene-state]):first-child,
+  qiln-scene-deck [data-scene-state="active"] {
+    z-index: 1;
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  qiln-scene-deck [data-scene-state="prepared"] {
+    z-index: 2;
+    visibility: visible;
+  }
+
+  qiln-scene-deck [data-scene-state="entering"] {
+    z-index: 2;
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  qiln-scene-deck [data-scene-deck-progress] {
+    position: absolute;
+    z-index: 30;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+    pointer-events: none;
+  }
+
+  qiln-scene-deck [data-scene-deck-progress-bar] {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      var(--color-primary),
+      var(--color-secondary)
+    );
+    transform: scaleX(0);
+    transform-origin: left center;
+    will-change: transform;
+  }
+
+  @supports (clip-path: inset(0)) {
+    qiln-scene-deck [data-scene-deck-scene] {
+      opacity: 1;
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 500ms ease-out;
+      will-change: clip-path;
+    }
+
+    qiln-scene-deck [data-scene-state="inactive"],
+    qiln-scene-deck [data-scene-state="prepared"] {
+      clip-path: inset(0 100% 0 0);
+    }
+
+    qiln-scene-deck [data-scene-deck-scene]:not([data-scene-state]):first-child,
+    qiln-scene-deck [data-scene-state="active"],
+    qiln-scene-deck [data-scene-state="entering"] {
+      clip-path: inset(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    qiln-scene-deck [data-scene-deck-scene] {
+      transition: none !important;
+      will-change: auto;
+    }
+
+    qiln-scene-deck [data-scene-deck-progress-bar] {
+      will-change: auto;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    qiln-scene-deck.pitch-deck-slider [data-scene-deck-stage] {
+      height: 42rem;
+      min-height: 0;
+      grid-template-rows: minmax(0, 1fr);
+    }
+  }
+</style>

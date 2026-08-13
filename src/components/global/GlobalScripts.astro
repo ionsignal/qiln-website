@@ -92,15 +92,15 @@
     });
   }
 
-  function isHeroProductFrameElement(element: Element): boolean {
-    return element.closest(".hero-product-frame") !== null;
+  function isInsideSceneDeckFrame(element: Element): boolean {
+    return element.closest("[data-scene-deck-frame]") !== null;
   }
 
   function initializeHorizontalScroll() {
     document.querySelectorAll("*").forEach((element) => {
       if (
         !(element instanceof HTMLElement) ||
-        isHeroProductFrameElement(element) ||
+        isInsideSceneDeckFrame(element) ||
         element.scrollWidth <= element.clientWidth
       ) {
         return;
