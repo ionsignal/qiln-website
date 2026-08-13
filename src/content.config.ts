@@ -2,7 +2,7 @@ import { defineCollection, reference } from "astro:content";
 import { glob, file } from "astro/loaders";
 import { z } from "astro/zod";
 
-const heroVisualIcon = z.enum([
+const workflowArtifactIcon = z.enum([
   "Workflow",
   "Database",
   "Folder",
@@ -13,6 +13,50 @@ const heroVisualIcon = z.enum([
   "ShieldAlert",
   "Package",
 ]);
+
+const deckSlideKeySchema = z.enum([
+  "title",
+  "problem",
+  "solution",
+  "product",
+  "beachhead",
+  "evidence",
+  "raise",
+]);
+
+const deckSlideSchema = z
+  .object({
+    eyebrow: z.string().min(1),
+    title: z.string().min(1),
+    subtitle: z.string().min(1),
+    diagram: z
+      .object({
+        label: z.string().min(1),
+        description: z.string().min(1),
+      })
+      .strict(),
+    footer: z.string().min(1),
+  })
+  .strict();
+
+const deckVariantKeySchema = z
+  .string()
+  .regex(
+    /^(?!index$)[a-z0-9]+(?:-[a-z0-9]+)*$/,
+    "Deck variant keys must be URL-safe lowercase slugs and cannot be index.",
+  );
+
+const deckVariantSchema = z
+  .object({
+    slides: z
+      .array(deckSlideKeySchema)
+      .min(1)
+      .refine(
+        (slideKeys) => new Set(slideKeys).size === slideKeys.length,
+        "Deck variants cannot contain duplicate slides.",
+      ),
+  })
+  .strict();
 
 export const collections = {
   sections: defineCollection({
@@ -44,7 +88,7 @@ export const collections = {
               .array(
                 z.object({
                   label: z.string().min(1),
-                  icon: heroVisualIcon,
+                  icon: workflowArtifactIcon,
                 }),
               )
               .length(8),
@@ -68,7 +112,7 @@ export const collections = {
                 .array(
                   z.object({
                     label: z.string().min(1),
-                    icon: heroVisualIcon,
+                    icon: workflowArtifactIcon,
                   }),
                 )
                 .length(4),
@@ -285,6 +329,34 @@ export const collections = {
           )
           .optional(),
       }),
+  }),
+
+  decks: defineCollection({
+    loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/decks" }),
+    schema: z
+      .object({
+        title: z.string().min(1),
+        description: z.string().min(1),
+        variants: z
+          .record(deckVariantKeySchema, deckVariantSchema)
+          .refine(
+            (variants) =>
+              Object.prototype.hasOwnProperty.call(variants, "explainer"),
+            'Deck content must define an "explainer" variant.',
+          ),
+        slides: z
+          .object({
+            title: deckSlideSchema,
+            problem: deckSlideSchema,
+            solution: deckSlideSchema,
+            product: deckSlideSchema,
+            beachhead: deckSlideSchema,
+            evidence: deckSlideSchema,
+            raise: deckSlideSchema,
+          })
+          .strict(),
+      })
+      .strict(),
   }),
 
   homepage: defineCollection({
