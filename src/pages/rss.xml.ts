@@ -1,11 +1,9 @@
 import rss from "@astrojs/rss";
 import sanitizeHtml from "sanitize-html";
-import MarkdownIt from "markdown-it";
 import config from ".astro/config.generated.json";
 import { getPublishedBlogPosts } from "@/utils/content";
+import { markdownify } from "@/utils/text";
 import type { APIRoute } from "astro";
-
-const parser = new MarkdownIt();
 
 export const GET: APIRoute = async (context) => {
   const posts = await getPublishedBlogPosts();
@@ -21,7 +19,7 @@ export const GET: APIRoute = async (context) => {
       pubDate: post.data.pubDate,
       description: post.data.description,
       link: `/blog/${post.id}/`,
-      content: sanitizeHtml(parser.render(post.body || ""), {
+      content: sanitizeHtml(markdownify(post.body || "", true), {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
       }),
     })),

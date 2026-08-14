@@ -34,17 +34,6 @@
     "node": ">=22.23.1",
     "npm": ">=10.9.1"
   },
-  "overrides": {
-    "@lucide/astro": {
-      "astro": "$astro"
-    },
-    "yaml": "2.8.3",
-    "postcss": "8.5.25",
-    "fast-uri": "3.1.5",
-    "fast-xml-parser": "5.10.1",
-    "linkify-it": "5.0.2",
-    "svgo": "4.0.2"
-  },
   "allowScripts": {
     "fsevents": false,
     "esbuild": false,
@@ -60,15 +49,14 @@
     "@preline/overlay": "4.2.0",
     "@preline/scrollspy": "4.2.0",
     "@preline/tabs": "4.2.0",
-    "astro": "7.2.1",
+    "astro": "7.2.2",
     "gpu-curtains": "0.16.3",
-    "markdown-it": "14.2.0",
     "marked": "18.0.9",
     "mdast-util-to-string": "4.0.0",
-    "motion": "12.43.0",
+    "motion": "13.1.0",
     "plyr": "3.8.4",
     "reading-time": "1.5.0",
-    "sanitize-html": "2.17.6"
+    "sanitize-html": "2.17.7"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
@@ -77,7 +65,6 @@
     "@astrojs/sitemap": "3.7.3",
     "@tailwindcss/forms": "0.5.11",
     "@tailwindcss/vite": "4.3.3",
-    "@types/markdown-it": "14.1.2",
     "@types/node": "26.2.0",
     "@types/sanitize-html": "2.16.1",
     "prettier": "3.9.6",
@@ -87,7 +74,7 @@
     "rehype-external-links": "3.0.0",
     "sharp": "0.35.3",
     "tailwindcss": "4.3.3",
-    "toml": "4.1.1",
+    "toml": "5.0.0",
     "typescript": "6.0.3",
     "unist-util-visit": "5.1.0"
   }
