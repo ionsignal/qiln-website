@@ -4,7 +4,7 @@ Marketing, documentation, and blog website for **Qiln** — Persistent visual-fi
 
 ## Tech Stack
 
-- **Framework:** [Astro 6](https://astro.build/) (Static Site Generation)
+- **Framework:** [Astro 7](https://astro.build/) (Static Site Generation)
 - **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
 - **UI & Interactivity:** [Preline UI](https://preline.co/) (Vanilla JS plugins) & Motion
 - **Content:** MDX with strictly typed Astro Content Collections
@@ -12,8 +12,8 @@ Marketing, documentation, and blog website for **Qiln** — Persistent visual-fi
 
 ## Prerequisites
 
-- **Node.js:** `>= 22.12.0`
-- **npm:** `>= 9.6.7`
+- **Node.js:** `>= 22.23.1`
+- **npm:** `>= 10.9.1`
 
 ## Getting Started
 
@@ -38,7 +38,21 @@ Marketing, documentation, and blog website for **Qiln** — Persistent visual-fi
 
 ## Cutting a Release
 
-Releases are automated using npm's built-in versioning lifecycle. Ensure your working directory is clean (all changes committed), then run:
+Releases use npm's version lifecycle. Always release from a clean, up-to-date `main` branch.
+
+### 1. Confirm the release state
+
+```bash
+git status --short
+git pull --ff-only
+git tag --sort=-version:refname | head -n 1
+```
+
+`git status --short` must return no output before continuing.
+
+### 2. Run the version bump
+
+Choose one:
 
 ```bash
 npm version patch
@@ -46,10 +60,48 @@ npm version minor
 npm version major
 ```
 
-**What this does automatically:**
+For example, `npm version patch` moves `0.5.13` to `0.5.14`.
 
-1. Runs `npm run typecheck` to ensure there are no build errors.
-2. Bumps the version in `package.json`.
-3. Creates a Git commit and tag (e.g., `v0.5.8`).
-4. Builds the site and packs the release tarball (`qiln-website-v0.5.8.tar.gz`).
-5. Pushes the commit and tags to the remote repository.
+### What the version command does
+
+1. Runs `npm run typecheck`.
+2. Updates the package version and creates a release commit.
+3. Creates an annotated Git tag such as `v0.5.14`.
+4. Runs `npm run build`, including TOML generation.
+5. Creates `qiln-website-v0.5.14.tar.gz` from `dist`.
+6. Pushes the release commit and tag to GitHub.
+
+Do not use `astro build` directly for a release. Use `npm run build` so `src/config/config.toml` is compiled into `.astro/config.generated.json` first.
+
+### 3. Verify the pushed release
+
+```bash
+git show --no-patch --format=fuller v0.5.14
+git status --short
+```
+
+The generated `.tar.gz` archive may appear as an untracked local artifact. Do not commit it. Attach it to the GitHub Release only if you intend to distribute the static build archive.
+
+### 4. Create the GitHub Release
+
+Create the release manually in GitHub:
+
+- **Tag:** `v0.5.14`
+- **Title:** `v0.5.14`
+- **Description:** Use the template below.
+
+The GitHub Release description is separate from the Git tag annotation.
+
+## GitHub Release Template
+
+```md
+Brief summary of the release and its user-facing impact.
+
+## What's Changed
+
+- feat: describe the primary feature
+- feat: describe another notable improvement
+- fix: describe an important fix
+- refactor: describe meaningful internal or architectural work
+- chore: describe dependency, tooling, or release updates
+```
