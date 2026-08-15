@@ -2,18 +2,6 @@ import { defineCollection, reference } from "astro:content";
 import { glob, file } from "astro/loaders";
 import { z } from "astro/zod";
 
-const workflowArtifactIcon = z.enum([
-  "Workflow",
-  "Database",
-  "Folder",
-  "Settings2",
-  "Route",
-  "KeyRound",
-  "ClipboardCheck",
-  "ShieldAlert",
-  "Package",
-]);
-
 const deckSlideKeySchema = z.enum([
   "title",
   "problem",
@@ -83,21 +71,6 @@ export const collections = {
             eyebrow: z.string().min(1),
             title: z.string().min(1),
             description: z.string().min(1),
-            workflowLabel: z.string().min(1),
-            artifacts: z
-              .array(
-                z.object({
-                  label: z.string().min(1),
-                  icon: workflowArtifactIcon,
-                }),
-              )
-              .length(8),
-            changeRequest: z.object({
-              label: z.string().min(1),
-              items: z.array(z.string().min(1)).length(4),
-            }),
-            questions: z.array(z.string().min(1)).length(3),
-            pathWarning: z.string().min(1),
           })
           .optional(),
         heroSolution: z
@@ -105,23 +78,6 @@ export const collections = {
             eyebrow: z.string().min(1),
             title: z.string().min(1),
             description: z.string().min(1),
-            capsule: z.object({
-              label: z.string().min(1),
-              version: z.string().min(1),
-              groups: z
-                .array(
-                  z.object({
-                    label: z.string().min(1),
-                    icon: workflowArtifactIcon,
-                  }),
-                )
-                .length(4),
-            }),
-            route: z.object({
-              label: z.string().min(1),
-              mapping: z.string().min(1),
-              status: z.string().min(1),
-            }),
           })
           .optional(),
         heroDiagram: z

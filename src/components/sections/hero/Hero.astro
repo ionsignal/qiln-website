@@ -1,6 +1,6 @@
 ---
 import config from ".astro/config.generated.json";
-import SvgIcon from "@/components/helpers/SvgIcon.astro";
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
 import ActionButton from "@/components/ui/ActionButton.astro";
 import Badge from "@/components/ui/Badge.astro";
 import AnimatedText from "@/components/sections/hero/AnimatedText.astro";
@@ -175,9 +175,10 @@ const tickerTitle = parseTickerTitle(title);
                     : "btn-solid-primary",
                 ]}>
                 <span class="rounded-ful flex h-6 w-12 items-center justify-center">
-                  <SvgIcon
-                    icon={button.icon || "star"}
+                  <LucideIcon
+                    icon={button.icon || "BookOpen"}
                     class="h-5 w-5 transition-all duration-300 group-hover:rotate-180"
+                    aria-hidden="true"
                   />
                 </span>
               </ActionButton>

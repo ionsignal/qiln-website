@@ -6,59 +6,13 @@ description: "**Qiln helps teams safely change production AI workflow systems.**
 subscription:
   enable: true
 heroProblem:
-  eyebrow: "Why a repository isn't enough."
-  title: "A code repository can't version a complete production AI workflow."
-  description: "A working AI workflow also depends on models, files, configuration, routes, credential references, and controlled external actions."
-  workflowLabel: "Production AI Workflow"
-  artifacts:
-    - label: "Workflow logic + services"
-      icon: "Workflow"
-    - label: "Models + private assets"
-      icon: "Database"
-    - label: "Inputs, outputs + persistent files"
-      icon: "Folder"
-    - label: "Configuration + dependencies"
-      icon: "Settings2"
-    - label: "Routes + schemas"
-      icon: "Route"
-    - label: "Credential references"
-      icon: "KeyRound"
-    - label: "Test / release evidence"
-      icon: "ClipboardCheck"
-    - label: "External actions / side-effect policy"
-      icon: "ShieldAlert"
-  changeRequest:
-    label: "Change requested"
-    items:
-      - "Model swap"
-      - "New input or output"
-      - "Dependency update"
-      - "CUDA drivers"
-  questions:
-    - "Reproduce?"
-    - "Inspect?"
-    - "Roll back?"
-  pathWarning: "A direct change can leave the working system hard to reproduce, inspect, or reverse."
+  eyebrow: "The repository is not the production system."
+  title: "A working AI workflow is more than source code."
+  description: "Production state spans code, runtimes, models, assets, data, configuration, credential references, and routes. Without one known-good capsule, a change is hard to reproduce, inspect, or reverse."
 heroSolution:
-  eyebrow: "The Qiln Capsule"
-  title: "A capsule is the versioned, runnable state around a working AI workflow."
-  description: "It preserves the relevant system state needed to run, test, review, and safely change a known-good production version."
-  capsule:
-    label: "Known-Good Capsule"
-    version: "Version v42"
-    groups:
-      - label: "Workflow logic + services"
-        icon: "Workflow"
-      - label: "Dependencies, models, assets + files"
-        icon: "Package"
-      - label: "Routes, schemas + credential references"
-        icon: "Route"
-      - label: "Tests, snapshots + release evidence"
-        icon: "ClipboardCheck"
-  route:
-    label: "Production route alias"
-    mapping: "/generate → v42"
-    status: "Live known-good version"
+  eyebrow: "Give every change a safe path."
+  title: "Promote change without risking production."
+  description: "Start from a known-good capsule. Humans and agents edit in isolated forks, run golden tests, inspect capsule diffs, and promote only approved versions—with rollback ready."
 heroDiagram:
   annotations:
     humansAgents:
@@ -129,6 +83,6 @@ buttons:
   - enable: true
     label: "Read the docs"
     url: "/docs/"
-    icon: "docs"
+    icon: "BookOpen"
     variant: "secondary"
 ---
