@@ -1,6 +1,7 @@
 ---
 import defaultLogo from "@/assets/images/logo.svg";
 import Image from "@/components/helpers/Image.astro";
+import DeckSlideFooter from "@/components/deck/SlideFooter.astro";
 import TitleDiagram from "@/components/deck/slides/diagrams/TitleDiagram.astro";
 import type { DeckSlideContent } from "@/types/deck";
 
@@ -41,10 +42,13 @@ const { content, siteTitle } = Astro.props;
       </p>
     </header>
     <div class="title-visual">
-      <TitleDiagram />
+      <TitleDiagram
+        label={content.diagram.label}
+        description={content.diagram.description}
+      />
     </div>
   </div>
-  <footer class="title-footer">{content.footer}</footer>
+  <DeckSlideFooter content={content.footer} />
 </section>
 
 <style>
@@ -68,7 +72,7 @@ const { content, siteTitle } = Astro.props;
   .title-layout {
     display: grid;
     width: 100%;
-    gap: 3rem;
+    gap: 2rem;
     align-self: center;
     align-items: center;
   }
@@ -84,8 +88,8 @@ const { content, siteTitle } = Astro.props;
 
   .title-brand {
     display: flex;
+    gap: 0.5rem;
     align-items: center;
-    gap: 0.75rem;
   }
 
   .title-brand-logo {
@@ -106,31 +110,13 @@ const { content, siteTitle } = Astro.props;
     line-height: 1.08;
   }
 
-  .title-footer {
-    align-self: end;
-    margin-top: 1.5rem;
-    color: color-mix(in srgb, var(--color-text-default) 76%, transparent);
-    font-family: var(--font-mono);
-    font-size: 0.625rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    line-height: 1rem;
-    text-align: center;
-  }
-
   @media (min-width: 1024px) {
     .title-layout {
       grid-template-columns: minmax(0, 1.05fr) minmax(24rem, 0.95fr);
-      gap: 4rem;
     }
 
     .title-visual {
       min-height: 18rem;
-    }
-
-    .title-footer {
-      margin-top: 1rem;
-      text-align: right;
     }
   }
 </style>

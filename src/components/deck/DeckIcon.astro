@@ -1,0 +1,93 @@
+---
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+
+type DeckIconColor = "primary" | "secondary";
+
+interface Props {
+  icon: string;
+  label?: string;
+  color?: DeckIconColor;
+  class?: string;
+}
+
+const { icon, label, color = "primary", class: className } = Astro.props;
+const visibleLabel = label?.trim();
+---
+
+<span
+  class:list={[
+    "deck-icon",
+    `deck-icon--${color}`,
+    { "deck-icon--labeled": Boolean(visibleLabel) },
+    className,
+  ]}>
+  <span class="deck-icon-wrap">
+    <LucideIcon
+      icon={icon}
+      class="deck-icon-glyph"
+      aria-hidden="true"
+      stroke-width="1"
+    />
+    {visibleLabel && <span class="deck-icon-label">{visibleLabel}</span>}
+  </span>
+</span>
+
+<style>
+  .deck-icon {
+    display: inline-grid;
+    flex: none;
+    justify-items: center;
+    color: var(--deck-icon-color);
+    --deck-icon-color: var(--color-primary);
+  }
+
+  .deck-icon--secondary {
+    --deck-icon-color: var(--color-secondary);
+  }
+
+  .deck-icon-wrap {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border: 1px solid
+      color-mix(in srgb, var(--deck-icon-color) 40%, transparent);
+    border-radius: 0.5rem;
+    color: var(--deck-icon-color);
+    background: color-mix(
+      in srgb,
+      var(--deck-icon-color) 8%,
+      var(--color-theme-dark)
+    );
+  }
+
+  .deck-icon-wrap :global(.deck-icon-glyph) {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .deck-icon--labeled .deck-icon-wrap {
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .deck-icon--labeled .deck-icon-wrap :global(.deck-icon-glyph) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .deck-icon-label {
+    color: var(--deck-icon-color);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 0.625rem;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+</style>

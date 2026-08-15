@@ -1,0 +1,43 @@
+---
+interface Props {
+  content: string;
+}
+
+const { content } = Astro.props;
+---
+
+<footer class="deck-slide-footer">
+  <span class="deck-slide-footer-text">{content}</span>
+</footer>
+
+<style>
+  .deck-slide-footer {
+    display: flex;
+    min-width: 0;
+    justify-content: flex-end;
+    padding-top: 1rem;
+    color: color-mix(in srgb, var(--color-text-default) 76%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    line-height: 0.875rem;
+  }
+
+  .deck-slide-footer-text {
+    min-width: 0;
+    text-align: right;
+  }
+
+  @media (max-width: 1023px) {
+    :global(qiln-scene-deck.pitch-deck-slider) .deck-slide-footer {
+      padding-bottom: 4.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .deck-slide-footer {
+      line-height: 1rem;
+    }
+  }
+</style>

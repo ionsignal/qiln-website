@@ -6,43 +6,44 @@ import LucideIcon from "@/components/helpers/LucideIcon.astro";
   <article class="beachhead-qualification">
     <div class="flex items-center gap-3">
       <span class="beachhead-icon-wrap">
-        <LucideIcon icon="Crosshair" class="h-5 w-5" aria-hidden="true" />
+        <LucideIcon icon="Crosshair" class="h-7 w-7" aria-hidden="true" />
       </span>
       <h3 class="text-lg font-medium text-white">
-        Commercial AI builders with workflows that:
+        Initial ICP: AI product teams
       </h3>
     </div>
     <ul class="beachhead-list mt-6">
       <li>
         <LucideIcon
           icon="CircleDollarSign"
-          class="text-primary h-5 w-5 shrink-0"
+          class="text-primary h-7 w-7"
           aria-hidden="true"
+          stroke-width="1"
         />
-        <span>Make money or run operations</span>
+        <span>Run a production Python/PyTorch/CUDA workflow</span>
       </li>
       <li>
         <LucideIcon
           icon="Layers3"
-          class="text-primary h-5 w-5 shrink-0"
+          class="text-primary h-7 w-7"
           aria-hidden="true"
         />
-        <span>Span models, assets, services, and routes</span>
+        <span>Ship models, assets, services, and routes together</span>
       </li>
       <li>
         <LucideIcon
           icon="ShieldAlert"
-          class="text-primary h-5 w-5 shrink-0"
+          class="text-primary h-7 w-7"
           aria-hidden="true"
         />
-        <span>Cannot afford unsafe change</span>
+        <span>Need a safe path for the next change</span>
       </li>
     </ul>
   </article>
   <article class="beachhead-migration">
     <div class="flex items-center gap-3">
       <span class="beachhead-icon-wrap">
-        <LucideIcon icon="HandHeart" class="h-5 w-5" aria-hidden="true" />
+        <LucideIcon icon="HandHeart" class="h-7 w-7" aria-hidden="true" />
       </span>
       <h3 class="text-lg font-medium text-white">Concierge migration</h3>
     </div>
@@ -50,31 +51,25 @@ import LucideIcon from "@/components/helpers/LucideIcon.astro";
       <li>
         <span class="migration-step-number">01</span>
         <div>
-          <p class="migration-step-title">Workflow migration</p>
-          <p class="migration-step-detail">
-            Capture the working system around the workflow.
-          </p>
+          <p class="migration-step-title">Capture known-good capsule</p>
+          <p class="migration-step-detail">Make the workflow reproducible.</p>
         </div>
       </li>
       <li>
         <span class="migration-step-number">02</span>
         <div>
-          <p class="migration-step-title">
-            Known-good capsule + repeatable test
-          </p>
+          <p class="migration-step-title">Define golden test</p>
           <p class="migration-step-detail">
-            Establish a runnable release unit and evidence.
+            Set release evidence and branch policy.
           </p>
         </div>
       </li>
       <li>
         <span class="migration-step-number">03</span>
         <div>
-          <p class="migration-step-title">
-            First safe change + verified rollback
-          </p>
+          <p class="migration-step-title">Prove safe change</p>
           <p class="migration-step-detail">
-            Prove the production path before expanding usage.
+            Fork → edit → test → diff → promote → rollback
           </p>
         </div>
       </li>
@@ -108,8 +103,8 @@ import LucideIcon from "@/components/helpers/LucideIcon.astro";
     flex: none;
     align-items: center;
     justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 3.25rem;
+    height: 3.25rem;
     border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
     border-radius: 0.5rem;
     color: var(--color-primary);
@@ -133,9 +128,8 @@ import LucideIcon from "@/components/helpers/LucideIcon.astro";
     background: color-mix(in srgb, var(--color-body) 42%, transparent);
     padding: 0.875rem;
     color: var(--color-light);
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.25rem;
+    font-size: 1.1rem;
+    line-height: 1.75rem;
   }
 
   .migration-journey li {
@@ -173,23 +167,23 @@ import LucideIcon from "@/components/helpers/LucideIcon.astro";
     color: var(--color-primary);
     background: color-mix(in srgb, var(--color-primary) 10%, var(--color-body));
     font-family: var(--font-mono);
-    font-size: 0.6875rem;
+    font-size: 0.8rem;
     font-weight: 500;
   }
 
   .migration-step-title {
     margin: 0;
     color: var(--color-light);
-    font-size: 0.875rem;
+    font-size: 1.1rem;
     font-weight: 500;
-    line-height: 1.25rem;
+    line-height: 1.75rem;
   }
 
   .migration-step-detail {
     margin: 0.25rem 0 0;
     color: var(--color-text-default);
-    font-size: 0.75rem;
-    line-height: 1.125rem;
+    font-size: 0.9rem;
+    line-height: 1.75rem;
   }
 
   @media (min-width: 1024px) {

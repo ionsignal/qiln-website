@@ -1,206 +1,656 @@
 ---
 import LucideIcon from "@/components/helpers/LucideIcon.astro";
+
+const pilotPartners = ["Mowie", "GitHits"] as const;
+
+const activationMilestones = [
+  {
+    label: "Customer discovery",
+    status: "complete",
+  },
+  {
+    label: "Pilot commitment",
+    status: "complete",
+  },
+  {
+    label: "Product-ready deployment",
+    status: "pending",
+  },
+  {
+    label: "Paid-pilot activation",
+    status: "pending",
+  },
+] as const;
+
+const commitmentCount = pilotPartners.length;
 ---
 
-<div class="evidence-stage mx-auto w-full max-w-5xl">
-  <article class="evidence-metric" aria-labelledby="evidence-partner-heading">
-    <div class="evidence-metric-kicker">
-      <span class="evidence-icon-wrap">
-        <LucideIcon icon="UsersRound" class="h-5 w-5" aria-hidden="true" />
-      </span>
-      <span>Current partner signal</span>
-    </div>
-    <div class="evidence-metric-heading">
-      <strong class="evidence-metric-count">2</strong>
-      <h3 id="evidence-partner-heading" class="evidence-metric-label">
-        early design partners
-      </h3>
-    </div>
-    <p class="evidence-metric-description">
-      Mowie and GitHits are bringing revenue-relevant AI workflows into Qiln.
-    </p>
-  </article>
-  <ul class="evidence-partner-list" aria-label="Qiln design partners">
-    <li class="evidence-partner-card">
-      <span class="evidence-icon-wrap">
-        <LucideIcon icon="Workflow" class="h-5 w-5" aria-hidden="true" />
-      </span>
-      <div class="evidence-partner-copy">
-        <h3 class="evidence-partner-name">Mowie</h3>
-        <p class="evidence-partner-role">Design partner</p>
+<div class="evidence-stage mx-auto w-full max-w-4xl">
+  <div class="evidence-commitment-row">
+    <article
+      class="evidence-metric"
+      aria-labelledby="evidence-commitment-heading">
+      <div class="evidence-metric-heading">
+        <strong class="evidence-metric-count">{commitmentCount}</strong>
+        <div class="evidence-metric-copy">
+          <p class="evidence-metric-kicker">Conditional</p>
+          <h3 id="evidence-commitment-heading" class="evidence-metric-label">
+            paid-pilot commitments
+          </h3>
+        </div>
       </div>
-      <span class="evidence-partner-status">
-        <LucideIcon icon="ShieldCheck" class="h-4 w-4" aria-hidden="true" />
-        Partner
-      </span>
-    </li>
-    <li class="evidence-partner-card">
-      <span class="evidence-icon-wrap">
-        <LucideIcon icon="GitFork" class="h-5 w-5" aria-hidden="true" />
-      </span>
-      <div class="evidence-partner-copy">
-        <h3 class="evidence-partner-name">GitHits</h3>
-        <p class="evidence-partner-role">Design partner</p>
+      <div class="evidence-metric-divider" aria-hidden="true"></div>
+      <div class="evidence-metric-detail">
+        <span class="evidence-metric-icon">
+          <LucideIcon
+            icon="ClipboardCheck"
+            class="h-7 w-7"
+            aria-hidden="true"
+          />
+        </span>
+        <p>Pilots begin after product-ready deployment</p>
       </div>
-      <span class="evidence-partner-status">
-        <LucideIcon icon="ShieldCheck" class="h-4 w-4" aria-hidden="true" />
-        Partner
-      </span>
-    </li>
-  </ul>
+    </article>
+    <svg
+      class="evidence-commitment-connectors"
+      viewBox="0 0 100 200"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false">
+      <path
+        class="evidence-commitment-connector-mobile"
+        d="M50 0 V200"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <circle
+        class="evidence-commitment-node evidence-commitment-node-mobile"
+        cx="50"
+        cy="194"
+        r="4"
+        vector-effect="non-scaling-stroke">
+      </circle>
+      <path
+        class="evidence-commitment-connector-desktop"
+        d="M0 100 H50"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="evidence-commitment-connector-desktop"
+        d="M50 50 V150"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="evidence-commitment-connector-desktop"
+        d="M50 50 H100"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="evidence-commitment-connector-desktop"
+        d="M50 150 H100"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <circle
+        class="evidence-commitment-node evidence-commitment-node-desktop"
+        cx="50"
+        cy="100"
+        r="3.5"
+        vector-effect="non-scaling-stroke">
+      </circle>
+      <circle
+        class="evidence-commitment-node evidence-commitment-node-desktop"
+        cx="98"
+        cy="50"
+        r="4"
+        vector-effect="non-scaling-stroke">
+      </circle>
+      <circle
+        class="evidence-commitment-node evidence-commitment-node-desktop"
+        cx="98"
+        cy="150"
+        r="4"
+        vector-effect="non-scaling-stroke">
+      </circle>
+    </svg>
+    <div class="evidence-partners">
+      <ul
+        class="evidence-partner-list"
+        aria-label="Conditional paid-pilot partners">
+        {
+          pilotPartners.map((partnerName) => (
+            <li>
+              <article class="evidence-partner-card">
+                <span class="evidence-partner-icon">
+                  <LucideIcon
+                    icon="UsersRound"
+                    class="h-6 w-6"
+                    aria-hidden="true"
+                  />
+                </span>
+                <div class="evidence-partner-copy">
+                  <h3 class="evidence-partner-name">{partnerName}</h3>
+                  <p class="evidence-partner-status">
+                    <span>Conditional</span>
+                    <span>paid pilot</span>
+                  </p>
+                </div>
+              </article>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+  <ol class="evidence-timeline" aria-label="Paid-pilot activation path">
+    {
+      activationMilestones.map((milestone, index) => {
+        const nextMilestone = activationMilestones[index + 1];
+        const connectorIsComplete =
+          milestone.status === "complete" &&
+          nextMilestone?.status === "complete";
+        return (
+          <li class:list={["evidence-timeline-item", `is-${milestone.status}`]}>
+            <span class="evidence-timeline-marker">
+              {milestone.status === "complete" && (
+                <LucideIcon icon="Check" class="h-5 w-5" aria-hidden="true" />
+              )}
+            </span>
+            <span class="evidence-timeline-label">{milestone.label}</span>
+            {nextMilestone && (
+              <svg
+                class:list={[
+                  "evidence-timeline-connector",
+                  connectorIsComplete ? "is-complete" : "is-pending",
+                ]}
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+                focusable="false">
+                <path
+                  class="evidence-timeline-connector-mobile"
+                  d="M50 0 V94"
+                  vector-effect="non-scaling-stroke"
+                />
+                <path
+                  class="evidence-timeline-connector-mobile"
+                  d="M42 92 L50 100 L58 92"
+                  vector-effect="non-scaling-stroke"
+                />
+                <path
+                  class="evidence-timeline-connector-desktop"
+                  d="M0 50 H94"
+                  vector-effect="non-scaling-stroke"
+                />
+                <path
+                  class="evidence-timeline-connector-desktop"
+                  d="M92 42 L100 50 L92 58"
+                  vector-effect="non-scaling-stroke"
+                />
+              </svg>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
 </div>
 
 <style>
   .evidence-stage {
     display: grid;
+    container-type: inline-size;
     gap: 1.25rem;
-    align-items: stretch;
+  }
+
+  .evidence-commitment-row {
+    display: grid;
+    min-width: 0;
   }
 
   .evidence-metric,
   .evidence-partner-card {
-    border: 1px solid color-mix(in srgb, var(--color-light) 20%, transparent);
-    background: color-mix(in srgb, var(--color-theme-dark) 76%, transparent);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.035);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 68%, transparent);
+    background:
+      radial-gradient(
+        circle at 76% 24%,
+        color-mix(in srgb, var(--color-primary) 11%, transparent),
+        transparent 48%
+      ),
+      color-mix(in srgb, var(--color-theme-dark) 94%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.05),
+      0 18px 42px rgb(0 0 0 / 0.18);
   }
 
   .evidence-metric {
+    position: relative;
+    z-index: 2;
     display: grid;
+    min-width: 0;
     align-content: center;
-    border-color: color-mix(in srgb, var(--color-primary) 48%, transparent);
+    gap: 1rem;
+    border-width: 2px;
     border-radius: 1rem;
-    padding: 1.5rem;
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.035),
-      0 18px 42px rgb(0 0 0 / 0.16);
-  }
-
-  .evidence-metric-kicker {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: var(--color-primary);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .evidence-icon-wrap {
-    display: inline-flex;
-    flex: none;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
-    border-radius: 0.5rem;
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    padding: clamp(1rem, 4cqw, 1.5rem);
   }
 
   .evidence-metric-heading {
-    display: grid;
-    gap: 0.5rem;
-    margin-top: 1.5rem;
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: clamp(0.75rem, 3cqw, 1.25rem);
   }
 
   .evidence-metric-count {
+    flex: none;
     color: var(--color-light);
     font-family: var(--font-secondary);
-    font-size: clamp(4.5rem, 10vw, 7.5rem);
+    font-size: clamp(4.25rem, 19cqw, 6rem);
     font-weight: 500;
-    letter-spacing: -0.04em;
-    line-height: 0.85;
+    letter-spacing: -0.07em;
+    line-height: 0.75;
+  }
+
+  .evidence-metric-copy {
+    display: grid;
+    min-width: 0;
+    gap: 0.25rem;
+  }
+
+  .evidence-metric-kicker {
+    margin: 0;
+    color: var(--color-primary);
+    font-family: var(--font-mono);
+    font-size: clamp(0.625rem, 2.5cqw, 0.75rem);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    line-height: 1rem;
+    text-transform: uppercase;
   }
 
   .evidence-metric-label {
     margin: 0;
+    overflow-wrap: anywhere;
     color: var(--color-light);
     font-family: var(--font-secondary);
-    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-size: clamp(1.25rem, 6cqw, 1.875rem);
     font-weight: 500;
     letter-spacing: 0.01em;
-    line-height: 1.1;
+    line-height: 1.08;
   }
 
-  .evidence-metric-description {
-    max-width: 38rem;
-    margin: 1.5rem 0 0;
-    color: var(--color-text-default);
-    font-size: 0.9375rem;
-    line-height: 1.5rem;
+  .evidence-metric-divider {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+      to right,
+      var(--color-primary),
+      color-mix(in srgb, var(--color-primary) 16%, transparent)
+    );
+  }
+
+  .evidence-metric-detail {
+    display: grid;
+    min-width: 0;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .evidence-metric-icon,
+  .evidence-partner-icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+  }
+
+  .evidence-metric-icon {
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 44%, transparent);
+    border-radius: 0.625rem;
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+
+  .evidence-metric-detail p {
+    min-width: 0;
+    margin: 0;
+    overflow-wrap: anywhere;
+    color: var(--color-light);
+    font-size: clamp(0.9375rem, 3.5cqw, 1.1875rem);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .evidence-metric-icon :global(svg),
+  .evidence-partner-icon :global(svg) {
+    stroke-width: 1.75;
+  }
+
+  .evidence-commitment-connectors {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 2.75rem;
+    overflow: visible;
+    fill: none;
+    pointer-events: none;
+  }
+
+  .evidence-commitment-connector-mobile,
+  .evidence-commitment-connector-desktop {
+    fill: none;
+    stroke: var(--color-primary);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2px;
+  }
+
+  .evidence-commitment-connector-desktop,
+  .evidence-commitment-node-desktop {
+    display: none;
+  }
+
+  .evidence-commitment-node {
+    fill: var(--color-primary);
+    stroke: var(--color-theme-dark);
+    stroke-width: 2px;
+  }
+
+  .evidence-partners {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
   }
 
   .evidence-partner-list {
     display: grid;
-    gap: 0.875rem;
-    align-content: center;
+    min-width: 0;
+    gap: 0.75rem;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .evidence-partner-card {
-    display: flex;
+  .evidence-partner-list > li {
+    display: grid;
     min-width: 0;
+  }
+
+  .evidence-partner-card {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
     gap: 0.875rem;
+    min-height: 6.25rem;
     border-radius: 0.875rem;
-    padding: 1rem;
+    padding: 0.875rem 1rem;
+  }
+
+  .evidence-partner-icon {
+    width: 3.25rem;
+    height: 3.25rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 42%, transparent);
+    border-radius: 0.625rem;
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
   }
 
   .evidence-partner-copy {
+    display: grid;
     min-width: 0;
+    gap: 0.5rem;
   }
 
   .evidence-partner-name {
     margin: 0;
     color: var(--color-light);
-    font-family: var(--font-primary);
-    font-size: 1rem;
+    font-family: var(--font-secondary);
+    font-size: clamp(1.375rem, 5.5cqw, 2rem);
     font-weight: 500;
-    line-height: 1.25rem;
-  }
-
-  .evidence-partner-role {
-    margin: 0.25rem 0 0;
-    color: var(--color-text-default);
-    font-size: 0.75rem;
-    line-height: 1.125rem;
+    letter-spacing: 0.01em;
+    line-height: 1;
   }
 
   .evidence-partner-status {
-    display: inline-flex;
-    flex: none;
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.375rem;
-    margin-left: auto;
-    border: 1px solid
-      color-mix(in srgb, var(--color-secondary) 36%, transparent);
-    border-radius: 9999px;
-    padding: 0.375rem 0.625rem;
-    color: var(--color-secondary);
-    background: color-mix(in srgb, var(--color-secondary) 7%, transparent);
-    font-size: 0.6875rem;
+    margin: 0;
+    color: var(--color-light);
+    font-size: 0.8125rem;
     font-weight: 500;
+    line-height: 1.125rem;
+  }
+
+  .evidence-partner-status span:first-child {
+    border: 1px solid color-mix(in srgb, var(--color-primary) 72%, transparent);
+    border-radius: 0.5rem;
+    padding: 0.2rem 0.45rem;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .evidence-timeline {
+    display: grid;
+    gap: 0.625rem;
+    margin: 0;
+    padding: 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-light) 16%, transparent);
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--color-theme-dark) 72%, transparent);
+    list-style: none;
+  }
+
+  .evidence-timeline-item {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    min-height: 3rem;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .evidence-timeline-marker {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 2px solid currentColor;
+    border-radius: 9999px;
+    background: var(--color-theme-dark);
+  }
+
+  .evidence-timeline-item.is-complete {
+    color: var(--color-primary);
+  }
+
+  .evidence-timeline-item.is-pending {
+    color: color-mix(in srgb, var(--color-text-default) 62%, transparent);
+  }
+
+  .evidence-timeline-item.is-complete .evidence-timeline-marker {
+    background: color-mix(in srgb, var(--color-primary) 9%, transparent);
+  }
+
+  .evidence-timeline-label {
+    min-width: 0;
+    color: var(--color-light);
+    font-family: var(--font-secondary);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.15;
+  }
+
+  .evidence-timeline-connector {
+    position: absolute;
+    z-index: 0;
+    top: 2.5rem;
+    left: 0;
+    display: block;
+    width: 2.5rem;
+    height: calc(100% - 1.875rem);
+    overflow: visible;
+    fill: none;
+    pointer-events: none;
+  }
+
+  .evidence-timeline-connector.is-complete {
+    color: var(--color-primary);
+  }
+
+  .evidence-timeline-connector.is-pending {
+    color: color-mix(in srgb, var(--color-text-default) 52%, transparent);
+  }
+
+  .evidence-timeline-connector path {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.75px;
+  }
+
+  .evidence-timeline-connector-desktop {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .evidence-timeline {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+      padding: 1rem 0.75rem 0.875rem;
+    }
+
+    .evidence-timeline-item {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      gap: 0.75rem;
+      min-height: 5.5rem;
+      padding-inline: 0.375rem;
+      text-align: center;
+    }
+
+    .evidence-timeline-label {
+      max-width: 10rem;
+      font-size: clamp(0.8125rem, 1.8cqw, 1rem);
+    }
+
+    .evidence-timeline-connector {
+      top: 0.75rem;
+      left: calc(50% + 1.25rem);
+      width: calc(100% - 2.5rem);
+      height: 1rem;
+    }
+
+    .evidence-timeline-connector-mobile {
+      display: none;
+    }
+
+    .evidence-timeline-connector-desktop {
+      display: block;
+    }
   }
 
   @media (min-width: 1024px) {
     .evidence-stage {
-      grid-template-columns: minmax(0, 1.35fr) minmax(17rem, 0.65fr);
-      gap: 1.5rem;
+      gap: 1.125rem;
+    }
+
+    .evidence-commitment-row {
+      grid-template-columns:
+        minmax(0, 1.12fr) clamp(3.5rem, 6cqw, 5rem)
+        minmax(18rem, 0.88fr);
+      align-items: stretch;
     }
 
     .evidence-metric {
-      min-height: 20rem;
-      padding: 2rem;
+      min-height: 12.75rem;
+      gap: 0.875rem;
+      padding: clamp(1.125rem, 2cqw, 1.5rem);
+    }
+
+    .evidence-metric-heading {
+      gap: clamp(0.75rem, 1.75cqw, 1.25rem);
+    }
+
+    .evidence-metric-count {
+      font-size: clamp(5rem, 8.5cqw, 6.5rem);
+    }
+
+    .evidence-metric-kicker {
+      font-size: clamp(0.625rem, 0.95cqw, 0.75rem);
+    }
+
+    .evidence-metric-label {
+      font-size: clamp(1.5rem, 2.65cqw, 2.25rem);
+    }
+
+    .evidence-metric-detail p {
+      font-size: clamp(0.9375rem, 1.55cqw, 1.25rem);
+    }
+
+    .evidence-commitment-connectors {
+      align-self: stretch;
+      height: 100%;
+      min-height: 12.75rem;
+    }
+
+    .evidence-commitment-connector-mobile,
+    .evidence-commitment-node-mobile {
+      display: none;
+    }
+
+    .evidence-commitment-connector-desktop,
+    .evidence-commitment-node-desktop {
+      display: block;
+    }
+
+    .evidence-partner-list {
+      height: 100%;
+      grid-template-rows: repeat(2, minmax(0, 1fr));
     }
 
     .evidence-partner-card {
-      min-height: 8rem;
-      padding: 1.25rem;
+      height: 100%;
+      min-height: 0;
+      gap: clamp(0.75rem, 1.25cqw, 1rem);
+      padding: clamp(0.75rem, 1.25cqw, 1rem);
+    }
+
+    .evidence-partner-icon {
+      width: clamp(2.75rem, 4.25cqw, 3.5rem);
+      height: clamp(2.75rem, 4.25cqw, 3.5rem);
+    }
+
+    .evidence-partner-name {
+      font-size: clamp(1.375rem, 2.2cqw, 1.875rem);
+    }
+
+    .evidence-partner-status {
+      font-size: clamp(0.75rem, 1.15cqw, 0.875rem);
+    }
+
+    .evidence-timeline {
+      min-height: 6.75rem;
+      padding: 0.875rem 1.25rem 0.75rem;
+    }
+
+    .evidence-timeline-item {
+      min-height: 5rem;
     }
   }
 </style>

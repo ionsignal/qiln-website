@@ -1,0 +1,734 @@
+---
+interface Props {
+  desktopBreakpoint?: "md" | "lg";
+}
+
+const { desktopBreakpoint = "lg" } = Astro.props;
+---
+
+<div
+  class:list={[
+    "product-diagram",
+    `product-diagram-desktop-${desktopBreakpoint}`,
+  ]}>
+  <svg
+    class="product-diagram-mobile"
+    viewBox="0 0 400 660"
+    aria-hidden="true"
+    focusable="false">
+    <defs>
+      <marker
+        id="qiln-product-mobile-primary-arrow"
+        viewBox="0 0 8 8"
+        refX="7"
+        refY="4"
+        markerWidth="8"
+        markerHeight="8"
+        markerUnits="userSpaceOnUse"
+        orient="auto">
+        <path class="diagram-marker-primary" d="M0 0 L8 4 L0 8 Z"></path>
+      </marker>
+      <marker
+        id="qiln-product-mobile-secondary-arrow"
+        viewBox="0 0 8 8"
+        refX="7"
+        refY="4"
+        markerWidth="8"
+        markerHeight="8"
+        markerUnits="userSpaceOnUse"
+        orient="auto">
+        <path class="diagram-marker-secondary" d="M0 0 L8 4 L0 8 Z"></path>
+      </marker>
+      <marker
+        id="qiln-product-mobile-neutral-arrow"
+        viewBox="0 0 8 8"
+        refX="7"
+        refY="4"
+        markerWidth="8"
+        markerHeight="8"
+        markerUnits="userSpaceOnUse"
+        orient="auto">
+        <path class="diagram-marker-neutral" d="M0 0 L8 4 L0 8 Z"></path>
+      </marker>
+    </defs>
+
+    <rect
+      class="diagram-isolation-lane"
+      x="16"
+      y="190"
+      width="290"
+      height="456"
+      rx="18">
+    </rect>
+
+    <path
+      class="diagram-line diagram-stable-line"
+      d="M174 98 H227"
+      marker-end="url(#qiln-product-mobile-secondary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-rollback-line"
+      d="M239 58 C222 20 192 20 174 58"
+      marker-end="url(#qiln-product-mobile-neutral-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-fork-line"
+      d="M95 148 V207"
+      marker-end="url(#qiln-product-mobile-primary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-fork-line"
+      d="M161 275 V304"
+      marker-end="url(#qiln-product-mobile-primary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-fork-line"
+      d="M161 362 V391"
+      marker-end="url(#qiln-product-mobile-primary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-fork-line"
+      d="M161 449 V478"
+      marker-end="url(#qiln-product-mobile-primary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-fork-line"
+      d="M161 536 V565"
+      marker-end="url(#qiln-product-mobile-primary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-promotion-line"
+      d="M284 601 H390 V98 H384"
+      marker-end="url(#qiln-product-mobile-secondary-arrow)">
+    </path>
+
+    <rect
+      class="diagram-label-backplate"
+      x="172"
+      y="8"
+      width="70"
+      height="21"
+      rx="10.5">
+    </rect>
+    <text class="diagram-rail-label" x="207" y="23" text-anchor="middle">
+      Roll back
+    </text>
+
+    <rect
+      class="diagram-label-backplate"
+      x="185"
+      y="86"
+      width="42"
+      height="20"
+      rx="10">
+    </rect>
+    <text
+      class="diagram-rail-label diagram-rail-label-secondary"
+      x="206"
+      y="100"
+      text-anchor="middle">
+      LIVE
+    </text>
+
+    <rect
+      class="diagram-capsule-layer"
+      x="22"
+      y="42"
+      width="158"
+      height="100"
+      rx="14">
+    </rect>
+    <rect
+      class="diagram-card diagram-capsule-card"
+      x="16"
+      y="48"
+      width="158"
+      height="100"
+      rx="14">
+    </rect>
+    <text class="diagram-kicker" x="31" y="71">CAPSULE</text>
+    <text class="diagram-title" x="31" y="99">
+      <tspan x="31" dy="0">Known-Good</tspan>
+      <tspan x="31" dy="20">Capsule</tspan>
+    </text>
+    <text class="diagram-detail" x="31" y="138">v42 · verified</text>
+
+    <rect
+      class="diagram-card diagram-route-card"
+      x="239"
+      y="48"
+      width="145"
+      height="100"
+      rx="14">
+    </rect>
+    <circle class="diagram-status-dot" cx="255" cy="68" r="3.5"></circle>
+    <text class="diagram-kicker diagram-kicker-secondary" x="265" y="72">
+      STABLE
+    </text>
+    <text class="diagram-title" x="254" y="99">
+      <tspan x="254" dy="0">Production</tspan>
+      <tspan x="254" dy="20">Route</tspan>
+    </text>
+    <text class="diagram-detail" x="254" y="138">Live version</text>
+
+    <text class="diagram-rail-label" x="108" y="179">FORK</text>
+    <rect
+      class="diagram-label-backplate"
+      x="119"
+      y="180"
+      width="173"
+      height="21"
+      rx="10.5">
+    </rect>
+    <text class="diagram-lane-label" x="205.5" y="195" text-anchor="middle">
+      ISOLATED CHANGE LANE
+    </text>
+
+    <rect
+      class="diagram-card diagram-fork-card"
+      x="38"
+      y="215"
+      width="246"
+      height="60"
+      rx="12">
+    </rect>
+    <text class="diagram-kicker" x="56" y="238">ISOLATED FORK</text>
+    <text class="diagram-title" x="56" y="261">Human or Agent Fork</text>
+
+    <rect
+      class="diagram-card diagram-step-card"
+      x="70"
+      y="312"
+      width="182"
+      height="50"
+      rx="10">
+    </rect>
+    <text class="diagram-step-number" x="89" y="333">01</text>
+    <text class="diagram-step-title" x="161" y="345" text-anchor="middle">
+      Edit
+    </text>
+
+    <rect
+      class="diagram-card diagram-step-card"
+      x="70"
+      y="399"
+      width="182"
+      height="50"
+      rx="10">
+    </rect>
+    <text class="diagram-step-number" x="89" y="420">02</text>
+    <text class="diagram-step-title" x="161" y="432" text-anchor="middle">
+      Test
+    </text>
+
+    <rect
+      class="diagram-card diagram-step-card"
+      x="70"
+      y="486"
+      width="182"
+      height="50"
+      rx="10">
+    </rect>
+    <text class="diagram-step-number" x="89" y="507">03</text>
+    <text class="diagram-step-title" x="161" y="519" text-anchor="middle">
+      Capsule Diff
+    </text>
+
+    <rect
+      class="diagram-card diagram-gate-card"
+      x="38"
+      y="573"
+      width="246"
+      height="56"
+      rx="12">
+    </rect>
+    <text class="diagram-kicker diagram-kicker-secondary" x="56" y="596">
+      ONLY REJOIN POINT
+    </text>
+    <text class="diagram-title" x="56" y="619">Approval Gate</text>
+
+    <text
+      class="diagram-rail-label diagram-rail-label-secondary"
+      x="373"
+      y="462"
+      text-anchor="middle"
+      transform="rotate(-90 373 462)">
+      PROMOTE NEW VERSION
+    </text>
+  </svg>
+
+  <svg
+    class="product-diagram-desktop"
+    viewBox="0 0 1200 380"
+    aria-hidden="true"
+    focusable="false">
+    <defs>
+      <marker
+        id="qiln-product-desktop-primary-arrow"
+        viewBox="0 0 8 8"
+        refX="7"
+        refY="4"
+        markerWidth="8"
+        markerHeight="8"
+        markerUnits="userSpaceOnUse"
+        orient="auto">
+        <path class="diagram-marker-primary" d="M0 0 L8 4 L0 8 Z"></path>
+      </marker>
+      <marker
+        id="qiln-product-desktop-secondary-arrow"
+        viewBox="0 0 8 8"
+        refX="7"
+        refY="4"
+        markerWidth="8"
+        markerHeight="8"
+        markerUnits="userSpaceOnUse"
+        orient="auto">
+        <path class="diagram-marker-secondary" d="M0 0 L8 4 L0 8 Z"></path>
+      </marker>
+      <marker
+        id="qiln-product-desktop-neutral-arrow"
+        viewBox="0 0 8 8"
+        refX="7"
+        refY="4"
+        markerWidth="8"
+        markerHeight="8"
+        markerUnits="userSpaceOnUse"
+        orient="auto">
+        <path class="diagram-marker-neutral" d="M0 0 L8 4 L0 8 Z"></path>
+      </marker>
+    </defs>
+
+    <rect
+      class="diagram-isolation-lane"
+      x="55"
+      y="216"
+      width="1090"
+      height="142"
+      rx="18">
+    </rect>
+
+    <path
+      class="diagram-line diagram-stable-line"
+      d="M340 102 H892"
+      marker-end="url(#qiln-product-desktop-secondary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-rollback-line"
+      d="M900 62 C780 6 468 6 348 62"
+      marker-end="url(#qiln-product-desktop-neutral-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-fork-line"
+      d="M199 152 V238"
+      marker-end="url(#qiln-product-desktop-primary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-fork-line"
+      d="M285 285 H337"
+      marker-end="url(#qiln-product-desktop-primary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-fork-line"
+      d="M450 285 H502"
+      marker-end="url(#qiln-product-desktop-primary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-fork-line"
+      d="M615 285 H667"
+      marker-end="url(#qiln-product-desktop-primary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-fork-line"
+      d="M825 285 H887"
+      marker-end="url(#qiln-product-desktop-primary-arrow)">
+    </path>
+    <path
+      class="diagram-line diagram-promotion-line"
+      d="M1100 285 H1170 V102 H1140"
+      marker-end="url(#qiln-product-desktop-secondary-arrow)">
+    </path>
+
+    <rect
+      class="diagram-label-backplate"
+      x="584"
+      y="10"
+      width="112"
+      height="24"
+      rx="12">
+    </rect>
+    <text class="diagram-rail-label" x="640" y="27" text-anchor="middle">
+      Roll back
+    </text>
+
+    <rect
+      class="diagram-label-backplate"
+      x="588"
+      y="89"
+      width="104"
+      height="25"
+      rx="12.5">
+    </rect>
+    <text
+      class="diagram-rail-label diagram-rail-label-secondary"
+      x="640"
+      y="106"
+      text-anchor="middle">
+      LIVE VERSION
+    </text>
+
+    <rect
+      class="diagram-capsule-layer"
+      x="66"
+      y="44"
+      width="282"
+      height="100"
+      rx="15">
+    </rect>
+    <rect
+      class="diagram-card diagram-capsule-card"
+      x="58"
+      y="52"
+      width="282"
+      height="100"
+      rx="15">
+    </rect>
+    <text class="diagram-kicker" x="82" y="80">CAPSULE</text>
+    <rect
+      class="diagram-version-pill"
+      x="278"
+      y="66"
+      width="42"
+      height="23"
+      rx="11.5">
+    </rect>
+    <text class="diagram-version-text" x="299" y="82" text-anchor="middle">
+      v42
+    </text>
+    <text class="diagram-title" x="82" y="111">Known-Good Capsule</text>
+    <text class="diagram-detail" x="82" y="135">
+      Verified, runnable version
+    </text>
+
+    <rect
+      class="diagram-card diagram-route-card"
+      x="900"
+      y="52"
+      width="240"
+      height="100"
+      rx="15">
+    </rect>
+    <circle class="diagram-status-dot" cx="924" cy="76" r="4"></circle>
+    <text class="diagram-kicker diagram-kicker-secondary" x="937" y="80">
+      STABLE ROUTE
+    </text>
+    <text class="diagram-title" x="924" y="111">Production Route</text>
+    <text class="diagram-detail" x="924" y="135">/generate → v42</text>
+
+    <text class="diagram-rail-label" x="215" y="191">FORK FROM KNOWN-GOOD</text>
+    <rect
+      class="diagram-label-backplate"
+      x="263"
+      y="206"
+      width="202"
+      height="21"
+      rx="10.5">
+    </rect>
+    <text class="diagram-lane-label" x="364" y="221" text-anchor="middle">
+      ISOLATED CHANGE LANE
+    </text>
+
+    <rect
+      class="diagram-card diagram-fork-card"
+      x="85"
+      y="245"
+      width="200"
+      height="78"
+      rx="12">
+    </rect>
+    <text class="diagram-kicker" x="105" y="270">ISOLATED FORK</text>
+    <text class="diagram-lane-title" x="105" y="296">Human or Agent Fork</text>
+    <text class="diagram-detail" x="105" y="316">Production unchanged</text>
+
+    <rect
+      class="diagram-card diagram-step-card"
+      x="345"
+      y="251"
+      width="105"
+      height="66"
+      rx="10">
+    </rect>
+    <text class="diagram-step-number" x="397.5" y="275" text-anchor="middle">
+      01
+    </text>
+    <text class="diagram-step-title" x="397.5" y="300" text-anchor="middle">
+      Edit
+    </text>
+
+    <rect
+      class="diagram-card diagram-step-card"
+      x="510"
+      y="251"
+      width="105"
+      height="66"
+      rx="10">
+    </rect>
+    <text class="diagram-step-number" x="562.5" y="275" text-anchor="middle">
+      02
+    </text>
+    <text class="diagram-step-title" x="562.5" y="300" text-anchor="middle">
+      Test
+    </text>
+
+    <rect
+      class="diagram-card diagram-step-card"
+      x="675"
+      y="251"
+      width="150"
+      height="66"
+      rx="10">
+    </rect>
+    <text class="diagram-step-number" x="750" y="275" text-anchor="middle">
+      03
+    </text>
+    <text class="diagram-step-title" x="750" y="300" text-anchor="middle">
+      Capsule Diff
+    </text>
+
+    <rect
+      class="diagram-card diagram-gate-card"
+      x="895"
+      y="245"
+      width="205"
+      height="78"
+      rx="12">
+    </rect>
+    <text class="diagram-kicker diagram-kicker-secondary" x="915" y="270">
+      ONLY REJOIN POINT
+    </text>
+    <text class="diagram-lane-title" x="915" y="296">Approval Gate</text>
+    <text class="diagram-detail" x="915" y="316">Human or policy approval</text>
+
+    <text
+      class="diagram-rail-label diagram-rail-label-secondary"
+      x="1155"
+      y="206"
+      text-anchor="middle"
+      transform="rotate(-90 1155 206)">
+      PROMOTE NEW VERSION
+    </text>
+  </svg>
+</div>
+
+<style>
+  .product-diagram {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+
+  .product-diagram svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .product-diagram-mobile {
+    display: block;
+    max-width: 25rem;
+    margin-inline: auto;
+  }
+
+  .product-diagram-desktop {
+    display: none;
+  }
+
+  .diagram-card,
+  .diagram-capsule-layer,
+  .diagram-isolation-lane,
+  .diagram-version-pill {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .diagram-card {
+    fill: color-mix(in srgb, var(--color-theme-dark) 94%, transparent);
+    stroke: color-mix(in srgb, var(--color-light) 20%, transparent);
+    stroke-width: 1;
+  }
+
+  .diagram-capsule-card,
+  .diagram-fork-card {
+    stroke: color-mix(in srgb, var(--color-primary) 52%, transparent);
+  }
+
+  .diagram-route-card,
+  .diagram-gate-card {
+    stroke: color-mix(in srgb, var(--color-secondary) 52%, transparent);
+  }
+
+  .diagram-gate-card {
+    stroke-width: 1.5;
+  }
+
+  .diagram-step-card {
+    fill: color-mix(in srgb, var(--color-body) 70%, transparent);
+    stroke: color-mix(in srgb, var(--color-light) 16%, transparent);
+  }
+
+  .diagram-capsule-layer {
+    fill: color-mix(in srgb, var(--color-primary) 4%, transparent);
+    stroke: color-mix(in srgb, var(--color-primary) 26%, transparent);
+    stroke-width: 1;
+  }
+
+  .diagram-isolation-lane {
+    fill: color-mix(in srgb, var(--color-primary) 2.5%, transparent);
+    stroke: color-mix(in srgb, var(--color-primary) 34%, transparent);
+    stroke-width: 1;
+    stroke-dasharray: 7 8;
+  }
+
+  .diagram-line {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .diagram-stable-line,
+  .diagram-promotion-line {
+    stroke: var(--color-secondary);
+    stroke-width: 2;
+  }
+
+  .diagram-fork-line {
+    stroke: color-mix(in srgb, var(--color-primary) 78%, transparent);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 7;
+  }
+
+  .diagram-rollback-line {
+    stroke: color-mix(in srgb, var(--color-text-default) 56%, transparent);
+    stroke-width: 1.25;
+    stroke-dasharray: 2 5;
+  }
+
+  .diagram-marker-primary {
+    fill: var(--color-primary);
+  }
+
+  .diagram-marker-secondary {
+    fill: var(--color-secondary);
+  }
+
+  .diagram-marker-neutral {
+    fill: color-mix(in srgb, var(--color-text-default) 72%, transparent);
+  }
+
+  .diagram-label-backplate {
+    fill: var(--color-theme-dark);
+  }
+
+  .diagram-version-pill {
+    fill: color-mix(in srgb, var(--color-secondary) 8%, transparent);
+    stroke: color-mix(in srgb, var(--color-secondary) 38%, transparent);
+    stroke-width: 1;
+  }
+
+  .diagram-status-dot {
+    fill: var(--color-secondary);
+  }
+
+  .diagram-kicker,
+  .diagram-lane-label,
+  .diagram-rail-label,
+  .diagram-step-number,
+  .diagram-version-text {
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+
+  .diagram-kicker {
+    fill: var(--color-primary);
+    font-size: 12px;
+    letter-spacing: 0.11em;
+  }
+
+  .diagram-kicker-secondary {
+    fill: var(--color-secondary);
+  }
+
+  .diagram-title,
+  .diagram-lane-title,
+  .diagram-step-title {
+    fill: var(--color-light);
+    font-family: var(--font-secondary);
+    font-weight: 500;
+  }
+
+  .diagram-title {
+    font-size: 19px;
+    letter-spacing: 0.01em;
+  }
+
+  .diagram-lane-title {
+    font-size: 17px;
+  }
+
+  .diagram-step-title {
+    font-size: 17px;
+  }
+
+  .diagram-detail {
+    fill: var(--color-text-default);
+    font-family: var(--font-primary);
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  .diagram-lane-label {
+    fill: color-mix(in srgb, var(--color-primary) 88%, var(--color-light));
+    font-size: 11px;
+    letter-spacing: 0.12em;
+  }
+
+  .diagram-rail-label {
+    fill: var(--color-text-default);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+
+  .diagram-rail-label-secondary {
+    fill: var(--color-secondary);
+  }
+
+  .diagram-step-number {
+    fill: var(--color-primary);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+
+  .diagram-version-text {
+    fill: var(--color-secondary);
+    font-size: 11px;
+  }
+
+  @media (min-width: 768px) {
+    .product-diagram-desktop-md .product-diagram-mobile {
+      display: none;
+    }
+
+    .product-diagram-desktop-md .product-diagram-desktop {
+      display: block;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .product-diagram-desktop-lg .product-diagram-mobile {
+      display: none;
+    }
+
+    .product-diagram-desktop-lg .product-diagram-desktop {
+      display: block;
+    }
+  }
+</style>

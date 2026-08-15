@@ -1,0 +1,1095 @@
+---
+import LucideIcon from "@/components/helpers/LucideIcon.astro";
+
+type Coordinate = readonly [number, number];
+
+type MobileArtifactLayout = {
+  anchor: {
+    x: number;
+    y: number;
+  };
+  rotation: string;
+  controlPoints: readonly [Coordinate, Coordinate];
+};
+
+type DesktopArtifactLayout = {
+  position: {
+    top: string;
+    left: string;
+    right: string;
+    rotation: string;
+  };
+  connectorPath: string;
+};
+
+type ArtifactSatellite = {
+  id: string;
+  label: string;
+  icon: string;
+  mobile: MobileArtifactLayout;
+  desktop: DesktopArtifactLayout;
+};
+
+const mobileConvergence = {
+  x: 50,
+  y: 89,
+} as const;
+
+const artifactSatellites = [
+  {
+    id: "code",
+    label: "repos ×3",
+    icon: "FileCodeCorner",
+    mobile: {
+      anchor: {
+        x: 18,
+        y: 13,
+      },
+      rotation: "-3deg",
+      controlPoints: [
+        [27, 24],
+        [43, 65],
+      ],
+    },
+    desktop: {
+      position: {
+        top: "3%",
+        left: "1%",
+        right: "auto",
+        rotation: "-2deg",
+      },
+      connectorPath: "M48 28 C132 45 190 136 260 172",
+    },
+  },
+  {
+    id: "runtime",
+    label: "CUDA",
+    icon: "Cpu",
+    mobile: {
+      anchor: {
+        x: 44,
+        y: 35,
+      },
+      rotation: "2deg",
+      controlPoints: [
+        [46, 53],
+        [48, 71],
+      ],
+    },
+    desktop: {
+      position: {
+        top: "15%",
+        left: "43%",
+        right: "auto",
+        rotation: "2deg",
+      },
+      connectorPath: "M150 82 C202 96 220 156 260 184",
+    },
+  },
+  {
+    id: "python",
+    label: "Python 3.11",
+    icon: "FileCodeCorner",
+    mobile: {
+      anchor: {
+        x: 88,
+        y: 34,
+      },
+      rotation: "2.5deg",
+      controlPoints: [
+        [66, 47],
+        [55, 74],
+      ],
+    },
+    desktop: {
+      position: {
+        top: "27%",
+        left: "4%",
+        right: "auto",
+        rotation: "-1deg",
+      },
+      connectorPath: "M54 136 C132 142 198 174 260 198",
+    },
+  },
+  {
+    id: "pip",
+    label: "pip / venv",
+    icon: "Package",
+    mobile: {
+      anchor: {
+        x: 75,
+        y: 4,
+      },
+      rotation: "-1.5deg",
+      controlPoints: [
+        [68, 25],
+        [57, 65],
+      ],
+    },
+    desktop: {
+      position: {
+        top: "39%",
+        left: "20%",
+        right: "auto",
+        rotation: "1.5deg",
+      },
+      connectorPath: "M144 190 C190 192 226 200 260 210",
+    },
+  },
+  {
+    id: "model",
+    label: "weights",
+    icon: "Package",
+    mobile: {
+      anchor: {
+        x: 18,
+        y: 58,
+      },
+      rotation: "2.5deg",
+      controlPoints: [
+        [30, 67],
+        [43, 82],
+      ],
+    },
+    desktop: {
+      position: {
+        top: "51%",
+        left: "0",
+        right: "auto",
+        rotation: "2.5deg",
+      },
+      connectorPath: "M48 244 C135 239 205 224 260 220",
+    },
+  },
+  {
+    id: "data",
+    label: "csv / i-o",
+    icon: "FileSpreadsheet",
+    mobile: {
+      anchor: {
+        x: 78,
+        y: 79,
+      },
+      rotation: "-1.5deg",
+      controlPoints: [
+        [68, 81],
+        [57, 86],
+      ],
+    },
+    desktop: {
+      position: {
+        top: "63%",
+        left: "31%",
+        right: "auto",
+        rotation: "-1.5deg",
+      },
+      connectorPath: "M150 300 C199 286 216 244 260 228",
+    },
+  },
+  {
+    id: "environment",
+    label: "env vars",
+    icon: "KeyRound",
+    mobile: {
+      anchor: {
+        x: 70,
+        y: 57,
+      },
+      rotation: "-2.5deg",
+      controlPoints: [
+        [63, 67],
+        [55, 82],
+      ],
+    },
+    desktop: {
+      position: {
+        top: "75%",
+        left: "6%",
+        right: "auto",
+        rotation: "-2.5deg",
+      },
+      connectorPath: "M56 354 C139 339 201 261 260 237",
+    },
+  },
+  {
+    id: "route",
+    label: "/api",
+    icon: "Route",
+    mobile: {
+      anchor: {
+        x: 30,
+        y: 80,
+      },
+      rotation: "2.5deg",
+      controlPoints: [
+        [37, 82],
+        [45, 86],
+      ],
+    },
+    desktop: {
+      position: {
+        top: "87%",
+        left: "42%",
+        right: "auto",
+        rotation: "2.5deg",
+      },
+      connectorPath: "M150 388 C205 370 222 286 260 245",
+    },
+  },
+] satisfies readonly ArtifactSatellite[];
+
+function getArtifactStyle(artifact: ArtifactSatellite): string {
+  const { mobile, desktop } = artifact;
+
+  return [
+    `--artifact-mobile-anchor-x: ${mobile.anchor.x}%`,
+    `--artifact-mobile-anchor-y: ${mobile.anchor.y}%`,
+    `--artifact-mobile-rotation: ${mobile.rotation}`,
+    `--artifact-desktop-top: ${desktop.position.top}`,
+    `--artifact-desktop-left: ${desktop.position.left}`,
+    `--artifact-desktop-right: ${desktop.position.right}`,
+    `--artifact-desktop-rotation: ${desktop.position.rotation}`,
+  ].join("; ");
+}
+
+function getMobileConnectorPath(artifact: ArtifactSatellite): string {
+  const [firstControlPoint, secondControlPoint] = artifact.mobile.controlPoints;
+  const { x, y } = artifact.mobile.anchor;
+  return [
+    `M${x} ${y}`,
+    `C${firstControlPoint[0]} ${firstControlPoint[1]}`,
+    `${secondControlPoint[0]} ${secondControlPoint[1]}`,
+    `${mobileConvergence.x} ${mobileConvergence.y}`,
+  ].join(" ");
+}
+---
+
+<div
+  class="qiln-title-visual mx-auto w-full max-w-6xl"
+  role="img"
+  aria-labelledby="qiln-title-visual-description">
+  <p id="qiln-title-visual-description" class="sr-only">
+    Scattered code, runtime, model, data, environment, and route state converges
+    into a Qiln version 42 known-good capsule. Production remains fixed at the
+    protected generate route while both a human and an agent receive an isolated
+    version 43 fork.
+  </p>
+  <div class="qiln-system-stage" aria-hidden="true">
+    <svg
+      class="system-connections"
+      viewBox="0 0 1000 420"
+      preserveAspectRatio="none"
+      focusable="false">
+      {
+        artifactSatellites.map((artifact) => (
+          <path
+            class="artifact-connection"
+            d={artifact.desktop.connectorPath}
+            vector-effect="non-scaling-stroke"
+          />
+        ))
+      }
+      <path
+        class="fork-connection"
+        d="M650 225 H892 V174"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="route-connection"
+        d="M650 314 H740"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <circle class="capsule-input-node" cx="260" cy="210" r="3"></circle>
+      <circle class="route-output-node" cx="746" cy="314" r="3"></circle>
+    </svg>
+    <section class="artifact-constellation">
+      <svg
+        class="artifact-mobile-connections"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        focusable="false">
+        {
+          artifactSatellites.map((artifact) => (
+            <path
+              class="artifact-mobile-connection"
+              d={getMobileConnectorPath(artifact)}
+              vector-effect="non-scaling-stroke"
+            />
+          ))
+        }
+        <path
+          class="artifact-capsule-connection"
+          d={`M${mobileConvergence.x} ${mobileConvergence.y} V104`}
+          vector-effect="non-scaling-stroke">
+        </path>
+        <circle
+          class="artifact-convergence-node"
+          cx={mobileConvergence.x}
+          cy={mobileConvergence.y}
+          r="0.75"
+          vector-effect="non-scaling-stroke">
+        </circle>
+      </svg>
+      <ul class="artifact-satellite-list">
+        {
+          artifactSatellites.map((artifact) => (
+            <li
+              class="artifact-satellite"
+              data-artifact={artifact.id}
+              style={getArtifactStyle(artifact)}>
+              <LucideIcon
+                icon={artifact.icon}
+                class="h-3.5 w-3.5"
+                aria-hidden="true"
+              />
+              <span>{artifact.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+    <div class="capsule-zone">
+      <span class="capsule-layer capsule-layer-back"></span>
+      <span class="capsule-layer capsule-layer-middle"></span>
+      <article class="capsule-card">
+        <header class="capsule-header">
+          <span class="capsule-mark">
+            <LucideIcon icon="Layers3" class="h-4 w-4" aria-hidden="true" />
+          </span>
+          <span class="capsule-label">CAPSULE</span>
+        </header>
+        <div class="capsule-core">
+          <div class="capsule-release">
+            <code class="capsule-version">v42</code>
+            <span class="capsule-state">
+              <LucideIcon
+                icon="ShieldCheck"
+                class="h-4 w-4"
+                aria-hidden="true"
+              />
+              <strong>KNOWN GOOD</strong>
+            </span>
+          </div>
+          <span class="capsule-alignment">
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+        </div>
+      </article>
+    </div>
+    <svg
+      class="capsule-outcome-connections"
+      viewBox="0 0 500 64"
+      preserveAspectRatio="none"
+      focusable="false">
+      <path
+        class="capsule-outcome-trunk"
+        d="M250 -2 V24"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="capsule-fork-connection"
+        d="M250 24 H125 V76"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <path
+        class="capsule-route-connection"
+        d="M250 24 H375 V76"
+        vector-effect="non-scaling-stroke">
+      </path>
+      <circle
+        class="capsule-outcome-node"
+        cx="250"
+        cy="24"
+        r="2.5"
+        vector-effect="non-scaling-stroke">
+      </circle>
+    </svg>
+    <div class="outcome-zone">
+      <div class="fork-system">
+        <div class="fork-editors">
+          <span class="editor-node human-node">
+            <LucideIcon icon="User" class="h-4 w-4" aria-hidden="true" />
+            <span>HUMAN</span>
+          </span>
+          <span class="editor-node agent-node">
+            <LucideIcon icon="Bot" class="h-4 w-4" aria-hidden="true" />
+            <span>AGENT</span>
+          </span>
+        </div>
+        <svg
+          class="editor-fork-connection"
+          viewBox="0 0 48 104"
+          preserveAspectRatio="none"
+          focusable="false">
+          <path d="M8 24 H24 V52 H50" vector-effect="non-scaling-stroke"></path>
+          <path d="M8 80 H24 V52" vector-effect="non-scaling-stroke"></path>
+        </svg>
+        <div class="fork-capsule">
+          <span class="fork-layer"></span>
+          <article class="fork-card">
+            <span class="fork-label">
+              <LucideIcon
+                icon="GitFork"
+                class="h-3.5 w-3.5"
+                aria-hidden="true"
+              />
+              FORK
+            </span>
+            <code class="fork-version">v43</code>
+          </article>
+        </div>
+      </div>
+      <article class="route-card">
+        <span class="route-shield">
+          <LucideIcon icon="ShieldCheck" class="h-4 w-4" aria-hidden="true" />
+        </span>
+        <div class="route-content">
+          <span class="route-label">STABLE ROUTE</span>
+          <span class="route-mapping">
+            <code>/generate</code>
+            <span>v42</span>
+          </span>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<style>
+  .qiln-title-visual {
+    container-type: inline-size;
+  }
+
+  .qiln-system-stage {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    width: 100%;
+    gap: 0;
+    padding: 0.75rem 0.25rem;
+  }
+
+  .qiln-system-stage::before {
+    position: absolute;
+    z-index: -1;
+    inset: 10% 4%;
+    background: radial-gradient(
+      circle at 52% 54%,
+      color-mix(in srgb, var(--color-primary) 12%, transparent),
+      transparent 62%
+    );
+    filter: blur(18px);
+    content: "";
+  }
+
+  .system-connections {
+    display: none;
+  }
+
+  .artifact-constellation {
+    position: relative;
+    z-index: 1;
+    height: 11rem;
+  }
+
+  .artifact-mobile-connections {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: none;
+    pointer-events: none;
+  }
+
+  .artifact-mobile-connection {
+    stroke: color-mix(in srgb, var(--color-light) 40%, transparent);
+    stroke-dasharray: 3 7;
+    stroke-linecap: round;
+    stroke-width: 1px;
+  }
+
+  .artifact-capsule-connection {
+    stroke: color-mix(in srgb, var(--color-primary) 70%, transparent);
+    stroke-linecap: round;
+    stroke-width: 1px;
+  }
+
+  .artifact-convergence-node {
+    fill: var(--color-primary);
+    stroke: none;
+  }
+
+  .artifact-satellite-list {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .artifact-satellite {
+    position: absolute;
+    top: var(--artifact-mobile-anchor-y);
+    left: var(--artifact-mobile-anchor-x);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border: 1px solid color-mix(in srgb, var(--color-light) 34%, transparent);
+    border-radius: 0.375rem;
+    background: color-mix(in srgb, var(--color-theme-dark) 90%, transparent);
+    padding: 0.375rem 0.5rem;
+    color: color-mix(in srgb, var(--color-text-default) 90%, transparent);
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.12);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: bold;
+    line-height: 0.875rem;
+    white-space: nowrap;
+    transform: translate(-50%, -50%) rotate(var(--artifact-mobile-rotation));
+    transform-origin: center;
+  }
+
+  .capsule-zone {
+    position: relative;
+    z-index: 2;
+    width: min(calc(100% - 1.5rem), 30rem);
+    margin: 0 auto;
+  }
+
+  .capsule-layer {
+    position: absolute;
+    inset: 0;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 28%, transparent);
+    border-radius: 1.125rem;
+    background: color-mix(in srgb, var(--color-primary) 3%, transparent);
+    pointer-events: none;
+  }
+
+  .capsule-layer-back {
+    transform: translate(0.75rem, -0.75rem);
+  }
+
+  .capsule-layer-middle {
+    border-color: color-mix(in srgb, var(--color-primary) 42%, transparent);
+    transform: translate(0.375rem, -0.375rem);
+  }
+
+  .capsule-card {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    min-height: 12rem;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
+    border-radius: 1.125rem;
+    background:
+      radial-gradient(
+        circle at 78% 72%,
+        color-mix(in srgb, var(--color-primary) 14%, transparent),
+        transparent 42%
+      ),
+      color-mix(in srgb, var(--color-theme-dark) 94%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      0 24px 52px rgb(0 0 0 / 0.22),
+      0 0 32px color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+
+  .capsule-header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--color-primary) 22%, transparent);
+    padding: 0.875rem 1rem;
+  }
+
+  .capsule-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 46%, transparent);
+    border-radius: 0.5rem;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  }
+
+  .capsule-label {
+    color: var(--color-primary);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    line-height: 1rem;
+  }
+
+  .capsule-core {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1rem 1.25rem 1.25rem;
+  }
+
+  .capsule-release {
+    display: grid;
+    gap: 0.875rem;
+  }
+
+  .capsule-version {
+    color: var(--color-light);
+    font-family: var(--font-secondary);
+    font-size: clamp(2.5rem, 11cqw, 4.5rem);
+    font-weight: 500;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+  }
+
+  .capsule-state {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    gap: 0.375rem;
+    border: 1px solid
+      color-mix(in srgb, var(--color-secondary) 42%, transparent);
+    border-radius: 9999px;
+    padding: 0.375rem 0.625rem;
+    color: var(--color-secondary);
+    background: color-mix(in srgb, var(--color-secondary) 8%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .capsule-state strong {
+    color: inherit;
+    font-weight: inherit;
+  }
+
+  .capsule-alignment {
+    display: grid;
+    width: min(32%, 7rem);
+    gap: 0.75rem;
+  }
+
+  .capsule-alignment i {
+    position: relative;
+    display: block;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-primary) 78%, transparent),
+      color-mix(in srgb, var(--color-primary) 12%, transparent)
+    );
+  }
+
+  .capsule-alignment i::before {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0.375rem;
+    height: 0.375rem;
+    border: 1px solid var(--color-primary);
+    border-radius: 9999px;
+    background: var(--color-theme-dark);
+    transform: translateY(-50%);
+    content: "";
+  }
+
+  .capsule-alignment i:nth-child(2) {
+    width: 78%;
+    margin-left: auto;
+  }
+
+  .capsule-alignment i:nth-child(3) {
+    width: 58%;
+  }
+
+  .capsule-outcome-connections {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 4rem;
+    overflow: visible;
+    fill: none;
+    pointer-events: none;
+  }
+
+  .capsule-outcome-trunk {
+    stroke: color-mix(in srgb, var(--color-light) 20%, transparent);
+    stroke-linecap: round;
+    stroke-width: 1px;
+  }
+
+  .capsule-fork-connection {
+    stroke: color-mix(in srgb, var(--color-primary) 52%, transparent);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1px;
+  }
+
+  .capsule-route-connection {
+    stroke: color-mix(in srgb, var(--color-secondary) 52%, transparent);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1px;
+  }
+
+  .capsule-outcome-node {
+    fill: color-mix(in srgb, var(--color-light) 42%, transparent);
+    stroke: none;
+  }
+
+  .outcome-zone {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .fork-system {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    grid-template-columns: auto 1rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .fork-editors {
+    display: grid;
+    gap: 0.375rem;
+  }
+
+  .editor-node {
+    display: inline-grid;
+    flex: none;
+    width: 3rem;
+    height: 3rem;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 38%, transparent);
+    border-radius: 0.625rem;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, var(--color-body));
+  }
+
+  .editor-node span {
+    margin-top: -0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 0.5rem;
+  }
+
+  .editor-fork-connection {
+    display: block;
+    width: calc(100% + 0.25rem);
+    height: 6.5rem;
+    margin-inline: -0.125rem;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .editor-fork-connection path {
+    fill: none;
+    stroke: color-mix(in srgb, var(--color-primary) 74%, transparent);
+    stroke-dasharray: 4 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1px;
+  }
+
+  .fork-capsule {
+    position: relative;
+    min-width: 0;
+  }
+
+  .fork-layer {
+    position: absolute;
+    inset: 0;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
+    border-radius: 0.75rem;
+    transform: translate(0.25rem, -0.25rem);
+  }
+
+  .fork-card {
+    position: relative;
+    display: grid;
+    min-height: 5rem;
+    align-content: center;
+    gap: 0.25rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 42%, transparent);
+    border-radius: 0.75rem;
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--color-primary) 9%, transparent),
+        transparent
+      ),
+      color-mix(in srgb, var(--color-theme-dark) 90%, transparent);
+    padding: 0.75rem;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  }
+
+  .fork-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--color-primary);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+
+  .fork-version {
+    color: var(--color-light);
+    font-family: var(--font-secondary);
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .route-card {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.625rem;
+    margin: 0.78em 0;
+    border: 1px solid
+      color-mix(in srgb, var(--color-secondary) 38%, transparent);
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--color-theme-dark) 88%, transparent);
+    padding: 0.75rem;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.04),
+      0 12px 28px rgb(0 0 0 / 0.14);
+  }
+
+  .route-shield {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid
+      color-mix(in srgb, var(--color-secondary) 38%, transparent);
+    border-radius: 0.5rem;
+    color: var(--color-secondary);
+    background: color-mix(in srgb, var(--color-secondary) 8%, transparent);
+  }
+
+  .route-content {
+    display: grid;
+    min-width: 0;
+    gap: 0.25rem;
+  }
+
+  .route-label {
+    color: var(--color-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  .route-mapping {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.375rem;
+  }
+
+  .route-mapping code {
+    color: var(--color-light);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .route-mapping span {
+    color: var(--color-text-default);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    white-space: nowrap;
+  }
+
+  @container (min-width: 35rem) {
+    .qiln-system-stage {
+      display: block;
+      height: clamp(20rem, 42cqw, 26.25rem);
+      padding: 0;
+    }
+
+    .system-connections {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .artifact-connection,
+    .fork-connection,
+    .route-connection {
+      fill: none;
+      stroke-linecap: round;
+    }
+
+    .artifact-connection {
+      stroke: color-mix(in srgb, var(--color-light) 40%, transparent);
+      stroke-dasharray: 3 7;
+      stroke-width: 1px;
+    }
+
+    .fork-connection {
+      stroke: color-mix(in srgb, var(--color-primary) 46%, transparent);
+      stroke-width: 1.25px;
+    }
+
+    .route-connection {
+      stroke: color-mix(in srgb, var(--color-secondary) 58%, transparent);
+      stroke-width: 1.5px;
+    }
+
+    .capsule-input-node {
+      fill: var(--color-primary);
+    }
+
+    .fork-output-node {
+      fill: color-mix(in srgb, var(--color-primary) 72%, transparent);
+    }
+
+    .route-output-node {
+      fill: var(--color-secondary);
+    }
+
+    .artifact-constellation {
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      left: 0;
+      width: 23%;
+      height: 100%;
+      padding: 0;
+    }
+
+    .artifact-mobile-connections,
+    .capsule-outcome-connections {
+      display: none;
+    }
+
+    .artifact-satellite-list {
+      height: 100%;
+    }
+
+    .artifact-satellite {
+      top: var(--artifact-desktop-top);
+      right: var(--artifact-desktop-right);
+      left: var(--artifact-desktop-left);
+      gap: clamp(0.25rem, 0.6cqw, 0.375rem);
+      padding: clamp(0.25rem, 0.6cqw, 0.375rem) clamp(0.25rem, 0.8cqw, 0.5rem);
+      font-size: clamp(0.55rem, 1.35cqw, 0.78rem);
+      line-height: clamp(0.65rem, 1.6cqw, 0.875rem);
+      transform: rotate(var(--artifact-desktop-rotation));
+    }
+
+    .capsule-zone {
+      position: absolute;
+      z-index: 2;
+      top: 22%;
+      left: 25%;
+      width: 40%;
+      height: 63%;
+      margin: 0;
+    }
+
+    .capsule-card {
+      height: 100%;
+      min-height: 0;
+    }
+
+    .capsule-version {
+      font-size: clamp(2.25rem, 6cqw, 4.25rem);
+    }
+
+    .outcome-zone {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      display: block;
+      padding: 0;
+    }
+
+    .fork-system {
+      position: absolute;
+      top: 3%;
+      left: 69%;
+      display: block;
+      width: 31%;
+      height: 38%;
+    }
+
+    .fork-editors {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: grid;
+      gap: 0.375rem;
+    }
+
+    .editor-fork-connection {
+      position: absolute;
+      top: 0;
+      left: 2.75rem;
+      right: 60%;
+      width: auto;
+      height: 6.5rem;
+      margin: 0;
+    }
+
+    .fork-capsule {
+      position: absolute;
+      top: 22%;
+      right: 0;
+      width: 60%;
+    }
+
+    .fork-card {
+      min-height: 6rem;
+    }
+
+    .route-card {
+      position: absolute;
+      top: 67%;
+      left: 74%;
+      width: 25%;
+      min-height: 5rem;
+      margin: auto;
+    }
+  }
+</style>

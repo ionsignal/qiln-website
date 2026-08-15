@@ -39,7 +39,7 @@ const { class: className, ...attributes } = Astro.props;
 </noscript>
 
 <script>
-  const sceneDurationMs = 6000;
+  const sceneDurationMs = 15000;
   const transitionWatchdogBufferMs = 100;
 
   type SceneDeckAction = "previous" | "toggle-autoplay" | "next";
@@ -583,6 +583,7 @@ const { class: className, ...attributes } = Astro.props;
   qiln-scene-deck [data-scene-deck-scene] {
     position: relative;
     z-index: 0;
+    display: grid;
     grid-area: 1 / 1;
     min-width: 0;
     background-color: var(--color-body);

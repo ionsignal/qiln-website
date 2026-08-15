@@ -1,6 +1,9 @@
 ---
+import config from ".astro/config.generated.json";
 import defaultLogo from "@/assets/images/logo.svg";
+import DeckSlideFooter from "@/components/deck/SlideFooter.astro";
 import Image from "@/components/helpers/Image.astro";
+import { formatUrl } from "@/utils/core";
 import type { DeckSlideContent } from "@/types/deck";
 
 interface Props {
@@ -16,6 +19,20 @@ const diagramDescriptionId = `${headingId}-diagram-description`;
 <section
   class="deck-slide-theme px-4 py-8 md:px-8 md:py-10 lg:px-12 lg:py-8"
   aria-labelledby={headingId}>
+  <a
+    class="deck-slide-brand"
+    href={formatUrl("/")}
+    aria-label={`${config.site.title} home`}>
+    <Image
+      src={defaultLogo}
+      alt=""
+      aria-hidden="true"
+      class="block h-6 w-6"
+      width={20}
+      height={20}
+    />
+    <span>{config.site.title}</span>
+  </a>
   <header class="deck-slide-header mx-auto max-w-5xl text-center">
     <p
       class="text-primary text-sm font-medium tracking-[0.16em] uppercase md:text-base">
@@ -39,25 +56,15 @@ const diagramDescriptionId = `${headingId}-diagram-description`;
     </figcaption>
     <slot name="diagram" />
   </figure>
-  <footer class="deck-slide-footer">
-    <span class="deck-slide-footer-brand" aria-hidden="true">
-      <Image
-        src={defaultLogo}
-        alt=""
-        class="block h-8 w-8"
-        width={24}
-        height={24}
-      />
-    </span>
-    <span class="deck-slide-footer-text">{content.footer}</span>
-  </footer>
+  <DeckSlideFooter content={content.footer} />
 </section>
 
 <style>
   .deck-slide-theme {
+    position: relative;
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
     min-height: 42rem;
+    grid-template-rows: auto minmax(0, 1fr) auto;
     background:
       radial-gradient(
         circle at 52% 58%,
@@ -69,6 +76,38 @@ const diagramDescriptionId = `${headingId}-diagram-description`;
         color-mix(in srgb, var(--color-theme-dark) 54%, transparent),
         transparent
       );
+  }
+
+  .deck-slide-brand {
+    position: absolute;
+    z-index: 10;
+    top: 0.875rem;
+    right: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.175rem;
+    color: color-mix(in srgb, var(--color-light) 68%, transparent);
+    font-family: var(--font-secondary);
+    font-size: 1.24rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.25rem;
+    text-decoration: none;
+    transition: color 200ms ease;
+  }
+
+  .deck-slide-brand img {
+    opacity: 0.68;
+  }
+
+  .deck-slide-brand:hover {
+    color: var(--color-light);
+  }
+
+  .deck-slide-brand:focus-visible {
+    border-radius: 0.25rem;
+    outline: 2px solid var(--color-primary);
+    outline-offset: 0.25rem;
   }
 
   .deck-slide-header {
@@ -83,39 +122,10 @@ const diagramDescriptionId = `${headingId}-diagram-description`;
     margin: 1.5rem 0 0;
   }
 
-  .deck-slide-footer {
-    display: flex;
-    width: 100%;
-    min-width: 0;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    align-self: end;
-    margin-top: 1.25rem;
-    color: color-mix(in srgb, var(--color-text-default) 76%, transparent);
-    font-family: var(--font-mono);
-    font-size: 0.5625rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    line-height: 0.875rem;
-  }
-
-  .deck-slide-footer-brand {
-    display: inline-flex;
-    flex: none;
-    align-items: center;
-    opacity: 0.42;
-  }
-
-  .deck-slide-footer-text {
-    min-width: 0;
-    text-align: right;
-  }
-
   @media (min-width: 768px) {
-    .deck-slide-footer {
-      font-size: 0.625rem;
-      line-height: 1rem;
+    .deck-slide-brand {
+      top: 1.25rem;
+      right: 2rem;
     }
   }
 
@@ -124,8 +134,7 @@ const diagramDescriptionId = `${headingId}-diagram-description`;
       margin-top: 1.25rem;
     }
 
-    .deck-slide-footer {
-      margin-top: 1rem;
+    .deck-slide-brand {
     }
   }
 </style>
