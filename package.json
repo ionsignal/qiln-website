@@ -3,7 +3,7 @@
   "name": "qiln-website",
   "description": "Qiln makes an AI workflow system durable, branchable, and reviewable.",
   "type": "module",
-  "version": "0.5.13",
+  "version": "0.6.0",
   "license": "UNLICENSED",
   "author": "IonSignal, Inc.",
   "homepage": "https://qiln.com",
