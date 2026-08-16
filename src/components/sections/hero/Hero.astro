@@ -5,8 +5,9 @@ import ActionButton from "@/components/ui/ActionButton.astro";
 import Badge from "@/components/ui/Badge.astro";
 import AnimatedText from "@/components/sections/hero/AnimatedText.astro";
 import Subscription from "@/components/sections/hero/Subscription.astro";
-import SlideProblem from "@/components/sections/hero/SlideProblem.astro";
-import SlideSolution from "@/components/sections/hero/SlideSolution.astro";
+import Problem from "@/components/sections/hero/slides/Problem.astro";
+import Solution from "@/components/sections/hero/slides/Solution.astro";
+import Controls from "@/components/deck/Controls.astro";
 import Slider from "@/components/deck/Slider.astro";
 import Frame from "@/components/deck/Frame.astro";
 import Background from "@/components/visualization/Background.astro";
@@ -79,6 +80,7 @@ function parseTickerTitle(rawTitle: string | undefined): TickerTitle {
 }
 
 const tickerTitle = parseTickerTitle(title);
+const heroDeckId = "qiln-homepage-hero-deck";
 ---
 
 <section id="home" class="scroll-mt-24 lg:scroll-mt-32">
@@ -188,16 +190,21 @@ const tickerTitle = parseTickerTitle(title);
       </div>
     </div>
     <div class="relative container mt-12 px-4 md:px-8 lg:px-0 xl:mt-16 xl:px-4">
-      <Frame class="hero-product-frame">
-        <Slider class="hidden w-full md:block">
-          <div data-scene-deck-scene class="min-w-0">
-            <SlideProblem content={heroProblem} />
-          </div>
-          <div data-scene-deck-scene class="min-w-0">
-            <SlideSolution content={heroSolution} />
-          </div>
-        </Slider>
-      </Frame>
+      <div class="relative">
+        <Frame class="hero-product-frame">
+          <Slider id={heroDeckId} class="block w-full">
+            <div data-scene-deck-scene class="min-w-0">
+              <Problem content={heroProblem} />
+            </div>
+            <div data-scene-deck-scene class="min-w-0">
+              <Solution content={heroSolution} />
+            </div>
+          </Slider>
+        </Frame>
+        <div class="contents">
+          <Controls deckId={heroDeckId} />
+        </div>
+      </div>
     </div>
   </div>
 </section>
