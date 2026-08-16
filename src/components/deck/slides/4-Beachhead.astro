@@ -1,13 +1,12 @@
 ---
+import DeckIcon from "@/components/deck/DeckIcon.astro";
 import LucideIcon from "@/components/helpers/LucideIcon.astro";
 ---
 
 <div class="beachhead-grid mx-auto w-full max-w-6xl">
   <article class="beachhead-qualification">
     <div class="flex items-center gap-3">
-      <span class="beachhead-icon-wrap">
-        <LucideIcon icon="Crosshair" class="h-7 w-7" aria-hidden="true" />
-      </span>
+      <DeckIcon icon="Crosshair" />
       <h3 class="text-lg font-medium text-white">
         Initial ICP: AI product teams
       </h3>
@@ -18,7 +17,7 @@ import LucideIcon from "@/components/helpers/LucideIcon.astro";
           icon="CircleDollarSign"
           class="text-primary h-7 w-7"
           aria-hidden="true"
-          stroke-width="1"
+          stroke-width="1.25"
         />
         <span>Run a production Python/PyTorch/CUDA workflow</span>
       </li>
@@ -27,6 +26,7 @@ import LucideIcon from "@/components/helpers/LucideIcon.astro";
           icon="Layers3"
           class="text-primary h-7 w-7"
           aria-hidden="true"
+          stroke-width="1.25"
         />
         <span>Ship models, assets, services, and routes together</span>
       </li>
@@ -35,6 +35,7 @@ import LucideIcon from "@/components/helpers/LucideIcon.astro";
           icon="ShieldAlert"
           class="text-primary h-7 w-7"
           aria-hidden="true"
+          stroke-width="1.25"
         />
         <span>Need a safe path for the next change</span>
       </li>
@@ -42,9 +43,7 @@ import LucideIcon from "@/components/helpers/LucideIcon.astro";
   </article>
   <article class="beachhead-migration">
     <div class="flex items-center gap-3">
-      <span class="beachhead-icon-wrap">
-        <LucideIcon icon="HandHeart" class="h-7 w-7" aria-hidden="true" />
-      </span>
+      <DeckIcon icon="HandHeart" />
       <h3 class="text-lg font-medium text-white">Concierge migration</h3>
     </div>
     <ol class="migration-journey mt-6">
@@ -96,19 +95,6 @@ import LucideIcon from "@/components/helpers/LucideIcon.astro";
 
   .beachhead-migration {
     border-color: color-mix(in srgb, var(--color-primary) 42%, transparent);
-  }
-
-  .beachhead-icon-wrap {
-    display: inline-flex;
-    flex: none;
-    align-items: center;
-    justify-content: center;
-    width: 3.25rem;
-    height: 3.25rem;
-    border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
-    border-radius: 0.5rem;
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
   }
 
   .beachhead-list,

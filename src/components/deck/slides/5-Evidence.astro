@@ -1,4 +1,5 @@
 ---
+import DeckIcon from "@/components/deck/DeckIcon.astro";
 import LucideIcon from "@/components/helpers/LucideIcon.astro";
 
 const pilotPartners = ["Mowie", "GitHits"] as const;
@@ -51,66 +52,50 @@ const commitmentCount = pilotPartners.length;
         <p>Pilots begin after product-ready deployment</p>
       </div>
     </article>
-    <svg
-      class="evidence-commitment-connectors"
-      viewBox="0 0 100 200"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      focusable="false">
-      <path
-        class="evidence-commitment-connector-mobile"
-        d="M50 0 V200"
-        vector-effect="non-scaling-stroke">
-      </path>
-      <circle
-        class="evidence-commitment-node evidence-commitment-node-mobile"
-        cx="50"
-        cy="194"
-        r="4"
-        vector-effect="non-scaling-stroke">
-      </circle>
-      <path
-        class="evidence-commitment-connector-desktop"
-        d="M0 100 H50"
-        vector-effect="non-scaling-stroke">
-      </path>
-      <path
-        class="evidence-commitment-connector-desktop"
-        d="M50 50 V150"
-        vector-effect="non-scaling-stroke">
-      </path>
-      <path
-        class="evidence-commitment-connector-desktop"
-        d="M50 50 H100"
-        vector-effect="non-scaling-stroke">
-      </path>
-      <path
-        class="evidence-commitment-connector-desktop"
-        d="M50 150 H100"
-        vector-effect="non-scaling-stroke">
-      </path>
-      <circle
-        class="evidence-commitment-node evidence-commitment-node-desktop"
-        cx="50"
-        cy="100"
-        r="3.5"
-        vector-effect="non-scaling-stroke">
-      </circle>
-      <circle
-        class="evidence-commitment-node evidence-commitment-node-desktop"
-        cx="98"
-        cy="50"
-        r="4"
-        vector-effect="non-scaling-stroke">
-      </circle>
-      <circle
-        class="evidence-commitment-node evidence-commitment-node-desktop"
-        cx="98"
-        cy="150"
-        r="4"
-        vector-effect="non-scaling-stroke">
-      </circle>
-    </svg>
+    <div class="evidence-commitment-connectors" aria-hidden="true">
+      <svg
+        class="evidence-commitment-lines"
+        viewBox="0 0 100 200"
+        preserveAspectRatio="none"
+        focusable="false">
+        <path
+          class="evidence-commitment-connector-mobile"
+          d="M50 0 V200"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="evidence-commitment-connector-desktop"
+          d="M0 100 H50"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="evidence-commitment-connector-desktop"
+          d="M50 50 V150"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="evidence-commitment-connector-desktop"
+          d="M50 50 H100"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="evidence-commitment-connector-desktop"
+          d="M50 150 H100"
+          vector-effect="non-scaling-stroke">
+        </path>
+      </svg>
+      <span class="evidence-commitment-node evidence-commitment-node-mobile">
+      </span>
+      <span
+        class="evidence-commitment-node evidence-commitment-node-desktop evidence-commitment-node-center">
+      </span>
+      <span
+        class="evidence-commitment-node evidence-commitment-node-desktop evidence-commitment-node-top">
+      </span>
+      <span
+        class="evidence-commitment-node evidence-commitment-node-desktop evidence-commitment-node-bottom">
+      </span>
+    </div>
     <div class="evidence-partners">
       <ul
         class="evidence-partner-list"
@@ -119,13 +104,7 @@ const commitmentCount = pilotPartners.length;
           pilotPartners.map((partnerName) => (
             <li>
               <article class="evidence-partner-card">
-                <span class="evidence-partner-icon">
-                  <LucideIcon
-                    icon="UsersRound"
-                    class="h-6 w-6"
-                    aria-hidden="true"
-                  />
-                </span>
+                <DeckIcon icon="UsersRound" class="evidence-partner-icon" />
                 <div class="evidence-partner-copy">
                   <h3 class="evidence-partner-name">{partnerName}</h3>
                   <p class="evidence-partner-status">
@@ -156,36 +135,20 @@ const commitmentCount = pilotPartners.length;
             </span>
             <span class="evidence-timeline-label">{milestone.label}</span>
             {nextMilestone && (
-              <svg
+              <span
                 class:list={[
                   "evidence-timeline-connector",
                   connectorIsComplete ? "is-complete" : "is-pending",
                 ]}
-                viewBox="0 0 100 100"
-                preserveAspectRatio="none"
-                aria-hidden="true"
-                focusable="false">
-                <path
-                  class="evidence-timeline-connector-mobile"
-                  d="M50 0 V94"
-                  vector-effect="non-scaling-stroke"
-                />
-                <path
-                  class="evidence-timeline-connector-mobile"
-                  d="M42 92 L50 100 L58 92"
-                  vector-effect="non-scaling-stroke"
-                />
-                <path
-                  class="evidence-timeline-connector-desktop"
-                  d="M0 50 H94"
-                  vector-effect="non-scaling-stroke"
-                />
-                <path
-                  class="evidence-timeline-connector-desktop"
-                  d="M92 42 L100 50 L92 58"
-                  vector-effect="non-scaling-stroke"
-                />
-              </svg>
+                aria-hidden="true">
+                <span class="evidence-timeline-connector-line" />
+                <svg
+                  class="evidence-timeline-connector-arrow"
+                  viewBox="0 0 10 10"
+                  focusable="false">
+                  <path d="M1 2 L5 6 L9 2" />
+                </svg>
+              </span>
             )}
           </li>
         );
@@ -208,7 +171,6 @@ const commitmentCount = pilotPartners.length;
 
   .evidence-metric,
   .evidence-partner-card {
-    border: 1px solid color-mix(in srgb, var(--color-primary) 68%, transparent);
     background:
       radial-gradient(
         circle at 76% 24%,
@@ -228,7 +190,8 @@ const commitmentCount = pilotPartners.length;
     min-width: 0;
     align-content: center;
     gap: 1rem;
-    border-width: 2px;
+    border: 1.5px solid
+      color-mix(in srgb, var(--color-primary) 42%, transparent);
     border-radius: 1rem;
     padding: clamp(1rem, 4cqw, 1.5rem);
   }
@@ -296,8 +259,7 @@ const commitmentCount = pilotPartners.length;
     gap: 0.75rem;
   }
 
-  .evidence-metric-icon,
-  .evidence-partner-icon {
+  .evidence-metric-icon {
     display: inline-flex;
     flex: none;
     align-items: center;
@@ -323,9 +285,8 @@ const commitmentCount = pilotPartners.length;
     line-height: 1.3;
   }
 
-  .evidence-metric-icon :global(svg),
-  .evidence-partner-icon :global(svg) {
-    stroke-width: 1.75;
+  .evidence-metric-icon :global(svg) {
+    stroke-width: 1.5;
   }
 
   .evidence-commitment-connectors {
@@ -334,29 +295,51 @@ const commitmentCount = pilotPartners.length;
     display: block;
     width: 100%;
     height: 2.75rem;
+    pointer-events: none;
+  }
+
+  .evidence-commitment-lines {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
     overflow: visible;
     fill: none;
-    pointer-events: none;
   }
 
   .evidence-commitment-connector-mobile,
   .evidence-commitment-connector-desktop {
     fill: none;
-    stroke: var(--color-primary);
+    stroke: color-mix(in srgb, var(--color-primary) 58%, transparent);
     stroke-linecap: round;
     stroke-linejoin: round;
-    stroke-width: 2px;
+    stroke-width: 1.25px;
   }
 
-  .evidence-commitment-connector-desktop,
-  .evidence-commitment-node-desktop {
+  .evidence-commitment-connector-desktop {
     display: none;
   }
 
   .evidence-commitment-node {
-    fill: var(--color-primary);
-    stroke: var(--color-theme-dark);
-    stroke-width: 2px;
+    position: absolute;
+    z-index: 1;
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border: 1px solid var(--color-theme-dark);
+    border-radius: 9999px;
+    background: var(--color-primary);
+  }
+
+  .evidence-commitment-node-mobile {
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 50%);
+  }
+
+  .evidence-commitment-node-desktop {
+    display: none;
   }
 
   .evidence-partners {
@@ -383,20 +366,26 @@ const commitmentCount = pilotPartners.length;
     position: relative;
     display: grid;
     min-width: 0;
+    min-height: 6.25rem;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
     gap: 0.875rem;
-    min-height: 6.25rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 54%, transparent);
     border-radius: 0.875rem;
     padding: 0.875rem 1rem;
   }
 
-  .evidence-partner-icon {
+  .evidence-partner-icon :global(.deck-icon-wrap) {
     width: 3.25rem;
     height: 3.25rem;
-    border: 1px solid color-mix(in srgb, var(--color-primary) 42%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary) 42%, transparent);
     border-radius: 0.625rem;
     background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+
+  .evidence-partner-icon :global(.deck-icon-glyph) {
+    width: 1.5rem;
+    height: 1.5rem;
   }
 
   .evidence-partner-copy {
@@ -503,8 +492,6 @@ const commitmentCount = pilotPartners.length;
     display: block;
     width: 2.5rem;
     height: calc(100% - 1.875rem);
-    overflow: visible;
-    fill: none;
     pointer-events: none;
   }
 
@@ -516,16 +503,34 @@ const commitmentCount = pilotPartners.length;
     color: color-mix(in srgb, var(--color-text-default) 52%, transparent);
   }
 
-  .evidence-timeline-connector path {
+  .evidence-timeline-connector-line {
+    position: absolute;
+    top: 0;
+    bottom: 0.375rem;
+    left: 50%;
+    width: 0;
+    border-left: 1.25px solid currentColor;
+    transform: translateX(-50%);
+  }
+
+  .evidence-timeline-connector-arrow {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    display: block;
+    width: 0.625rem;
+    height: 0.625rem;
+    overflow: visible;
+    fill: none;
+    transform: translateX(-50%);
+  }
+
+  .evidence-timeline-connector-arrow path {
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
     stroke-linejoin: round;
-    stroke-width: 1.75px;
-  }
-
-  .evidence-timeline-connector-desktop {
-    display: none;
+    stroke-width: 1.5px;
   }
 
   @media (min-width: 768px) {
@@ -536,10 +541,10 @@ const commitmentCount = pilotPartners.length;
     }
 
     .evidence-timeline-item {
+      min-height: 5.5rem;
       grid-template-columns: minmax(0, 1fr);
       justify-items: center;
       gap: 0.75rem;
-      min-height: 5.5rem;
       padding-inline: 0.375rem;
       text-align: center;
     }
@@ -556,12 +561,24 @@ const commitmentCount = pilotPartners.length;
       height: 1rem;
     }
 
-    .evidence-timeline-connector-mobile {
-      display: none;
+    .evidence-timeline-connector-line {
+      top: 50%;
+      right: 0.375rem;
+      bottom: auto;
+      left: 0;
+      width: auto;
+      height: 0;
+      border-top: 1.25px solid currentColor;
+      border-left: 0;
+      transform: translateY(-50%);
     }
 
-    .evidence-timeline-connector-desktop {
-      display: block;
+    .evidence-timeline-connector-arrow {
+      top: 50%;
+      right: 0;
+      bottom: auto;
+      left: auto;
+      transform: translateY(-50%) rotate(-90deg);
     }
   }
 
@@ -619,6 +636,24 @@ const commitmentCount = pilotPartners.length;
       display: block;
     }
 
+    .evidence-commitment-node-center {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .evidence-commitment-node-top {
+      top: 25%;
+      right: 0;
+      transform: translate(50%, -50%);
+    }
+
+    .evidence-commitment-node-bottom {
+      right: 0;
+      bottom: 25%;
+      transform: translate(50%, 50%);
+    }
+
     .evidence-partner-list {
       height: 100%;
       grid-template-rows: repeat(2, minmax(0, 1fr));
@@ -631,7 +666,7 @@ const commitmentCount = pilotPartners.length;
       padding: clamp(0.75rem, 1.25cqw, 1rem);
     }
 
-    .evidence-partner-icon {
+    .evidence-partner-icon :global(.deck-icon-wrap) {
       width: clamp(2.75rem, 4.25cqw, 3.5rem);
       height: clamp(2.75rem, 4.25cqw, 3.5rem);
     }

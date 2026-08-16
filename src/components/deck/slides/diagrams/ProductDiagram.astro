@@ -1,875 +1,892 @@
 ---
+import DeckIcon from "@/components/deck/DeckIcon.astro";
 import LucideIcon from "@/components/helpers/LucideIcon.astro";
 ---
 
-<div class="product-flow-diagram" aria-hidden="true">
+<div class="product-flow mx-auto w-full" aria-hidden="true">
   <div class="product-flow-stage">
     <svg
-      class="product-flow-connections"
-      viewBox="0 0 1200 560"
+      class="product-flow-connector-layer"
+      viewBox="0 0 1200 400"
       preserveAspectRatio="none"
-      focusable="false">
+      focusable="false"
+      aria-hidden="true">
       <defs>
+        <linearGradient
+          id="product-flow-promotion-gradient"
+          x1="100%"
+          y1="100%"
+          x2="0%"
+          y2="0%">
+          <stop offset="0" stop-color="var(--color-primary)"></stop>
+          <stop offset="1" stop-color="var(--color-secondary)"></stop>
+        </linearGradient>
         <marker
-          id="qiln-product-flow-primary-arrow"
-          viewBox="0 0 8 8"
-          refX="7"
-          refY="4"
-          markerWidth="8"
-          markerHeight="8"
-          markerUnits="userSpaceOnUse"
-          orient="auto">
-          <path class="product-flow-marker-primary" d="M0 0 L8 4 L0 8 Z"></path>
-        </marker>
-        <marker
-          id="qiln-product-flow-secondary-arrow"
-          viewBox="0 0 8 8"
-          refX="7"
-          refY="4"
-          markerWidth="8"
-          markerHeight="8"
-          markerUnits="userSpaceOnUse"
-          orient="auto">
-          <path class="product-flow-marker-secondary" d="M0 0 L8 4 L0 8 Z">
+          id="product-flow-arrow-primary"
+          markerWidth="6"
+          markerHeight="6"
+          refX="5.5"
+          refY="3"
+          orient="auto"
+          markerUnits="strokeWidth"
+          viewBox="0 0 6 6">
+          <path class="product-flow-arrow-marker--primary" d="M0 0 L6 3 L0 6 Z">
           </path>
         </marker>
         <marker
-          id="qiln-product-flow-neutral-arrow"
-          viewBox="0 0 8 8"
-          refX="7"
-          refY="4"
-          markerWidth="8"
-          markerHeight="8"
-          markerUnits="userSpaceOnUse"
-          orient="auto">
-          <path class="product-flow-marker-neutral" d="M0 0 L8 4 L0 8 Z"></path>
+          id="product-flow-arrow-secondary"
+          markerWidth="6"
+          markerHeight="6"
+          refX="5.5"
+          refY="3"
+          orient="auto"
+          markerUnits="strokeWidth"
+          viewBox="0 0 6 6">
+          <path
+            class="product-flow-arrow-marker--secondary"
+            d="M0 0 L6 3 L0 6 Z">
+          </path>
+        </marker>
+        <marker
+          id="product-flow-arrow-muted"
+          markerWidth="6"
+          markerHeight="6"
+          refX="5.5"
+          refY="3"
+          orient="auto"
+          markerUnits="strokeWidth"
+          viewBox="0 0 6 6">
+          <path class="product-flow-arrow-marker--muted" d="M0 0 L6 3 L0 6 Z">
+          </path>
         </marker>
       </defs>
 
-      <path
-        class="product-flow-connection product-flow-connection-primary"
-        d="M360 156 V350"
-        marker-end="url(#qiln-product-flow-primary-arrow)"
-        vector-effect="non-scaling-stroke">
-      </path>
-      <path
-        class="product-flow-connection product-flow-connection-primary"
-        d="M520 417 H580"
-        marker-end="url(#qiln-product-flow-primary-arrow)"
-        vector-effect="non-scaling-stroke">
-      </path>
-      <path
-        class="product-flow-connection product-flow-connection-primary"
-        d="M715 417 H770"
-        marker-end="url(#qiln-product-flow-primary-arrow)"
-        vector-effect="non-scaling-stroke">
-      </path>
-      <path
-        class="product-flow-connection product-flow-connection-primary"
-        d="M925 417 H980"
-        marker-end="url(#qiln-product-flow-primary-arrow)"
-        vector-effect="non-scaling-stroke">
-      </path>
-      <path
-        class="product-flow-connection product-flow-connection-secondary"
-        d="M1062 360 V300"
-        marker-end="url(#qiln-product-flow-secondary-arrow)"
-        vector-effect="non-scaling-stroke">
-      </path>
-      <path
-        class="product-flow-connection product-flow-connection-rollback"
-        d="M1015 190 V138 C1015 100 840 102 688 102"
-        marker-end="url(#qiln-product-flow-neutral-arrow)"
-        vector-effect="non-scaling-stroke">
-      </path>
+      <g
+        class="product-flow-connectors--wide"
+        data-product-flow-connector-paths>
+        <path
+          class="product-flow-connector product-flow-connector--rollback"
+          d="M970 108 C870 18 575 8 455 50"
+          marker-end="url(#product-flow-arrow-muted)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="product-flow-connector product-flow-connector--primary"
+          d="M345 112 L345 248"
+          marker-end="url(#product-flow-arrow-primary)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="product-flow-connector product-flow-connector--primary"
+          d="M477 315 H504"
+          marker-end="url(#product-flow-arrow-primary)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="product-flow-connector product-flow-connector--primary"
+          d="M717 315 H744"
+          marker-end="url(#product-flow-arrow-primary)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="product-flow-connector product-flow-connector--primary"
+          d="M960 315 H987"
+          marker-end="url(#product-flow-arrow-primary)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="product-flow-connector product-flow-connector--promotion"
+          d="M1202 320 H1220 V164 H1130"
+          marker-end="url(#product-flow-arrow-secondary)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <g class="product-flow-arrow-label" transform="translate(345 184)">
+          <rect x="-24" y="-10" width="48" height="20" rx="10"></rect>
+          <text>fork</text>
+        </g>
+        <g class="product-flow-arrow-label" transform="translate(1215 218)">
+          <rect x="-30" y="-10" width="60" height="20" rx="10"></rect>
+          <text>promote</text>
+        </g>
+        <g
+          class="product-flow-arrow-label product-flow-arrow-label--muted"
+          transform="translate(680 31)">
+          <rect x="-39" y="-10" width="78" height="20" rx="10"></rect>
+          <text>rollback</text>
+        </g>
+      </g>
+
+      <svg
+        class="product-flow-connectors--compact"
+        data-product-flow-connector-paths
+        x="0"
+        y="0"
+        width="1200"
+        height="400"
+        viewBox="0 0 700 400"
+        preserveAspectRatio="none">
+        <path
+          class="product-flow-connector product-flow-connector--rollback"
+          d="M480 118 C410 18 315 8 222 50"
+          marker-end="url(#product-flow-arrow-muted)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="product-flow-connector product-flow-connector--primary"
+          d="M142 112 V240"
+          marker-end="url(#product-flow-arrow-primary)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="product-flow-connector product-flow-connector--primary"
+          d="M207 315 H229"
+          marker-end="url(#product-flow-arrow-primary)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="product-flow-connector product-flow-connector--primary"
+          d="M371 315 H392"
+          marker-end="url(#product-flow-arrow-primary)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="product-flow-connector product-flow-connector--primary"
+          d="M536 315 H555"
+          marker-end="url(#product-flow-arrow-primary)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <path
+          class="product-flow-connector product-flow-connector--promotion"
+          d="M628 265 V220"
+          marker-end="url(#product-flow-arrow-primary)"
+          vector-effect="non-scaling-stroke">
+        </path>
+        <g class="product-flow-arrow-label" transform="translate(140 184)">
+          <rect x="-24" y="-10" width="48" height="20" rx="10"></rect>
+          <text>fork</text>
+        </g>
+        <g class="product-flow-arrow-label" transform="translate(628 241)">
+          <rect x="-30" y="-10" width="60" height="20" rx="10"></rect>
+          <text>promote</text>
+        </g>
+        <g
+          class="product-flow-arrow-label product-flow-arrow-label--muted"
+          transform="translate(352 31)">
+          <rect x="-39" y="-10" width="78" height="20" rx="10"></rect>
+          <text>rollback</text>
+        </g>
+      </svg>
     </svg>
 
-    <span class="product-flow-lane-label product-flow-live-label">
-      Live production
-    </span>
-
-    <article
-      class="product-flow-card product-flow-route product-flow-route--source">
-      <span class="product-flow-route-status">
-        <span class="product-flow-route-shield">
-          <LucideIcon
-            icon="Shield"
-            class="product-flow-route-shield-icon"
-            aria-hidden="true"
-          />
-          <LucideIcon
-            icon="LockKeyhole"
-            class="product-flow-route-lock-icon"
-            aria-hidden="true"
-          />
-        </span>
-        <span class="product-flow-route-status-label">Live</span>
-      </span>
-      <span class="product-flow-route-title">
-        <span>Stable Route →</span>
-        <span>Approved Capsule v4.2</span>
-      </span>
-    </article>
-
-    <div class="product-flow-mobile-fork-connector">
-      <span>Fork</span>
-      <LucideIcon
-        icon="ArrowDown"
-        class="product-flow-mobile-connector-icon"
-        aria-hidden="true"
-      />
-    </div>
-
-    <span class="product-flow-lane-label product-flow-safe-label">
-      Safe change path
-    </span>
-
-    <span class="product-flow-action-label product-flow-fork-label">Fork</span>
-
-    <article class="product-flow-card product-flow-fork">
-      <span class="product-flow-fork-actors">
-        <span class="product-flow-fork-actor">
-          <LucideIcon
-            icon="UserRound"
-            class="product-flow-fork-user-icon"
-            aria-hidden="true"
-          />
-        </span>
-        <span class="product-flow-fork-actor product-flow-fork-actor--agent">
-          <LucideIcon
-            icon="Bot"
-            class="product-flow-fork-bot-icon"
-            aria-hidden="true"
-          />
-        </span>
-      </span>
-      <span class="product-flow-card-copy">
-        <span class="product-flow-card-kicker">Isolated fork</span>
-        <span class="product-flow-card-title">Forked Capsule v4.3</span>
-        <span class="product-flow-card-detail">Human or agent edits here</span>
-      </span>
-    </article>
-
-    <article class="product-flow-card product-flow-step product-flow-test">
-      <span class="product-flow-step-icon">
-        <LucideIcon
-          icon="FlaskConical"
-          class="product-flow-icon"
-          aria-hidden="true"
-        />
-      </span>
-      <span class="product-flow-step-title">Test</span>
-    </article>
-
-    <article class="product-flow-card product-flow-step product-flow-diff">
-      <span class="product-flow-step-icon">
-        <LucideIcon
-          icon="FileDiff"
-          class="product-flow-icon"
-          aria-hidden="true"
-        />
-      </span>
-      <span class="product-flow-step-title">Capsule Diff</span>
-    </article>
-
-    <article class="product-flow-card product-flow-step product-flow-approval">
-      <span class="product-flow-approval-icon">
-        <LucideIcon
-          icon="UserRound"
-          class="product-flow-icon"
-          aria-hidden="true"
-        />
-        <span class="product-flow-approval-check">
-          <LucideIcon
-            icon="Check"
-            class="product-flow-approval-check-icon"
-            aria-hidden="true"
-          />
-        </span>
-      </span>
-      <span class="product-flow-step-title">Approval</span>
-      <span class="product-flow-step-detail">Human or policy</span>
-    </article>
-
-    <span class="product-flow-action-label product-flow-promote-label">
-      Promote
-    </span>
-
-    <div class="product-flow-mobile-promote-connector">
-      <span>Promote</span>
-      <LucideIcon
-        icon="ArrowDown"
-        class="product-flow-mobile-connector-icon"
-        aria-hidden="true"
-      />
+    <div class="product-flow-label product-flow-label--production">
+      <span>Live production</span>
     </div>
 
     <article
-      class="product-flow-card product-flow-route product-flow-route--promoted">
-      <span class="product-flow-route-title">
-        <span>Stable Route →</span>
-        <span>Approved Capsule v4.3</span>
-      </span>
+      class="product-route-card product-route-card--current"
+      aria-label="Current live stable route pointing to approved capsule version 42">
+      <DeckIcon
+        icon="LockKeyhole"
+        color="secondary"
+        class="product-route-icon"
+      />
+      <div class="product-route-copy">
+        <span class="product-card-kicker product-card-kicker--stable">
+          LIVE
+        </span>
+        <h3 class="product-route-title">Stable Route</h3>
+        <p class="product-route-mapping">
+          <code>/generate</code>
+          <span>→</span>
+          <span>Capsule</span>
+          <code>v42</code>
+        </p>
+      </div>
     </article>
 
-    <span class="product-flow-rollback-label">
+    <div class="product-flow-label product-flow-label--change">
+      <span>Safe change path</span>
+    </div>
+
+    <div class="product-fork-system">
+      <div class="product-editors">
+        <DeckIcon icon="UserRound" label="human" class="product-editor" />
+        <DeckIcon icon="Bot" label="agent" class="product-editor" />
+      </div>
+
+      <div class="product-fork-capsule">
+        <span class="product-fork-layer"></span>
+        <article class="product-fork-card">
+          <DeckIcon icon="GitFork" class="product-fork-icon" />
+          <div class="product-fork-copy">
+            <span class="product-card-kicker">ISOLATED FORK</span>
+            <h3 class="product-fork-title">Capsule <code>v43</code></h3>
+            <p>Edit in isolation</p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <article class="product-flow-step product-flow-step--test">
       <LucideIcon
-        icon="RotateCcw"
-        class="product-flow-rollback-icon"
+        icon="FlaskConical"
+        class="product-step-icon"
         aria-hidden="true"
+        stroke-width="1.5"
       />
-      <span>Roll back to v4.2 if needed</span>
-    </span>
+      <span class="product-card-kicker">RUN</span>
+      <h3>Test</h3>
+      <p>Golden test</p>
+    </article>
+
+    <article class="product-flow-step product-flow-step--diff">
+      <LucideIcon
+        icon="FileDiff"
+        class="product-step-icon"
+        aria-hidden="true"
+        stroke-width="1.5"
+      />
+      <span class="product-card-kicker">REVIEW</span>
+      <h3>Diff</h3>
+      <p>Inspect change</p>
+    </article>
+
+    <article class="product-flow-step product-flow-step--approval">
+      <LucideIcon
+        icon="ShieldCheck"
+        class="product-step-icon"
+        aria-hidden="true"
+        stroke-width="1.5"
+      />
+      <span class="product-card-kicker">ONLY REJOIN POINT</span>
+      <h3>Approval</h3>
+      <p>Human or policy</p>
+    </article>
+
+    <article
+      class="product-route-card product-route-card--candidate"
+      aria-label="Promoted stable route pointing to approved capsule version 43">
+      <DeckIcon
+        icon="ShieldCheck"
+        color="secondary"
+        class="product-route-icon"
+      />
+      <div class="product-route-copy">
+        <span class="product-card-kicker product-card-kicker--stable">
+          AFTER APPROVAL
+        </span>
+        <h3 class="product-route-title">Stable Route</h3>
+        <p class="product-route-mapping">
+          <code>/generate</code>
+          <span>→</span>
+          <span>Capsule</span>
+          <code>v43</code>
+        </p>
+      </div>
+    </article>
   </div>
 </div>
 
 <style>
-  .product-flow-diagram {
+  .product-flow {
     width: 100%;
-    max-width: 75rem;
-    margin-inline: auto;
+    max-width: 72rem;
     container-type: inline-size;
+    --product-flow-gap: clamp(1rem, 2.25cqw, 2.5rem);
+    --product-flow-row-gap: 0.5rem;
+    --product-route-offset: 5rem;
+    --product-flow-approval-clearance: clamp(0.75rem, 1.5cqw, 1.25rem);
   }
 
   .product-flow-stage {
     position: relative;
     isolation: isolate;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.75rem;
-    padding: 1rem 0.25rem 0.5rem;
+    width: 100%;
+    min-height: 20rem;
+    grid-template-columns: minmax(0, 1.45fr) repeat(3, minmax(0, 1fr));
+    grid-template-rows:
+      var(--product-route-offset)
+      auto
+      auto
+      var(--product-flow-approval-clearance)
+      auto;
+    column-gap: var(--product-flow-gap);
+    row-gap: var(--product-flow-row-gap);
+    align-content: center;
+    align-items: center;
+    padding-top: 0.5rem;
   }
 
   .product-flow-stage::before {
     position: absolute;
-    z-index: -1;
-    inset: 6% 4%;
+    z-index: 0;
+    inset: 12% 5%;
     background:
       radial-gradient(
-        circle at 42% 58%,
-        color-mix(in srgb, var(--color-primary) 10%, transparent),
-        transparent 42%
+        circle at 30% 62%,
+        color-mix(in srgb, var(--color-primary) 9%, transparent),
+        transparent 38%
       ),
       radial-gradient(
-        circle at 75% 30%,
-        color-mix(in srgb, var(--color-secondary) 9%, transparent),
+        circle at 74% 32%,
+        color-mix(in srgb, var(--color-secondary) 8%, transparent),
         transparent 34%
       );
     filter: blur(20px);
     content: "";
   }
 
-  .product-flow-connections {
+  .product-flow-connector-layer {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .product-flow-connectors--compact {
+    display: block;
+  }
+
+  .product-flow-connectors--wide {
     display: none;
   }
 
-  .product-flow-lane-label,
-  .product-flow-action-label,
-  .product-flow-rollback-label,
-  .product-flow-card-kicker,
-  .product-flow-route-status-label {
+  .product-flow-connector {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.5px;
+  }
+
+  .product-flow-connector--primary {
+    stroke: color-mix(in srgb, var(--color-primary) 86%, transparent);
+  }
+
+  .product-flow-connector--rollback {
+    stroke: color-mix(in srgb, var(--color-text-default) 62%, transparent);
+    stroke-dasharray: 5 6;
+  }
+
+  .product-flow-connector--promotion {
+    stroke: url(#product-flow-promotion-gradient);
+    stroke-width: 1.75px;
+  }
+
+  .product-flow-connectors--compact .product-flow-connector--promotion {
+    stroke: var(--color-primary);
+  }
+
+  .product-flow-arrow-marker--primary {
+    fill: var(--color-primary);
+  }
+
+  .product-flow-arrow-marker--secondary {
+    fill: var(--color-secondary);
+  }
+
+  .product-flow-arrow-marker--muted {
+    fill: color-mix(in srgb, var(--color-text-default) 68%, transparent);
+  }
+
+  .product-flow-arrow-label {
+    pointer-events: none;
+  }
+
+  .product-flow-arrow-label rect {
+    fill: color-mix(in srgb, var(--color-theme-dark) 96%, transparent);
+    stroke: color-mix(in srgb, var(--color-primary) 38%, transparent);
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .product-flow-arrow-label text {
+    fill: var(--color-primary);
     font-family: var(--font-mono);
-    font-size: 0.6875rem;
+    font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.08em;
-    line-height: 1rem;
-    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-anchor: middle;
+    dominant-baseline: middle;
   }
 
-  .product-flow-lane-label {
-    grid-column: 1 / -1;
-    color: color-mix(in srgb, var(--color-light) 78%, transparent);
+  .product-flow-arrow-label--muted rect {
+    stroke: color-mix(in srgb, var(--color-text-default) 30%, transparent);
   }
 
-  .product-flow-live-label {
-    margin-top: 0.25rem;
+  .product-flow-arrow-label--muted text {
+    fill: color-mix(in srgb, var(--color-text-default) 76%, transparent);
   }
 
-  .product-flow-safe-label {
-    margin-top: 0.375rem;
-    color: var(--color-primary);
-  }
-
-  .product-flow-card {
+  .product-flow-stage > :not(.product-flow-connector-layer) {
     position: relative;
-    z-index: 2;
-    min-width: 0;
-    border: 1px solid color-mix(in srgb, var(--color-light) 24%, transparent);
+    z-index: 1;
+  }
+
+  .product-flow-label {
+    display: none;
+  }
+
+  .product-route-card,
+  .product-fork-card,
+  .product-flow-step {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.05),
+      0 16px 36px rgb(0 0 0 / 0.16);
+  }
+
+  .product-route-card {
+    display: grid;
+    width: min(16rem, 100%);
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    justify-self: start;
+    gap: 0.875rem;
+    border: 1px solid
+      color-mix(in srgb, var(--color-secondary) 64%, transparent);
     border-radius: 0.875rem;
     background:
       radial-gradient(
-        circle at 72% 34%,
-        color-mix(in srgb, var(--color-primary) 8%, transparent),
-        transparent 58%
+        circle at 16% 72%,
+        color-mix(in srgb, var(--color-secondary) 13%, transparent),
+        transparent 50%
       ),
-      color-mix(in srgb, var(--color-theme-dark) 92%, transparent);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.055),
-      0 16px 32px rgb(0 0 0 / 0.18);
+      color-mix(in srgb, var(--color-theme-dark) 94%, transparent);
+    padding: 1rem;
   }
 
-  .product-flow-route {
-    grid-column: 1 / -1;
-    min-height: 7rem;
-    border-color: color-mix(in srgb, var(--color-secondary) 74%, transparent);
+  .product-route-card--current {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: start;
+  }
+
+  .product-route-card--candidate {
+    grid-column: 3 / 5;
+    grid-row: 3;
+    align-self: start;
+    justify-self: center;
+    border-width: 1.5px;
     background:
       radial-gradient(
-        circle at 20% 55%,
-        color-mix(in srgb, var(--color-secondary) 13%, transparent),
-        transparent 60%
+        circle at 78% 32%,
+        color-mix(in srgb, var(--color-secondary) 15%, transparent),
+        transparent 50%
       ),
-      color-mix(in srgb, var(--color-theme-dark) 92%, transparent);
+      color-mix(in srgb, var(--color-theme-dark) 94%, transparent);
   }
 
-  .product-flow-route--source {
-    display: grid;
-    grid-template-columns: 4.5rem minmax(0, 1fr);
-    align-items: center;
-    gap: 0.875rem;
-    padding: 0.875rem;
+  .product-route-card :global(.deck-icon-wrap) {
+    width: 3rem;
+    height: 3rem;
+    border-color: color-mix(in srgb, var(--color-secondary) 44%, transparent);
+    border-radius: 0.625rem;
+    background: color-mix(in srgb, var(--color-secondary) 9%, transparent);
   }
 
-  .product-flow-route--promoted {
-    display: grid;
-    place-items: center;
-    padding: 1rem;
-    text-align: center;
+  .product-route-card :global(.deck-icon-glyph) {
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
-  .product-flow-route-status {
-    display: grid;
-    justify-items: center;
-    gap: 0.25rem;
-    color: var(--color-secondary);
-  }
-
-  .product-flow-route-shield {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.875rem;
-    height: 2.875rem;
-    color: var(--color-secondary);
-  }
-
-  .product-flow-route-shield :global(.product-flow-route-shield-icon) {
-    width: 100%;
-    height: 100%;
-    stroke-width: 1.75;
-  }
-
-  .product-flow-route-shield :global(.product-flow-route-lock-icon) {
-    position: absolute;
-    width: 1rem;
-    height: 1rem;
-    stroke-width: 2.25;
-  }
-
-  .product-flow-route-status-label {
-    color: var(--color-secondary);
-    letter-spacing: 0.05em;
-  }
-
-  .product-flow-route-title {
+  .product-route-copy,
+  .product-fork-copy {
     display: grid;
     min-width: 0;
-    gap: 0.125rem;
-    color: var(--color-light);
-    font-family: var(--font-secondary);
-    font-size: clamp(1.125rem, 4.4cqw, 1.75rem);
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    line-height: 1.18;
+    gap: 0.25rem;
   }
 
-  .product-flow-mobile-fork-connector,
-  .product-flow-mobile-promote-connector {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    grid-column: 1 / -1;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.125rem;
-    min-height: 2.75rem;
+  .product-card-kicker {
     color: var(--color-primary);
     font-family: var(--font-mono);
-    font-size: 0.6875rem;
+    font-size: 0.625rem;
     font-weight: 500;
-    letter-spacing: 0.08em;
-    line-height: 1rem;
-    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    line-height: 0.875rem;
   }
 
-  .product-flow-mobile-fork-connector::before,
-  .product-flow-mobile-promote-connector::before {
-    width: 1px;
-    height: 1rem;
-    background: color-mix(in srgb, currentColor 74%, transparent);
-    content: "";
-  }
-
-  .product-flow-mobile-promote-connector {
+  .product-card-kicker--stable {
     color: var(--color-secondary);
   }
 
-  .product-flow-mobile-connector-icon {
-    width: 1rem;
-    height: 1rem;
-    margin-top: -0.25rem;
-    stroke-width: 2;
+  .product-route-title,
+  .product-fork-title,
+  .product-flow-step h3 {
+    margin: 0;
+    color: var(--color-light);
+    font-family: var(--font-secondary);
+    font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
-  .product-flow-action-label {
+  .product-route-title {
+    font-size: clamp(0.75rem, 1.25cqw, 1rem);
+    line-height: 1.1;
+  }
+
+  .product-route-mapping {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem;
+    margin: 0.125rem 0 0;
+    color: var(--color-text-default);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    line-height: 1rem;
+  }
+
+  .product-route-mapping code,
+  .product-fork-title code {
+    color: var(--color-light);
+    font-family: inherit;
+    font-weight: inherit;
+  }
+
+  .product-fork-system {
+    display: grid;
+    min-width: 0;
+    min-height: 8.25rem;
+    grid-column: 1;
+    grid-row: 5;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .product-editors {
+    display: flex;
+    grid-column: 1;
+    grid-row: 1;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .product-editor :global(.deck-icon-wrap) {
+    width: 3rem;
+    height: 3rem;
+    border-color: color-mix(in srgb, var(--color-primary) 46%, transparent);
+    border-radius: 0.625rem;
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+
+  .product-editor :global(.deck-icon-glyph) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .product-editor :global(.deck-icon-label) {
+    color: var(--color-primary);
+    font-size: 0.575rem;
+  }
+
+  .product-fork-capsule {
+    position: relative;
+    min-width: 0;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .product-fork-layer {
+    position: absolute;
+    inset: 0;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 28%, transparent);
+    border-radius: 0.875rem;
+    background: color-mix(in srgb, var(--color-primary) 3%, transparent);
+    transform: translate(0.35rem, -0.35rem);
+  }
+
+  .product-fork-card {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    min-height: 8.25rem;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 0.75rem;
+    border: 1.5px solid
+      color-mix(in srgb, var(--color-primary) 62%, transparent);
+    border-radius: 0.875rem;
+    background:
+      radial-gradient(
+        circle at 20% 60%,
+        color-mix(in srgb, var(--color-primary) 13%, transparent),
+        transparent 58%
+      ),
+      color-mix(in srgb, var(--color-theme-dark) 94%, transparent);
+    padding: 1rem;
+  }
+
+  .product-fork-icon {
     display: none;
   }
 
-  .product-flow-fork {
-    display: grid;
-    grid-column: 1 / -1;
-    grid-template-columns: 4.5rem minmax(0, 1fr);
-    align-items: center;
-    gap: 0.875rem;
-    min-height: 7.5rem;
-    border-color: color-mix(in srgb, var(--color-primary) 78%, transparent);
-    padding: 0.875rem;
+  .product-fork-icon :global(.deck-icon-wrap) {
+    width: 3rem;
+    height: 3rem;
+    border-color: color-mix(in srgb, var(--color-primary) 44%, transparent);
+    border-radius: 0.625rem;
+    background: color-mix(in srgb, var(--color-primary) 9%, transparent);
   }
 
-  .product-flow-fork-actors {
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    width: 4.5rem;
-    height: 3.375rem;
+  .product-fork-icon :global(.deck-icon-glyph) {
+    width: 1.2rem;
+    height: 1.2rem;
   }
 
-  .product-flow-fork-actor {
-    position: relative;
-    z-index: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border: 1px solid color-mix(in srgb, var(--color-light) 34%, transparent);
-    border-radius: 9999px;
-    color: var(--color-light);
-    background: color-mix(in srgb, var(--color-theme-dark) 94%, transparent);
+  .product-fork-title {
+    font-size: clamp(0.75rem, 1.25cqw, 1rem);
+    line-height: 1.1;
   }
 
-  .product-flow-fork-actor :global(.product-flow-fork-user-icon) {
-    width: 1.7rem;
-    height: 1.7rem;
-    stroke-width: 1.8;
-  }
-
-  .product-flow-fork-actor--agent {
-    z-index: 2;
-    width: 2.875rem;
-    height: 2.875rem;
-    margin-bottom: -0.125rem;
-    margin-left: -1.125rem;
-    border-color: color-mix(in srgb, var(--color-primary) 72%, transparent);
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 9%, var(--color-body));
-  }
-
-  .product-flow-fork-actor :global(.product-flow-fork-bot-icon) {
-    width: 1.75rem;
-    height: 1.75rem;
-    stroke-width: 1.8;
-  }
-
-  .product-flow-card-copy {
-    display: grid;
-    min-width: 0;
-    gap: 0.25rem;
-  }
-
-  .product-flow-card-kicker {
-    color: var(--color-primary);
-  }
-
-  .product-flow-card-title,
-  .product-flow-step-title {
-    color: var(--color-light);
-    font-family: var(--font-secondary);
-    font-size: 1.125rem;
+  .product-fork-copy p,
+  .product-flow-step p {
+    margin: 0.125rem 0 0;
+    color: var(--color-text-default);
+    font-size: 0.75rem;
     font-weight: 500;
-    letter-spacing: 0.01em;
-    line-height: 1.15;
-  }
-
-  .product-flow-card-detail,
-  .product-flow-step-detail {
-    color: var(--color-primary);
-    font-size: 0.8125rem;
-    font-weight: 500;
-    line-height: 1.125rem;
+    line-height: 1rem;
   }
 
   .product-flow-step {
+    position: relative;
     display: grid;
     min-width: 0;
-    min-height: 7.25rem;
+    min-height: 6.5rem;
     align-content: center;
     justify-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 0.375rem;
+    gap: 0.2rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 46%, transparent);
+    border-radius: 0.75rem;
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--color-primary) 7%, transparent),
+        transparent
+      ),
+      color-mix(in srgb, var(--color-theme-dark) 92%, transparent);
+    padding: 0.75rem;
     text-align: center;
   }
 
-  .product-flow-step:not(.product-flow-test)::before {
-    position: absolute;
-    top: 50%;
-    left: -0.75rem;
-    width: 0.75rem;
-    border-top: 1px solid
-      color-mix(in srgb, var(--color-primary) 72%, transparent);
-    content: "";
+  .product-flow-step h3 {
+    font-size: clamp(0.75rem, 1.25cqw, 1rem);
+    line-height: 1.1;
   }
 
-  .product-flow-step:not(.product-flow-test)::after {
-    position: absolute;
-    top: calc(50% - 0.1875rem);
-    left: -0.3125rem;
-    width: 0.375rem;
-    height: 0.375rem;
-    border-top: 1px solid var(--color-primary);
-    border-right: 1px solid var(--color-primary);
-    transform: rotate(45deg);
-    content: "";
-  }
-
-  .product-flow-step-icon,
-  .product-flow-approval-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    color: var(--color-light);
-  }
-
-  .product-flow-step-icon :global(.product-flow-icon) {
-    width: 100%;
-    height: 100%;
-    stroke-width: 1.75;
-  }
-
-  .product-flow-step-title {
-    font-size: clamp(0.8125rem, 3.1cqw, 1.125rem);
-  }
-
-  .product-flow-step-detail {
-    margin-top: -0.125rem;
+  .product-step-icon {
+    display: block;
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
     color: var(--color-primary);
-    font-size: clamp(0.625rem, 2.3cqw, 0.75rem);
   }
 
-  .product-flow-approval-icon {
-    position: relative;
+  .product-flow-step--test {
+    grid-column: 2;
+    grid-row: 5;
   }
 
-  .product-flow-approval-icon > :global(.product-flow-icon) {
-    width: 2.125rem;
-    height: 2.125rem;
-    stroke-width: 1.75;
+  .product-flow-step--diff {
+    grid-column: 3;
+    grid-row: 5;
   }
 
-  .product-flow-approval-check {
-    position: absolute;
-    right: -0.25rem;
-    bottom: -0.125rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.25rem;
-    height: 1.25rem;
-    border: 1px solid color-mix(in srgb, var(--color-light) 52%, transparent);
-    border-radius: 9999px;
-    color: var(--color-light);
-    background: var(--color-primary);
+  .product-flow-step--approval {
+    grid-column: 4;
+    grid-row: 5;
+    border-color: color-mix(in srgb, var(--color-primary) 62%, transparent);
+    background:
+      radial-gradient(
+        circle at 76% 26%,
+        color-mix(in srgb, var(--color-primary) 11%, transparent),
+        transparent 52%
+      ),
+      color-mix(in srgb, var(--color-theme-dark) 94%, transparent);
   }
 
-  .product-flow-approval-check :global(.product-flow-approval-check-icon) {
-    width: 0.8125rem;
-    height: 0.8125rem;
-    stroke-width: 3;
+  .product-flow-step--approval .product-step-icon {
+    color: var(--color-primary);
   }
 
-  .product-flow-rollback-label {
-    display: inline-flex;
-    grid-column: 1 / -1;
-    align-items: center;
-    justify-self: center;
-    gap: 0.375rem;
-    margin-top: 0.125rem;
-    color: color-mix(in srgb, var(--color-text-default) 92%, transparent);
-    font-size: 0.6875rem;
-    letter-spacing: 0;
-    text-transform: none;
-  }
-
-  .product-flow-rollback-label :global(.product-flow-rollback-icon) {
-    width: 0.875rem;
-    height: 0.875rem;
-    color: color-mix(in srgb, var(--color-text-default) 82%, transparent);
-    stroke-width: 1.8;
-  }
-
-  @container (min-width: 48rem) {
+  @container (min-width: 52rem) {
     .product-flow-stage {
-      display: block;
-      height: clamp(25rem, 46.667cqw, 35rem);
-      padding: 0;
+      grid-template-columns:
+        minmax(6.75rem, 0.65fr) minmax(14.5rem, 1.45fr)
+        repeat(3, minmax(0, 1fr));
     }
 
-    .product-flow-connections {
-      position: absolute;
-      z-index: 0;
-      inset: 0;
-      display: block;
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-      fill: none;
-      pointer-events: none;
-    }
-
-    .product-flow-connection {
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .product-flow-connection-primary {
-      stroke: color-mix(in srgb, var(--color-primary) 92%, transparent);
-      stroke-width: 2px;
-    }
-
-    .product-flow-connection-secondary {
-      stroke: color-mix(in srgb, var(--color-secondary) 92%, transparent);
-      stroke-width: 2px;
-    }
-
-    .product-flow-connection-rollback {
-      stroke: color-mix(in srgb, var(--color-text-default) 78%, transparent);
-      stroke-dasharray: 7 8;
-      stroke-width: 1.75px;
-    }
-
-    .product-flow-marker-primary {
-      fill: var(--color-primary);
-    }
-
-    .product-flow-marker-secondary {
-      fill: var(--color-secondary);
-    }
-
-    .product-flow-marker-neutral {
-      fill: color-mix(in srgb, var(--color-text-default) 84%, transparent);
-    }
-
-    .product-flow-lane-label,
-    .product-flow-action-label,
-    .product-flow-rollback-label {
-      position: absolute;
-      z-index: 3;
-      display: block;
-    }
-
-    .product-flow-lane-label {
-      color: var(--color-light);
-      font-family: var(--font-secondary);
-      font-size: clamp(1.25rem, 2.55cqw, 2rem);
-      font-weight: 500;
-      letter-spacing: 0.01em;
-      line-height: 1.1;
-      text-transform: none;
-    }
-
-    .product-flow-live-label {
-      top: 17%;
-      left: 1%;
-      margin: 0;
-    }
-
-    .product-flow-safe-label {
-      top: 70%;
-      left: 1%;
-      margin: 0;
-      color: var(--color-light);
-    }
-
-    .product-flow-mobile-fork-connector,
-    .product-flow-mobile-promote-connector {
+    .product-flow-connectors--compact {
       display: none;
     }
 
-    .product-flow-action-label {
-      font-size: clamp(0.75rem, 1.65cqw, 1.25rem);
-      text-transform: none;
+    .product-flow-connectors--wide {
+      display: inline;
     }
 
-    .product-flow-fork-label {
-      top: 31%;
-      left: 28%;
-      color: var(--color-primary);
+    .product-flow-label {
+      display: flex;
+      min-width: 0;
+      align-self: center;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      line-height: 0.875rem;
+      white-space: nowrap;
+      text-transform: uppercase;
     }
 
-    .product-flow-promote-label {
-      top: 57.5%;
-      left: 88%;
+    .product-flow-label--production {
+      grid-column: 1;
+      grid-row: 1 / 3;
+      align-self: center;
       color: var(--color-secondary);
     }
 
-    .product-flow-card {
-      position: absolute;
-      margin: 0;
+    .product-flow-label--change {
+      grid-column: 1;
+      grid-row: 5;
+      color: var(--color-primary);
     }
 
-    .product-flow-route--source {
-      top: 7.1429%;
-      left: 23.3333%;
-      width: 33.3333%;
-      height: 20.7143%;
-      min-height: 0;
-      grid-template-columns: clamp(4rem, 7cqw, 5.5rem) minmax(0, 1fr);
-      gap: clamp(0.625rem, 1.25cqw, 1rem);
-      padding: clamp(0.625rem, 1.2cqw, 1rem);
+    .product-route-card--current {
+      width: 90%;
+      grid-column: 2;
     }
 
-    .product-flow-route--promoted {
-      top: 33.9286%;
-      left: 70.8333%;
-      width: 27.5%;
-      height: 19.6429%;
-      min-height: 0;
-      padding: clamp(0.75rem, 1.3cqw, 1.125rem);
+    .product-route-card--candidate {
+      grid-column: 4 / 6;
     }
 
-    .product-flow-route-shield {
-      width: clamp(2.5rem, 4.25cqw, 3.5rem);
-      height: clamp(2.5rem, 4.25cqw, 3.5rem);
+    .product-fork-system {
+      grid-column: 2;
     }
 
-    .product-flow-route-status-label {
-      font-size: clamp(0.625rem, 1.2cqw, 0.8125rem);
+    .product-fork-card {
+      grid-template-columns: auto minmax(0, 1fr);
     }
 
-    .product-flow-route-title {
-      font-size: clamp(1.125rem, 2.55cqw, 1.8rem);
+    .product-fork-icon {
+      display: inline-grid;
     }
 
-    .product-flow-route--promoted .product-flow-route-title {
-      font-size: clamp(1rem, 2.25cqw, 1.65rem);
+    .product-editor :global(.deck-icon-wrap) {
+      width: 2.8rem;
+      height: 2.8rem;
     }
 
-    .product-flow-fork {
-      top: 62.5%;
-      left: 20.8333%;
-      width: 22.5%;
-      height: 24.1071%;
-      min-height: 0;
-      grid-template-columns: clamp(3.25rem, 5.6cqw, 4.5rem) minmax(0, 1fr);
-      gap: clamp(0.5rem, 1cqw, 0.875rem);
-      padding: clamp(0.625rem, 1.15cqw, 1rem);
+    .product-flow-step--test {
+      grid-column: 3;
     }
 
-    .product-flow-fork-actors {
-      width: clamp(3.25rem, 5.6cqw, 4.5rem);
-      height: clamp(2.75rem, 4.75cqw, 3.5rem);
+    .product-flow-step--diff {
+      grid-column: 4;
     }
 
-    .product-flow-fork-actor {
-      width: clamp(2.125rem, 3.7cqw, 2.875rem);
-      height: clamp(2.125rem, 3.7cqw, 2.875rem);
+    .product-flow-step--approval {
+      grid-column: 5;
+    }
+  }
+
+  @container (max-width: 26rem) {
+    .product-flow :global(.deck-icon) {
+      display: none;
     }
 
-    .product-flow-fork-actor--agent {
-      width: clamp(2.25rem, 3.9cqw, 3rem);
-      height: clamp(2.25rem, 3.9cqw, 3rem);
-      margin-left: clamp(-1.125rem, -1.6cqw, -0.875rem);
+    .product-route-card {
+      min-height: 5rem;
+      gap: 0;
+      border-radius: 0.625rem;
+      padding: 0.625rem;
     }
 
-    .product-flow-card-kicker {
-      font-size: clamp(0.5625rem, 1cqw, 0.6875rem);
-      line-height: 1;
+    .product-route-icon,
+    .product-fork-icon,
+    .product-step-icon {
+      display: none;
     }
 
-    .product-flow-card-title {
-      font-size: clamp(0.875rem, 1.65cqw, 1.25rem);
+    .product-route-copy,
+    .product-fork-copy {
+      gap: 0.125rem;
     }
 
-    .product-flow-card-detail {
-      font-size: clamp(0.625rem, 1.1cqw, 0.8125rem);
-      line-height: 1.2;
+    .product-card-kicker {
+      font-size: 0.5rem;
+      letter-spacing: 0.07em;
+      line-height: 0.625rem;
+    }
+
+    .product-route-title,
+    .product-fork-title,
+    .product-flow-step h3 {
+      font-size: 0.6875rem;
+    }
+
+    .product-route-mapping {
+      gap: 0.2rem;
+      margin-top: 0;
+      font-size: 0.5625rem;
+      line-height: 0.8125rem;
+    }
+
+    .product-fork-system {
+      gap: 0.375rem;
+    }
+
+    .product-editors {
+      gap: 0.25rem;
+    }
+
+    .product-editor :global(.deck-icon-wrap) {
+      width: auto;
+      height: auto;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .product-editor :global(.deck-icon-glyph) {
+      display: none;
+    }
+
+    .product-editor :global(.deck-icon-label) {
+      font-size: 0.5rem;
+      letter-spacing: 0.04em;
+      line-height: 0.625rem;
+    }
+
+    .product-fork-layer {
+      transform: translate(0.25rem, -0.25rem);
+    }
+
+    .product-fork-card {
+      gap: 0;
+      border-radius: 0.625rem;
+      padding: 0.625rem;
+    }
+
+    .product-fork-copy p,
+    .product-flow-step p {
+      margin-top: 0;
+      font-size: 0.625rem;
+      line-height: 0.8125rem;
     }
 
     .product-flow-step {
-      top: 64.2857%;
-      min-height: 0;
-      height: 22.3214%;
-      padding: clamp(0.5rem, 1cqw, 0.875rem);
-    }
-
-    .product-flow-test {
-      left: 48.3333%;
-      width: 11.25%;
-    }
-
-    .product-flow-diff {
-      left: 64.1667%;
-      width: 12.9167%;
-    }
-
-    .product-flow-approval {
-      left: 81.6667%;
-      width: 13.75%;
-    }
-
-    .product-flow-step::before,
-    .product-flow-step::after {
-      content: none;
-    }
-
-    .product-flow-step-icon,
-    .product-flow-approval-icon {
-      width: clamp(1.75rem, 3.4cqw, 2.75rem);
-      height: clamp(1.75rem, 3.4cqw, 2.75rem);
-    }
-
-    .product-flow-step-title {
-      font-size: clamp(0.8125rem, 1.65cqw, 1.25rem);
-    }
-
-    .product-flow-step-detail {
-      font-size: clamp(0.625rem, 1.05cqw, 0.8125rem);
-    }
-
-    .product-flow-approval-check {
-      width: clamp(1rem, 1.7cqw, 1.375rem);
-      height: clamp(1rem, 1.7cqw, 1.375rem);
-    }
-
-    .product-flow-rollback-label {
-      top: 21%;
-      left: 59%;
-      align-items: center;
-      justify-self: auto;
-      gap: clamp(0.25rem, 0.5cqw, 0.375rem);
-      margin: 0;
-      color: color-mix(in srgb, var(--color-text-default) 92%, transparent);
-      font-size: clamp(0.625rem, 1.2cqw, 0.9375rem);
-      white-space: nowrap;
-    }
-
-    .product-flow-rollback-label :global(.product-flow-rollback-icon) {
-      width: clamp(0.75rem, 1.15cqw, 1rem);
-      height: clamp(0.75rem, 1.15cqw, 1rem);
+      gap: 0.125rem;
+      border-radius: 0.625rem;
+      padding: 0.5rem;
     }
   }
 </style>

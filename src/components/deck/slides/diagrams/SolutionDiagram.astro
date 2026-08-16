@@ -1,4 +1,5 @@
 ---
+import DeckIcon from "@/components/deck/DeckIcon.astro";
 import LucideIcon from "@/components/helpers/LucideIcon.astro";
 
 type Coordinate = readonly [number, number];
@@ -54,11 +55,11 @@ const artifactSatellites = [
     desktop: {
       position: {
         top: "3%",
-        left: "1%",
+        left: "10%",
         right: "auto",
         rotation: "-2deg",
       },
-      connectorPath: "M48 28 C132 45 190 136 260 172",
+      connectorPath: "M102 25 L260 110",
     },
   },
   {
@@ -79,11 +80,11 @@ const artifactSatellites = [
     desktop: {
       position: {
         top: "15%",
-        left: "43%",
+        left: "46%",
         right: "auto",
         rotation: "2deg",
       },
-      connectorPath: "M150 82 C202 96 220 156 260 184",
+      connectorPath: "M166 78 L260 145",
     },
   },
   {
@@ -104,11 +105,11 @@ const artifactSatellites = [
     desktop: {
       position: {
         top: "27%",
-        left: "4%",
+        left: "10%",
         right: "auto",
         rotation: "-1deg",
       },
-      connectorPath: "M54 136 C132 142 198 174 260 198",
+      connectorPath: "M133 126 L260 180",
     },
   },
   {
@@ -129,16 +130,16 @@ const artifactSatellites = [
     desktop: {
       position: {
         top: "39%",
-        left: "20%",
+        left: "26%",
         right: "auto",
         rotation: "1.5deg",
       },
-      connectorPath: "M144 190 C190 192 226 200 260 210",
+      connectorPath: "M162 179 L260 210",
     },
   },
   {
     id: "model",
-    label: "weights",
+    label: "model weights",
     icon: "Package",
     mobile: {
       anchor: {
@@ -158,7 +159,7 @@ const artifactSatellites = [
         right: "auto",
         rotation: "2.5deg",
       },
-      connectorPath: "M48 244 C135 239 205 224 260 220",
+      connectorPath: "M92 230 L260 235",
     },
   },
   {
@@ -179,11 +180,11 @@ const artifactSatellites = [
     desktop: {
       position: {
         top: "63%",
-        left: "31%",
+        left: "36%",
         right: "auto",
         rotation: "-1.5deg",
       },
-      connectorPath: "M150 300 C199 286 216 244 260 228",
+      connectorPath: "M179 277 L260 260",
     },
   },
   {
@@ -204,16 +205,16 @@ const artifactSatellites = [
     desktop: {
       position: {
         top: "75%",
-        left: "6%",
+        left: "12%",
         right: "auto",
         rotation: "-2.5deg",
       },
-      connectorPath: "M56 354 C139 339 201 261 260 237",
+      connectorPath: "M114 327 L260 285",
     },
   },
   {
     id: "route",
-    label: "/api",
+    label: "/api x2",
     icon: "Route",
     mobile: {
       anchor: {
@@ -233,12 +234,12 @@ const artifactSatellites = [
         right: "auto",
         rotation: "2.5deg",
       },
-      connectorPath: "M150 388 C205 370 222 286 260 245",
+      connectorPath: "M164 381 L260 310",
     },
   },
 ] satisfies readonly ArtifactSatellite[];
 
-function getArtifactStyle(artifact: ArtifactSatellite): string {
+function getArtifactLayoutStyle(artifact: ArtifactSatellite): string {
   const { mobile, desktop } = artifact;
 
   return [
@@ -258,23 +259,23 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
   return [
     `M${x} ${y}`,
     `C${firstControlPoint[0]} ${firstControlPoint[1]}`,
-    `${secondControlPoint[0]} ${secondControlPoint[1]}`,
+    `${secondControlPoint[0]} ${secondControlPoint[0]}`,
     `${mobileConvergence.x} ${mobileConvergence.y}`,
   ].join(" ");
 }
 ---
 
 <div
-  class="qiln-title-visual mx-auto w-full max-w-6xl"
+  class="qiln-solution-visual mx-auto w-full max-w-6xl"
   role="img"
-  aria-labelledby="qiln-title-visual-description">
-  <p id="qiln-title-visual-description" class="sr-only">
+  aria-labelledby="qiln-solution-visual-description">
+  <p id="qiln-solution-visual-description" class="sr-only">
     Scattered code, runtime, model, data, environment, and route state converges
     into a Qiln version 42 known-good capsule. Production remains fixed at the
     protected generate route while both a human and an agent receive an isolated
     version 43 fork.
   </p>
-  <div class="qiln-system-stage" aria-hidden="true">
+  <div class="qiln-solution-stage" aria-hidden="true">
     <svg
       class="system-connections"
       viewBox="0 0 1000 420"
@@ -291,7 +292,7 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
       }
       <path
         class="fork-connection"
-        d="M650 225 H892 V174"
+        d="M650 225 H892 V165"
         vector-effect="non-scaling-stroke">
       </path>
       <path
@@ -336,7 +337,7 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
             <li
               class="artifact-satellite"
               data-artifact={artifact.id}
-              style={getArtifactStyle(artifact)}>
+              style={getArtifactLayoutStyle(artifact)}>
               <LucideIcon
                 icon={artifact.icon}
                 class="h-3.5 w-3.5"
@@ -353,9 +354,7 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
       <span class="capsule-layer capsule-layer-middle"></span>
       <article class="capsule-card">
         <header class="capsule-header">
-          <span class="capsule-mark">
-            <LucideIcon icon="Layers3" class="h-4 w-4" aria-hidden="true" />
-          </span>
+          <DeckIcon icon="Layers3" class="capsule-mark" aria-hidden="true" />
           <span class="capsule-label">CAPSULE</span>
         </header>
         <div class="capsule-core">
@@ -409,42 +408,45 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
     <div class="outcome-zone">
       <div class="fork-system">
         <div class="fork-editors">
-          <span class="editor-node human-node">
-            <LucideIcon icon="User" class="h-4 w-4" aria-hidden="true" />
-            <span>HUMAN</span>
-          </span>
-          <span class="editor-node agent-node">
-            <LucideIcon icon="Bot" class="h-4 w-4" aria-hidden="true" />
-            <span>AGENT</span>
-          </span>
+          <DeckIcon
+            icon="User"
+            label="human"
+            class="editor-node"
+            aria-hidden="true"
+          />
+          <DeckIcon
+            icon="Bot"
+            label="agent"
+            class="editor-node"
+            aria-hidden="true"
+          />
         </div>
         <svg
           class="editor-fork-connection"
           viewBox="0 0 48 104"
           preserveAspectRatio="none"
           focusable="false">
-          <path d="M8 24 H24 V52 H50" vector-effect="non-scaling-stroke"></path>
-          <path d="M8 80 H24 V52" vector-effect="non-scaling-stroke"></path>
+          <path d="M8 24 H15 V52 H80" vector-effect="non-scaling-stroke"></path>
+          <path d="M8 80 H15 V52" vector-effect="non-scaling-stroke"></path>
         </svg>
         <div class="fork-capsule">
           <span class="fork-layer"></span>
           <article class="fork-card">
-            <span class="fork-label">
-              <LucideIcon
-                icon="GitFork"
-                class="h-3.5 w-3.5"
-                aria-hidden="true"
-              />
-              FORK
-            </span>
-            <code class="fork-version">v43</code>
+            <DeckIcon icon="GitFork" class="fork-icon" aria-hidden="true" />
+            <div class="fork-content">
+              <span class="fork-label">FORK</span>
+              <code class="fork-version">v43</code>
+            </div>
           </article>
         </div>
       </div>
       <article class="route-card">
-        <span class="route-shield">
-          <LucideIcon icon="ShieldCheck" class="h-4 w-4" aria-hidden="true" />
-        </span>
+        <DeckIcon
+          icon="ShieldCheck"
+          color="secondary"
+          class="route-shield"
+          aria-hidden="true"
+        />
         <div class="route-content">
           <span class="route-label">STABLE ROUTE</span>
           <span class="route-mapping">
@@ -458,11 +460,11 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
 </div>
 
 <style>
-  .qiln-title-visual {
+  .qiln-solution-visual {
     container-type: inline-size;
   }
 
-  .qiln-system-stage {
+  .qiln-solution-stage {
     position: relative;
     isolation: isolate;
     display: grid;
@@ -471,7 +473,7 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
     padding: 0.75rem 0.25rem;
   }
 
-  .qiln-system-stage::before {
+  .qiln-solution-stage::before {
     position: absolute;
     z-index: -1;
     inset: 10% 4%;
@@ -611,10 +613,7 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
     padding: 0.875rem 1rem;
   }
 
-  .capsule-mark {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  .capsule-mark :global(.deck-icon-wrap) {
     width: 1.75rem;
     height: 1.75rem;
     border: 1px solid color-mix(in srgb, var(--color-primary) 46%, transparent);
@@ -623,10 +622,15 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
     background: color-mix(in srgb, var(--color-primary) 10%, transparent);
   }
 
+  .capsule-mark :global(.deck-icon-glyph) {
+    width: 1rem;
+    height: 1rem;
+  }
+
   .capsule-label {
     color: var(--color-primary);
     font-family: var(--font-mono);
-    font-size: 0.625rem;
+    font-size: 0.7rem;
     font-weight: 500;
     letter-spacing: 0.18em;
     line-height: 1rem;
@@ -649,8 +653,7 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
   .capsule-version {
     color: var(--color-light);
     font-family: var(--font-secondary);
-    font-size: clamp(2.5rem, 11cqw, 4.5rem);
-    font-weight: 500;
+    font-size: clamp(1.875rem, 8.25cqw, 2.25rem);
     letter-spacing: -0.05em;
     line-height: 0.9;
   }
@@ -775,19 +778,16 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
     gap: 0.375rem;
   }
 
-  .editor-node {
-    display: inline-grid;
-    flex: none;
+  .editor-node :global(.deck-icon-wrap) {
     width: 3rem;
     height: 3rem;
-    place-items: center;
     border: 1px solid color-mix(in srgb, var(--color-primary) 38%, transparent);
     border-radius: 0.625rem;
     color: var(--color-primary);
     background: color-mix(in srgb, var(--color-primary) 8%, var(--color-body));
   }
 
-  .editor-node span {
+  .editor-node :global(.deck-icon-label) {
     margin-top: -0.25rem;
     font-family: var(--font-mono);
     font-size: 0.6rem;
@@ -830,9 +830,11 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
   .fork-card {
     position: relative;
     display: grid;
+    min-width: 0;
     min-height: 5rem;
-    align-content: center;
-    gap: 0.25rem;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.625rem;
     border: 1px solid color-mix(in srgb, var(--color-primary) 42%, transparent);
     border-radius: 0.75rem;
     background:
@@ -846,24 +848,50 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
   }
 
-  .fork-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
+  .fork-icon :global(.deck-icon-wrap) {
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid color-mix(in srgb, var(--color-primary) 38%, transparent);
+    border-radius: 0.5rem;
     color: var(--color-primary);
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
   }
 
-  .fork-version {
-    color: var(--color-light);
-    font-family: var(--font-secondary);
-    font-size: 1.5rem;
+  .fork-icon :global(.deck-icon-glyph) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .fork-content,
+  .route-content {
+    display: grid;
+    min-width: 0;
+  }
+
+  .fork-label,
+  .route-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
     font-weight: 500;
-    letter-spacing: -0.03em;
-    line-height: 1;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  .fork-label {
+    color: var(--color-primary);
+  }
+
+  .route-label {
+    color: var(--color-secondary);
+  }
+
+  .fork-version,
+  .route-mapping code {
+    color: var(--color-light);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
   }
 
   .route-card {
@@ -884,10 +912,7 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
       0 12px 28px rgb(0 0 0 / 0.14);
   }
 
-  .route-shield {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  .route-shield :global(.deck-icon-wrap) {
     width: 3rem;
     height: 3rem;
     border: 1px solid
@@ -897,19 +922,9 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
     background: color-mix(in srgb, var(--color-secondary) 8%, transparent);
   }
 
-  .route-content {
-    display: grid;
-    min-width: 0;
-    gap: 0.25rem;
-  }
-
-  .route-label {
-    color: var(--color-secondary);
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    white-space: nowrap;
+  .route-shield :global(.deck-icon-glyph) {
+    width: 1rem;
+    height: 1rem;
   }
 
   .route-mapping {
@@ -920,14 +935,6 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
     gap: 0.375rem;
   }
 
-  .route-mapping code {
-    color: var(--color-light);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
   .route-mapping span {
     color: var(--color-text-default);
     font-family: var(--font-mono);
@@ -935,8 +942,8 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
     white-space: nowrap;
   }
 
-  @container (min-width: 35rem) {
-    .qiln-system-stage {
+  @container (min-width: 48rem) {
+    .qiln-solution-stage {
       display: block;
       height: clamp(20rem, 42cqw, 26.25rem);
       padding: 0;
@@ -978,10 +985,6 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
 
     .capsule-input-node {
       fill: var(--color-primary);
-    }
-
-    .fork-output-node {
-      fill: color-mix(in srgb, var(--color-primary) 72%, transparent);
     }
 
     .route-output-node {
@@ -1033,10 +1036,6 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
       min-height: 0;
     }
 
-    .capsule-version {
-      font-size: clamp(2.25rem, 6cqw, 4.25rem);
-    }
-
     .outcome-zone {
       position: absolute;
       z-index: 2;
@@ -1047,7 +1046,7 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
 
     .fork-system {
       position: absolute;
-      top: 3%;
+      top: 8%;
       left: 69%;
       display: block;
       width: 31%;
@@ -1056,7 +1055,7 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
 
     .fork-editors {
       position: absolute;
-      top: 0;
+      top: 8%;
       left: 0;
       display: grid;
       gap: 0.375rem;
@@ -1076,7 +1075,7 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
       position: absolute;
       top: 22%;
       right: 0;
-      width: 60%;
+      width: 66%;
     }
 
     .fork-card {

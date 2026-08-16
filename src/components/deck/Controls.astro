@@ -6,15 +6,18 @@ interface Props {
 }
 
 const { deckId } = Astro.props;
-const controlButtonClass =
-  "border-divider bg-theme-dark/90 text-light hover:border-primary/60 hover:bg-theme-dark focus-visible:ring-primary/60 inline-flex h-11 w-11 items-center justify-center rounded-full border shadow-xl backdrop-blur-md transition-colors duration-200 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-40";
+const sharedControlButtonClass =
+  "border-divider bg-theme-dark/90 text-light hover:border-primary/60 hover:bg-theme-dark focus-visible:ring-primary/60 inline-flex items-center justify-center rounded-full border shadow-xl backdrop-blur-md transition-colors duration-200 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-40";
+const standardControlButtonSizeClass = "h-11 w-11";
+const desktopAutoplayButtonSizeClass = "h-14 w-14";
 ---
 
 <div data-scene-deck-controls={deckId} class="contents">
   <button
     type="button"
     class:list={[
-      controlButtonClass,
+      sharedControlButtonClass,
+      standardControlButtonSizeClass,
       "absolute top-1/2 -left-6 z-30 hidden -translate-y-1/2 lg:inline-flex",
     ]}
     data-scene-deck-action="previous"
@@ -26,7 +29,8 @@ const controlButtonClass =
   <button
     type="button"
     class:list={[
-      controlButtonClass,
+      sharedControlButtonClass,
+      standardControlButtonSizeClass,
       "absolute top-1/2 -right-6 z-30 hidden -translate-y-1/2 lg:inline-flex",
     ]}
     data-scene-deck-action="next"
@@ -38,8 +42,9 @@ const controlButtonClass =
   <button
     type="button"
     class:list={[
-      controlButtonClass,
-      "absolute -bottom-5 left-1/2 z-30 hidden -translate-x-1/2 lg:inline-flex",
+      sharedControlButtonClass,
+      desktopAutoplayButtonSizeClass,
+      "absolute -bottom-7 left-1/2 z-30 hidden -translate-x-1/2 lg:inline-flex",
     ]}
     data-scene-deck-action="toggle-autoplay"
     aria-controls={deckId}
@@ -49,13 +54,13 @@ const controlButtonClass =
     <span
       data-scene-deck-icon="pause"
       class="inline-flex items-center justify-center">
-      <LucideIcon icon="Pause" class="h-4 w-4" aria-hidden="true" />
+      <LucideIcon icon="Pause" class="h-5 w-5" aria-hidden="true" />
     </span>
     <span
       data-scene-deck-icon="resume"
       class="inline-flex items-center justify-center"
       hidden>
-      <LucideIcon icon="Play" class="h-4 w-4" aria-hidden="true" />
+      <LucideIcon icon="Play" class="h-5 w-5" aria-hidden="true" />
     </span>
     <span class="sr-only" data-scene-deck-toggle-label>
       Pause automatic slide changes
@@ -67,7 +72,7 @@ const controlButtonClass =
       class="border-divider bg-theme-dark/90 pointer-events-auto flex items-center gap-2 rounded-full border p-2 shadow-2xl backdrop-blur-md">
       <button
         type="button"
-        class={controlButtonClass}
+        class:list={[sharedControlButtonClass, standardControlButtonSizeClass]}
         data-scene-deck-action="previous"
         aria-controls={deckId}
         aria-label="Previous slide"
@@ -76,7 +81,7 @@ const controlButtonClass =
       </button>
       <button
         type="button"
-        class={controlButtonClass}
+        class:list={[sharedControlButtonClass, standardControlButtonSizeClass]}
         data-scene-deck-action="toggle-autoplay"
         aria-controls={deckId}
         aria-label="Pause automatic slide changes"
@@ -99,7 +104,7 @@ const controlButtonClass =
       </button>
       <button
         type="button"
-        class={controlButtonClass}
+        class:list={[sharedControlButtonClass, standardControlButtonSizeClass]}
         data-scene-deck-action="next"
         aria-controls={deckId}
         aria-label="Next slide"
