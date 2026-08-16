@@ -1,17 +1,17 @@
 ---
-badge: "Now onboarding **Qiln Managed** — read more"
+badge: "Now onboarding **Python/PyTorch/CUDA** systems to **Qiln Managed** →"
 title: "Versioned AI workflow capsules."
 subtitle: "Agents get forks, not production."
-description: "**Qiln helps teams safely change production AI workflow systems.** Humans and agents make changes in forked branches, run golden tests, inspect capsule diffs, and promote only approved versions."
+description: "**Qiln captures working AI workflow systems as known-good, versioned capsules.** Humans and agents make changes in forks, run tests, inspect diffs, and promote only approved versions with the prior versions preserved for rollback."
 subscription:
   enable: true
 heroProblem:
-  eyebrow: "The repository is not the production system."
-  title: "A working AI workflow is more than source code."
-  description: "Production state spans code, runtimes, models, assets, data, configuration, credential references, and routes. Without one known-good capsule, a change is hard to reproduce, inspect, or reverse."
+  eyebrow: "The repository is not always the production system."
+  title: "A working AI workflow is more than just source code."
+  description: "Production state spans code, runtimes, models, assets, data, configuration, credential references, and routes. Qiln captures that working system as one known-good capsule so changes can be reproduced, inspected, and reversed safely."
 heroSolution:
   eyebrow: "Give every change a safe path."
-  title: "Promote change without risking production."
+  title: "Promote change without risking the working version."
   description: "Start from a known-good capsule. Humans and agents edit in isolated forks, run golden tests, inspect capsule diffs, and promote only approved versions—with rollback ready."
 heroDiagram:
   annotations:
