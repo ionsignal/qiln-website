@@ -416,53 +416,43 @@ const diagramViewBox = createScaledViewBox(
       <path
         d={connectorPaths.knownGoodToFork}
         class="diagram-connector"
-        marker-end="url(#diagram-arrow)">
-      </path>
+        marker-end="url(#diagram-arrow)"></path>
       <path
         d={connectorPaths.forkToForkedBranch}
         class="diagram-connector"
-        marker-end="url(#diagram-arrow)">
-      </path>
+        marker-end="url(#diagram-arrow)"></path>
       <path
         d={connectorPaths.forkedBranchToCapsuleDiff}
         class="diagram-connector"
-        marker-end="url(#diagram-arrow)">
-      </path>
+        marker-end="url(#diagram-arrow)"></path>
       <path
         d={connectorPaths.capsuleDiffToGoldenTest}
         class="diagram-connector"
-        marker-end="url(#diagram-arrow)">
-      </path>
+        marker-end="url(#diagram-arrow)"></path>
       <path
         d={connectorPaths.goldenTestToPromote}
         class="diagram-connector"
-        marker-end="url(#diagram-arrow)">
-      </path>
+        marker-end="url(#diagram-arrow)"></path>
       <path
         d={connectorPaths.promoteToProductionRoute}
         class="diagram-connector"
-        marker-end="url(#diagram-arrow)">
-      </path>
+        marker-end="url(#diagram-arrow)"></path>
       <path
         d={connectorPaths.humansAgentsToForkedBranch}
         class="diagram-connector diagram-connector-dashed"
-        marker-end="url(#diagram-arrow)">
-      </path>
+        marker-end="url(#diagram-arrow)"></path>
       <path
         d={connectorPaths.branchPolicyToForkedBranch}
         class="diagram-connector diagram-connector-dashed"
-        marker-end="url(#diagram-arrow)">
-      </path>
+        marker-end="url(#diagram-arrow)"></path>
       <path
         d={connectorPaths.productionRouteToRollback}
         class="diagram-connector diagram-connector-dashed"
-        marker-end="url(#diagram-arrow)">
-      </path>
+        marker-end="url(#diagram-arrow)"></path>
       <path
         d={connectorPaths.rollbackToKnownGood}
         class="diagram-connector diagram-connector-dashed"
-        marker-end="url(#diagram-arrow)">
-      </path>
+        marker-end="url(#diagram-arrow)"></path>
     </g>
 
     <g class="diagram-nodes">
@@ -473,71 +463,64 @@ const diagramViewBox = createScaledViewBox(
           width={cards.knownGood.width}
           height={cards.knownGood.height}
           rx="14"
-          class="diagram-card">
-        </rect>
+          class="diagram-card"></rect>
         <rect
           x="20"
           y="85"
           width="220"
           height="55"
           rx="8"
-          class="diagram-card-inset">
-        </rect>
+          class="diagram-card-inset"></rect>
         <rect
           x="20"
           y="150"
           width="220"
           height="55"
           rx="8"
-          class="diagram-card-inset">
-        </rect>
+          class="diagram-card-inset"></rect>
         <rect
           x="20"
           y="215"
           width="220"
           height="55"
           rx="8"
-          class="diagram-card-inset">
-        </rect>
+          class="diagram-card-inset"></rect>
         <rect
           x="20"
           y="280"
           width="220"
           height="55"
           rx="8"
-          class="diagram-card-inset">
-        </rect>
+          class="diagram-card-inset"></rect>
         <path d="M20 66H240" class="diagram-divider"></path>
         <path d="M20 355H240" class="diagram-divider"></path>
         <g>
           <text x="20" y="44" class="diagram-content-title">
             {knownGood.title}
           </text>
-          {
-            knownGood.items.map((item, index) => {
-              const itemLines = splitLines(item);
-              const labelY = itemLines.length > 1 ? 112 : 120;
-              return (
-                <g transform={`translate(0 ${index * 64})`}>
-                  <LucideIcon
-                    icon={knownGoodItemIcons[index] ?? "Circle"}
-                    x="33"
-                    y="102"
-                    width="22"
-                    height="22"
-                    class="diagram-content-icon diagram-icon-primary"
-                  />
-                  <text x="63" y={labelY} class="diagram-content-row-label">
-                    {itemLines.map((line, lineIndex) => (
-                      <tspan x="63" dy={lineIndex === 0 ? 0 : 16}>
-                        {line}
-                      </tspan>
-                    ))}
-                  </text>
-                </g>
-              );
-            })
-          }
+          {knownGood.items.map((item, index) => {
+            const itemLines = splitLines(item);
+            const labelY = itemLines.length > 1 ? 112 : 120;
+            return (
+              <g transform={`translate(0 ${index * 64})`}>
+                <LucideIcon
+                  icon={knownGoodItemIcons[index] ?? "Circle"}
+                  x="33"
+                  y="102"
+                  width="22"
+                  height="22"
+                  class="diagram-content-icon diagram-icon-primary"
+                />
+                <text x="63" y={labelY} class="diagram-content-row-label">
+                  {itemLines.map((line, lineIndex) => (
+                    <tspan x="63" dy={lineIndex === 0 ? 0 : 16}>
+                      {line}
+                    </tspan>
+                  ))}
+                </text>
+              </g>
+            );
+          })}
           <g>
             <LucideIcon
               icon="Power"
@@ -564,8 +547,7 @@ const diagramViewBox = createScaledViewBox(
           width={cards.humansAgents.width}
           height={cards.humansAgents.height}
           rx="12"
-          class="diagram-card">
-        </rect>
+          class="diagram-card"></rect>
         <g>
           <LucideIcon
             icon="UsersRound"
@@ -576,22 +558,18 @@ const diagramViewBox = createScaledViewBox(
             class="diagram-content-icon diagram-icon-primary"
           />
           <text x="85" y="39" class="diagram-content-title">
-            {
-              splitLines(humansAgents.title).map((line, lineIndex) => (
-                <tspan x="85" dy={lineIndex === 0 ? 0 : 16}>
-                  {line}
-                </tspan>
-              ))
-            }
+            {splitLines(humansAgents.title).map((line, lineIndex) => (
+              <tspan x="85" dy={lineIndex === 0 ? 0 : 16}>
+                {line}
+              </tspan>
+            ))}
           </text>
           <text x="85" y="61" class="diagram-content-supporting">
-            {
-              splitLines(humansAgents.description).map((line, lineIndex) => (
-                <tspan x="85" dy={lineIndex === 0 ? 0 : 16}>
-                  {line}
-                </tspan>
-              ))
-            }
+            {splitLines(humansAgents.description).map((line, lineIndex) => (
+              <tspan x="85" dy={lineIndex === 0 ? 0 : 16}>
+                {line}
+              </tspan>
+            ))}
           </text>
         </g>
       </g>
@@ -603,8 +581,7 @@ const diagramViewBox = createScaledViewBox(
           width={cards.branchPolicy.width}
           height={cards.branchPolicy.height}
           rx="12"
-          class="diagram-card">
-        </rect>
+          class="diagram-card"></rect>
         <g>
           <LucideIcon
             icon="ShieldCheck"
@@ -615,38 +592,34 @@ const diagramViewBox = createScaledViewBox(
             class="diagram-content-icon diagram-icon-primary"
           />
           <text x="80" y="40" class="diagram-content-title">
-            {
-              splitLines(branchPolicy.title).map((line, lineIndex) => (
-                <tspan x="80" dy={lineIndex === 0 ? 0 : 16}>
-                  {line}
-                </tspan>
-              ))
-            }
+            {splitLines(branchPolicy.title).map((line, lineIndex) => (
+              <tspan x="80" dy={lineIndex === 0 ? 0 : 16}>
+                {line}
+              </tspan>
+            ))}
           </text>
-          {
-            branchPolicy.items.map((item, index) => {
-              const itemLines = splitLines(item);
-              return (
-                <g transform={`translate(0 ${index * 32})`}>
-                  <LucideIcon
-                    icon="Check"
-                    x="32"
-                    y="62"
-                    width="24"
-                    height="24"
-                    class="diagram-content-icon diagram-icon-primary"
-                  />
-                  <text x="81" y="78" class="diagram-content-list-item">
-                    {itemLines.map((line, lineIndex) => (
-                      <tspan x="81" dy={lineIndex === 0 ? 0 : 16}>
-                        {line}
-                      </tspan>
-                    ))}
-                  </text>
-                </g>
-              );
-            })
-          }
+          {branchPolicy.items.map((item, index) => {
+            const itemLines = splitLines(item);
+            return (
+              <g transform={`translate(0 ${index * 32})`}>
+                <LucideIcon
+                  icon="Check"
+                  x="32"
+                  y="62"
+                  width="24"
+                  height="24"
+                  class="diagram-content-icon diagram-icon-primary"
+                />
+                <text x="81" y="78" class="diagram-content-list-item">
+                  {itemLines.map((line, lineIndex) => (
+                    <tspan x="81" dy={lineIndex === 0 ? 0 : 16}>
+                      {line}
+                    </tspan>
+                  ))}
+                </text>
+              </g>
+            );
+          })}
         </g>
       </g>
 
@@ -657,8 +630,7 @@ const diagramViewBox = createScaledViewBox(
           width={cards.fork.width}
           height={cards.fork.height}
           rx="10"
-          class="diagram-card diagram-card-action">
-        </rect>
+          class="diagram-card diagram-card-action"></rect>
         <g>
           <LucideIcon
             icon="GitFork"
@@ -684,8 +656,7 @@ const diagramViewBox = createScaledViewBox(
           width={cards.forkedBranch.width}
           height={cards.forkedBranch.height}
           rx="14"
-          class="diagram-card">
-        </rect>
+          class="diagram-card"></rect>
         <path d="M25 165H195" class="diagram-divider"></path>
         <g>
           <LucideIcon
@@ -740,8 +711,7 @@ const diagramViewBox = createScaledViewBox(
           width={cards.capsuleDiff.width}
           height={cards.capsuleDiff.height}
           rx="12"
-          class="diagram-card">
-        </rect>
+          class="diagram-card"></rect>
         <g>
           <LucideIcon
             icon="FileDiff"
@@ -756,13 +726,11 @@ const diagramViewBox = createScaledViewBox(
             y="80"
             text-anchor="middle"
             class="diagram-content-card-title">
-            {
-              capsuleDiffTitleLines.map((line, lineIndex) => (
-                <tspan x="70" dy={lineIndex === 0 ? 0 : 17}>
-                  {line}
-                </tspan>
-              ))
-            }
+            {capsuleDiffTitleLines.map((line, lineIndex) => (
+              <tspan x="70" dy={lineIndex === 0 ? 0 : 17}>
+                {line}
+              </tspan>
+            ))}
           </text>
         </g>
       </g>
@@ -774,8 +742,7 @@ const diagramViewBox = createScaledViewBox(
           width={cards.goldenTest.width}
           height={cards.goldenTest.height}
           rx="12"
-          class="diagram-card">
-        </rect>
+          class="diagram-card"></rect>
         <g>
           <LucideIcon
             icon="FlaskConical"
@@ -790,13 +757,11 @@ const diagramViewBox = createScaledViewBox(
             y="80"
             text-anchor="middle"
             class="diagram-content-card-title">
-            {
-              goldenTestTitleLines.map((line, lineIndex) => (
-                <tspan x="70" dy={lineIndex === 0 ? 0 : 17}>
-                  {line}
-                </tspan>
-              ))
-            }
+            {goldenTestTitleLines.map((line, lineIndex) => (
+              <tspan x="70" dy={lineIndex === 0 ? 0 : 17}>
+                {line}
+              </tspan>
+            ))}
           </text>
         </g>
       </g>
@@ -808,8 +773,7 @@ const diagramViewBox = createScaledViewBox(
           width={cards.promote.width}
           height={cards.promote.height}
           rx="10"
-          class="diagram-card diagram-card-action">
-        </rect>
+          class="diagram-card diagram-card-action"></rect>
         <g>
           <LucideIcon
             icon="ShieldCheck"
@@ -835,8 +799,7 @@ const diagramViewBox = createScaledViewBox(
           width={cards.productionRoute.width}
           height={cards.productionRoute.height}
           rx="12"
-          class="diagram-card">
-        </rect>
+          class="diagram-card"></rect>
         <g>
           <LucideIcon
             icon="Globe2"
@@ -859,13 +822,11 @@ const diagramViewBox = createScaledViewBox(
             y="75"
             text-anchor="middle"
             class="diagram-content-card-title">
-            {
-              productionRouteTitleLines.map((line, lineIndex) => (
-                <tspan x="70" dy={lineIndex === 0 ? 0 : 17}>
-                  {line}
-                </tspan>
-              ))
-            }
+            {productionRouteTitleLines.map((line, lineIndex) => (
+              <tspan x="70" dy={lineIndex === 0 ? 0 : 17}>
+                {line}
+              </tspan>
+            ))}
           </text>
           <text
             x="70"
@@ -891,8 +852,7 @@ const diagramViewBox = createScaledViewBox(
           width={cards.rollback.width}
           height={cards.rollback.height}
           rx="12"
-          class="diagram-card">
-        </rect>
+          class="diagram-card"></rect>
         <g>
           <LucideIcon
             icon="RotateCcw"
@@ -921,33 +881,31 @@ const diagramViewBox = createScaledViewBox(
 
   <div class="diagram-process-rail">
     <ol class="diagram-process-list" aria-label={processRail.ariaLabel}>
-      {
-        processRail.steps.map((step, index) => (
-          <li
-            class:list={[
-              "diagram-process-step",
-              step.accent === "action" && "diagram-process-step-action",
-            ]}>
-            <span class="diagram-process-card">
-              <LucideIcon
-                icon={step.icon}
-                class="diagram-process-step-icon"
-                aria-hidden="true"
-                focusable="false"
-              />
-              <span class="diagram-process-step-label">{step.label}</span>
-            </span>
-            {index < processRail.steps.length - 1 && (
-              <LucideIcon
-                icon="ArrowRight"
-                class="diagram-process-arrow"
-                aria-hidden="true"
-                focusable="false"
-              />
-            )}
-          </li>
-        ))
-      }
+      {processRail.steps.map((step, index) => (
+        <li
+          class:list={[
+            "diagram-process-step",
+            step.accent === "action" && "diagram-process-step-action",
+          ]}>
+          <span class="diagram-process-card">
+            <LucideIcon
+              icon={step.icon}
+              class="diagram-process-step-icon"
+              aria-hidden="true"
+              focusable="false"
+            />
+            <span class="diagram-process-step-label">{step.label}</span>
+          </span>
+          {index < processRail.steps.length - 1 && (
+            <LucideIcon
+              icon="ArrowRight"
+              class="diagram-process-arrow"
+              aria-hidden="true"
+              focusable="false"
+            />
+          )}
+        </li>
+      ))}
     </ol>
   </div>
 </div>

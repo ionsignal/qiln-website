@@ -30,13 +30,11 @@ const copyrightLine = copyrightEnabled
   class:list={["docs-footer", className]}>
   <div class="docs-footer-inner">
     <Logo loading="lazy" />
-    {
-      copyrightLine && (
-        <p
-          class="docs-footer-copyright md:text-end"
-          set:html={markdownify(copyrightLine)}
-        />
-      )
-    }
+    {copyrightLine && (
+      <p
+        class="docs-footer-copyright md:text-end"
+        set:html={markdownify(copyrightLine)}
+      />
+    )}
   </div>
 </footer>

@@ -72,26 +72,24 @@ const resolvedRel = isExternal ? rel || "noopener noreferrer" : rel;
 const resolvedTarget = isExternal ? target || "_blank" : target;
 ---
 
-{
-  enable &&
-    (isButton ? (
-      <button
-        data-content={label}
-        class:list={["btn", className, "relative overflow-hidden"]}
-        {...buttonAttributes}>
-        <span class="label" set:html={markdownify(label)} />
-        <slot />
-      </button>
-    ) : (
-      <a
-        rel={resolvedRel}
-        target={resolvedTarget}
-        href={url ? formatUrl(url) : undefined}
-        data-content={label}
-        class:list={["btn", className, "relative overflow-hidden"]}
-        {...anchorAttributes}>
-        <span class="label" set:html={markdownify(label)} />
-        <slot />
-      </a>
-    ))
-}
+{enable &&
+  (isButton ? (
+    <button
+      data-content={label}
+      class:list={["btn", className, "relative overflow-hidden"]}
+      {...buttonAttributes}>
+      <span class="label" set:html={markdownify(label)} />
+      <slot />
+    </button>
+  ) : (
+    <a
+      rel={resolvedRel}
+      target={resolvedTarget}
+      href={url ? formatUrl(url) : undefined}
+      data-content={label}
+      class:list={["btn", className, "relative overflow-hidden"]}
+      {...anchorAttributes}>
+      <span class="label" set:html={markdownify(label)} />
+      <slot />
+    </a>
+  ))}

@@ -19,11 +19,9 @@ type Props = ImageAttributes & {
 const { src, alt = "", ...attributes } = Astro.props;
 ---
 
-{
-  src &&
-    (typeof src === "string" ? (
-      <AstroImage src={src} alt={alt} inferSize={true} {...attributes} />
-    ) : (
-      <AstroImage src={src} alt={alt} {...attributes} />
-    ))
-}
+{src &&
+  (typeof src === "string" ? (
+    <AstroImage src={src} alt={alt} inferSize={true} {...attributes} />
+  ) : (
+    <AstroImage src={src} alt={alt} {...attributes} />
+  ))}

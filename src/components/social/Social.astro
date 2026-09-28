@@ -64,56 +64,54 @@ const socialItems: SocialItem[] = visibleLinks.flatMap((social) => {
 });
 ---
 
-{
-  socialItems.length > 0 && (
-    <ul
-      class:list={["flex flex-wrap items-center gap-4", className]}
-      {...attributes}>
-      {socialItems.map(({ social, href }) => (
-        <li>
-          <a
-            aria-label={social.label}
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            class:list={[
-              "group relative flex items-center justify-center transition-all duration-300",
-              {
-                "text-text-default hover:bg-primary/10 hover:border-primary/40 hover:text-primary hover:shadow-[0_0_15px_--theme(--color-primary/20%)] rounded-full border border-transparent bg-white/5 backdrop-blur-md":
-                  layout === "classic",
-              },
-              {
-                "text-text-default hover:text-primary hover:scale-110":
-                  layout === "minimal",
-              },
-              {
-                "hover:bg-primary text-text-default hover:text-light rounded-full bg-white/5":
-                  layout === "modern",
-              },
-              {
-                "h-12 w-12": size === "sm",
-                "h-14 w-14": size === "md",
-                "h-16 w-16": size === "lg",
-              },
-            ]}>
-            <span class="sr-only">{social.label}</span>
-            {social.icon && (
-              <SvgIcon
-                icon={social.icon}
-                class:list={[
-                  "relative z-10 text-inherit transition-colors duration-300",
-                  {
-                    "h-4 w-4": size === "sm",
-                    "h-5 w-5": size === "md",
-                    "h-6 w-6": size === "lg",
-                  },
-                ]}
-                aria-hidden="true"
-              />
-            )}
-          </a>
-        </li>
-      ))}
-    </ul>
-  )
-}
+{socialItems.length > 0 && (
+  <ul
+    class:list={["flex flex-wrap items-center gap-4", className]}
+    {...attributes}>
+    {socialItems.map(({ social, href }) => (
+      <li>
+        <a
+          aria-label={social.label}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          class:list={[
+            "group relative flex items-center justify-center transition-all duration-300",
+            {
+              "text-text-default hover:bg-primary/10 hover:border-primary/40 hover:text-primary hover:shadow-[0_0_15px_--theme(--color-primary/20%)] rounded-full border border-transparent bg-white/5 backdrop-blur-md":
+                layout === "classic",
+            },
+            {
+              "text-text-default hover:text-primary hover:scale-110":
+                layout === "minimal",
+            },
+            {
+              "hover:bg-primary text-text-default hover:text-light rounded-full bg-white/5":
+                layout === "modern",
+            },
+            {
+              "h-12 w-12": size === "sm",
+              "h-14 w-14": size === "md",
+              "h-16 w-16": size === "lg",
+            },
+          ]}>
+          <span class="sr-only">{social.label}</span>
+          {social.icon && (
+            <SvgIcon
+              icon={social.icon}
+              class:list={[
+                "relative z-10 text-inherit transition-colors duration-300",
+                {
+                  "h-4 w-4": size === "sm",
+                  "h-5 w-5": size === "md",
+                  "h-6 w-6": size === "lg",
+                },
+              ]}
+              aria-hidden="true"
+            />
+          )}
+        </a>
+      </li>
+    ))}
+  </ul>
+)}

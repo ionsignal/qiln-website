@@ -32,116 +32,114 @@ const videoModalId =
     : undefined;
 ---
 
-{
-  enable && (
-    <section id="cta" class="cta-section mt-auto scroll-mt-24 lg:scroll-mt-32">
-      <div class="bg-accent py-14 md:py-28">
-        <div class="container grid grid-cols-1 place-content-between gap-y-16 lg:grid-cols-2 lg:gap-x-10">
-          <div
-            class="space-y-7 lg:max-w-2xl"
-            data-aos="fade-up-sm"
-            data-aos-offset="0">
-            {title && (
-              <h2
-                class="has-subtitle-text capitalize"
-                set:html={markdownify(title)}
-              />
-            )}
-            {features && (
-              <div class="flex flex-col gap-4 lg:flex-row lg:flex-wrap">
-                {features.map((feature) => (
-                  <div
-                    class:list={[
-                      "from-primary/20 to-primary/5 inline-flex items-center gap-4 rounded-full bg-linear-to-r to-90% py-1 pe-5 pl-2 text-white",
-                    ]}>
-                    <Icons icon="CircleCheck" class="text-primary" />
-                    {markdownify(feature)}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div class="has-video-modal flex w-full flex-col gap-8 lg:items-end">
-            {image && (
-              <div class="w-full overflow-hidden rounded-2xl border border-white/10 shadow-2xl lg:max-w-lg">
-                <Image
-                  src={image}
-                  alt="Video Thumbnail"
-                  class="aspect-video w-full object-cover"
-                />
-              </div>
-            )}
-            <div class="flex w-full flex-wrap items-center gap-x-8 gap-y-6 sm:gap-x-12 lg:max-w-lg lg:gap-x-16">
-              {ctaBtn && ctaBtn.enable && (
-                <div>
-                  {ctaBtn.type === "video" && ctaBtn.video && videoModalId ? (
-                    <ActionButton
-                      tag={"button"}
-                      content={ctaBtn}
-                      type="button"
-                      title="Play Video"
-                      aria-haspopup="dialog"
-                      aria-expanded="false"
-                      aria-controls={videoModalId}
-                      data-hs-overlay={`#${videoModalId}`}
-                      data-hs-overlay-options={`{"emulateScrollbarSpace" : true}`}
-                      class="video-modal-toggle btn-md btn-primary btn-has-icon group after:bg-primary/25 relative z-0 flex items-center gap-4 after:pointer-events-none after:absolute after:inset-0 after:z-10 after:size-full [&>.label]:z-20">
-                      <span class="has-animated-waves waves-white waves-sm relative z-20 flex h-6 w-6 items-center justify-center rounded-full">
-                        <Icons
-                          icon="Play"
-                          fill="currentColor"
-                          class="text-primary ml-0.5 h-3 w-3"
-                        />
-                      </span>
-                      {ctaBtn.video.src && (
-                        <video
-                          autoplay
-                          muted
-                          loop
-                          playsinline
-                          class="absolute top-0 left-0 z-0 h-full w-full object-cover"
-                          {...{
-                            src: ctaBtn?.video?.src.startsWith("http")
-                              ? ctaBtn?.video?.src
-                              : null,
-                          }}>
-                          {!ctaBtn.video.src.startsWith("http") && (
-                            <source src={ctaBtn.video.src} type="video/mp4" />
-                          )}
-                          Your browser does not support the video tag.
-                        </video>
-                      )}
-                    </ActionButton>
-                  ) : (
-                    <ActionButton
-                      class="btn-md btn-primary btn-has-icon group relative z-30 flex items-center gap-4"
-                      content={ctaBtn}>
-                      <span class="flex h-6 w-12 items-center justify-center rounded-full bg-white/15">
-                        <SvgIcon
-                          icon="star"
-                          class="h-5 w-5 transition-all duration-300 group-hover:rotate-180"
-                        />
-                      </span>
-                    </ActionButton>
-                  )}
+{enable && (
+  <section id="cta" class="cta-section mt-auto scroll-mt-24 lg:scroll-mt-32">
+    <div class="bg-accent py-14 md:py-28">
+      <div class="container grid grid-cols-1 place-content-between gap-y-16 lg:grid-cols-2 lg:gap-x-10">
+        <div
+          class="space-y-7 lg:max-w-2xl"
+          data-aos="fade-up-sm"
+          data-aos-offset="0">
+          {title && (
+            <h2
+              class="has-subtitle-text capitalize"
+              set:html={markdownify(title)}
+            />
+          )}
+          {features && (
+            <div class="flex flex-col gap-4 lg:flex-row lg:flex-wrap">
+              {features.map((feature) => (
+                <div
+                  class:list={[
+                    "from-primary/20 to-primary/5 inline-flex items-center gap-4 rounded-full bg-linear-to-r to-90% py-1 pe-5 pl-2 text-white",
+                  ]}>
+                  <Icons icon="CircleCheck" class="text-primary" />
+                  {markdownify(feature)}
                 </div>
-              )}
+              ))}
             </div>
+          )}
+        </div>
+        <div class="has-video-modal flex w-full flex-col gap-8 lg:items-end">
+          {image && (
+            <div class="w-full overflow-hidden rounded-2xl border border-white/10 shadow-2xl lg:max-w-lg">
+              <Image
+                src={image}
+                alt="Video Thumbnail"
+                class="aspect-video w-full object-cover"
+              />
+            </div>
+          )}
+          <div class="flex w-full flex-wrap items-center gap-x-8 gap-y-6 sm:gap-x-12 lg:max-w-lg lg:gap-x-16">
+            {ctaBtn && ctaBtn.enable && (
+              <div>
+                {ctaBtn.type === "video" && ctaBtn.video && videoModalId ? (
+                  <ActionButton
+                    tag={"button"}
+                    content={ctaBtn}
+                    type="button"
+                    title="Play Video"
+                    aria-haspopup="dialog"
+                    aria-expanded="false"
+                    aria-controls={videoModalId}
+                    data-hs-overlay={`#${videoModalId}`}
+                    data-hs-overlay-options={`{"emulateScrollbarSpace" : true}`}
+                    class="video-modal-toggle btn-md btn-primary btn-has-icon group after:bg-primary/25 relative z-0 flex items-center gap-4 after:pointer-events-none after:absolute after:inset-0 after:z-10 after:size-full [&>.label]:z-20">
+                    <span class="has-animated-waves waves-white waves-sm relative z-20 flex h-6 w-6 items-center justify-center rounded-full">
+                      <Icons
+                        icon="Play"
+                        fill="currentColor"
+                        class="text-primary ml-0.5 h-3 w-3"
+                      />
+                    </span>
+                    {ctaBtn.video.src && (
+                      <video
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        class="absolute top-0 left-0 z-0 h-full w-full object-cover"
+                        {...{
+                          src: ctaBtn?.video?.src.startsWith("http")
+                            ? ctaBtn?.video?.src
+                            : null,
+                        }}>
+                        {!ctaBtn.video.src.startsWith("http") && (
+                          <source src={ctaBtn.video.src} type="video/mp4" />
+                        )}
+                        Your browser does not support the video tag.
+                      </video>
+                    )}
+                  </ActionButton>
+                ) : (
+                  <ActionButton
+                    class="btn-md btn-primary btn-has-icon group relative z-30 flex items-center gap-4"
+                    content={ctaBtn}>
+                    <span class="flex h-6 w-12 items-center justify-center rounded-full bg-white/15">
+                      <SvgIcon
+                        icon="star"
+                        class="h-5 w-5 transition-all duration-300 group-hover:rotate-180"
+                      />
+                    </span>
+                  </ActionButton>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
-      {ctaBtn?.type === "video" && ctaBtn.video && videoModalId && (
-        <VideoModal
-          video={{
-            id: videoModalId,
-            src: ctaBtn.video.src,
-            provider: ctaBtn.video.provider,
-            type: ctaBtn.video.type,
-            poster: ctaBtn.video.poster,
-            autoplay: ctaBtn.video.autoplay,
-          }}
-        />
-      )}
-    </section>
-  )
-}
+    </div>
+    {ctaBtn?.type === "video" && ctaBtn.video && videoModalId && (
+      <VideoModal
+        video={{
+          id: videoModalId,
+          src: ctaBtn.video.src,
+          provider: ctaBtn.video.provider,
+          type: ctaBtn.video.type,
+          poster: ctaBtn.video.poster,
+          autoplay: ctaBtn.video.autoplay,
+        }}
+      />
+    )}
+  </section>
+)}

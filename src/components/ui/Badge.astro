@@ -74,14 +74,12 @@ const innerClasses = [
 ];
 ---
 
-{
-  href ? (
-    <a href={href} target={target} rel={rel} class:list={rootClasses}>
-      <span class:list={innerClasses} set:html={markdownify(content)} />
-    </a>
-  ) : (
-    <span class:list={rootClasses}>
-      <span class:list={innerClasses} set:html={markdownify(content)} />
-    </span>
-  )
-}
+{href ? (
+  <a href={href} target={target} rel={rel} class:list={rootClasses}>
+    <span class:list={innerClasses} set:html={markdownify(content)} />
+  </a>
+) : (
+  <span class:list={rootClasses}>
+    <span class:list={innerClasses} set:html={markdownify(content)} />
+  </span>
+)}

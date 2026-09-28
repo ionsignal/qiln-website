@@ -24,7 +24,9 @@ const msgs = {
   data-msg-network={msgs.network}
   class="block w-full">
   <form class="relative">
-    <label for="email-footer" class="sr-only">Email</label>
+    <label for="email-footer" class="sr-only">
+      Email
+    </label>
     <input
       required
       type="email"
@@ -38,8 +40,7 @@ const msgs = {
       type="submit"
       class="btn-solid-primary has-icon-moving-animation absolute top-1 right-1 flex h-[calc(100%-0.5rem)] w-24 items-center justify-center rounded-full disabled:cursor-not-allowed disabled:opacity-70">
       <span class="sr-only">Subscribe</span>
-      <span
-        class="icons-wrapper inline-flex h-10 w-10 items-center justify-center">
+      <span class="icons-wrapper inline-flex h-10 w-10 items-center justify-center">
         <span class="icon icon-before flex items-center justify-center">
           <LucideIcon icon="ArrowUpRight" class="h-6 w-6 text-white" />
         </span>
@@ -48,8 +49,7 @@ const msgs = {
         </span>
       </span>
     </button>
-    <div
-      class="messages-container absolute top-full left-0 w-full text-sm opacity-90">
+    <div class="messages-container absolute top-full left-0 w-full text-sm opacity-90">
       <div class="message-feedback hidden" aria-live="polite"></div>
     </div>
   </form>

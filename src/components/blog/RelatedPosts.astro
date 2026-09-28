@@ -28,15 +28,13 @@ const relatedPosts = allPosts
   .slice(0, 3); // Take top 3
 ---
 
-{
-  relatedPosts.length > 0 && (
-    <section class="mt-24 border-t border-white/10 pt-16">
-      <h2 class="mb-8 text-2xl font-bold text-white">Related Articles</h2>
-      <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-        {relatedPosts.map((post) => (
-          <BlogCard post={post} />
-        ))}
-      </div>
-    </section>
-  )
-}
+{relatedPosts.length > 0 && (
+  <section class="mt-24 border-t border-white/10 pt-16">
+    <h2 class="mb-8 text-2xl font-bold text-white">Related Articles</h2>
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+      {relatedPosts.map((post) => (
+        <BlogCard post={post} />
+      ))}
+    </div>
+  </section>
+)}

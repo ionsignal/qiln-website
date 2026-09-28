@@ -35,21 +35,19 @@ const {
 } = Astro.props;
 ---
 
-{
-  links.length > 0 && (
-    <ul class:list={["flex items-center", listClass]} aria-label={label}>
-      {links.map((social) => (
-        <li>
-          <a
-            href={social.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class={anchorClass}>
-            <span class="sr-only">{social.label}</span>
-            <SvgIcon icon={social.icon} class={iconClass} aria-hidden="true" />
-          </a>
-        </li>
-      ))}
-    </ul>
-  )
-}
+{links.length > 0 && (
+  <ul class:list={["flex items-center", listClass]} aria-label={label}>
+    {links.map((social) => (
+      <li>
+        <a
+          href={social.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class={anchorClass}>
+          <span class="sr-only">{social.label}</span>
+          <SvgIcon icon={social.icon} class={iconClass} aria-hidden="true" />
+        </a>
+      </li>
+    ))}
+  </ul>
+)}

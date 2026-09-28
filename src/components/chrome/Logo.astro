@@ -43,33 +43,31 @@ if (typeof logoSource === "string" && logoSource.endsWith(".svg")) {
 ---
 
 <a href={formatUrl("/")} class:list={["logo-wrapper", className]}>
-  {
-    rawSvgContent ? (
-      <>
-        <Fragment set:html={rawSvgContent} />
-        {logoText && (
-          <span class={logoTextClass} set:html={markdownify(logoText)} />
-        )}
-      </>
-    ) : logoSource ? (
-      <>
-        <Image
-          src={logoSource}
-          class={logoIconClass}
-          width={logoDimensions.width}
-          height={logoDimensions.height}
-          alt={logoAriaLabel}
-          loading={loading}
-          decoding="async"
-        />
-        {logoText && (
-          <span class={logoTextClass} set:html={markdownify(logoText)} />
-        )}
-      </>
-    ) : logoText ? (
-      logoText
-    ) : (
-      title
-    )
-  }
+  {rawSvgContent ? (
+    <>
+      <Fragment set:html={rawSvgContent} />
+      {logoText && (
+        <span class={logoTextClass} set:html={markdownify(logoText)} />
+      )}
+    </>
+  ) : logoSource ? (
+    <>
+      <Image
+        src={logoSource}
+        class={logoIconClass}
+        width={logoDimensions.width}
+        height={logoDimensions.height}
+        alt={logoAriaLabel}
+        loading={loading}
+        decoding="async"
+      />
+      {logoText && (
+        <span class={logoTextClass} set:html={markdownify(logoText)} />
+      )}
+    </>
+  ) : logoText ? (
+    logoText
+  ) : (
+    title
+  )}
 </a>

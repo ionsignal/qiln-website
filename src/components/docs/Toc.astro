@@ -87,19 +87,17 @@ const treeHtml = shouldRender
   : "";
 ---
 
-{
-  shouldRender && (
-    <nav
-      class="docs-toc has-customized-scrollbar"
-      data-docs-toc
-      data-hs-scrollspy="#docs-content"
-      style="--scrollspy-offset: 120;"
-      aria-label="On this page">
-      <p class="docs-toc-title">On this page</p>
-      <Fragment set:html={treeHtml} />
-    </nav>
-  )
-}
+{shouldRender && (
+  <nav
+    class="docs-toc has-customized-scrollbar"
+    data-docs-toc
+    data-hs-scrollspy="#docs-content"
+    style="--scrollspy-offset: 120;"
+    aria-label="On this page">
+    <p class="docs-toc-title">On this page</p>
+    <Fragment set:html={treeHtml} />
+  </nav>
+)}
 
 <script>
   let docsTocController: AbortController | null = null;

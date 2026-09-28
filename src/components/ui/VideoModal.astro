@@ -28,56 +28,54 @@ const playerConfig = {
 };
 ---
 
-{
-  src && (
-    <div
-      id={modalId}
-      class="hs-overlay pointer-events-none fixed inset-s-0 top-0 z-60 hidden size-full overflow-x-hidden overflow-y-auto"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Video player"
-      tabindex="-1">
-      <div class="hs-overlay-animation-target hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 flex min-h-[calc(100%-3.5rem)] items-center opacity-0 transition-[margin,opacity] ease-out sm:mx-auto sm:w-full sm:max-w-4xl">
-        <div class="has-video-player pointer-events-auto container flex flex-col">
-          <button
-            type="button"
-            aria-label="Close video"
-            data-hs-overlay={`#${modalId}`}
-            data-hs-overlay-options='{"emulateScrollbarSpace" : true}'
-            class="mb-2 ml-auto flex h-10 w-10 items-center justify-center rounded-full bg-white ring-0 ring-white/50 duration-300 hover:rotate-90 hover:ring-4">
-            <LucideIcon
-              icon="X"
-              class="text-dark/80 h-6 w-6"
-              aria-hidden="true"
-            />
-          </button>
-          {isHtml5Video ? (
-            <video
-              class="video-player"
-              playsinline
-              controls
-              data-id={modalId}
-              data-autoplay={autoplay ? "true" : "false"}
-              data-poster={poster}
-              data-plyr-config={JSON.stringify(playerConfig)}>
-              <source src={src} type={type} />
-            </video>
-          ) : (
-            <div
-              class="video-player"
-              data-autoplay={autoplay ? "true" : "false"}
-              data-id={modalId}
-              data-plyr-provider={provider}
-              data-plyr-embed-id={src}
-              data-plyr-poster={poster}
-              data-plyr-config={JSON.stringify(playerConfig)}
-            />
-          )}
-        </div>
+{src && (
+  <div
+    id={modalId}
+    class="hs-overlay pointer-events-none fixed inset-s-0 top-0 z-60 hidden size-full overflow-x-hidden overflow-y-auto"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Video player"
+    tabindex="-1">
+    <div class="hs-overlay-animation-target hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 flex min-h-[calc(100%-3.5rem)] items-center opacity-0 transition-[margin,opacity] ease-out sm:mx-auto sm:w-full sm:max-w-4xl">
+      <div class="has-video-player pointer-events-auto container flex flex-col">
+        <button
+          type="button"
+          aria-label="Close video"
+          data-hs-overlay={`#${modalId}`}
+          data-hs-overlay-options='{"emulateScrollbarSpace" : true}'
+          class="mb-2 ml-auto flex h-10 w-10 items-center justify-center rounded-full bg-white ring-0 ring-white/50 duration-300 hover:rotate-90 hover:ring-4">
+          <LucideIcon
+            icon="X"
+            class="text-dark/80 h-6 w-6"
+            aria-hidden="true"
+          />
+        </button>
+        {isHtml5Video ? (
+          <video
+            class="video-player"
+            playsinline
+            controls
+            data-id={modalId}
+            data-autoplay={autoplay ? "true" : "false"}
+            data-poster={poster}
+            data-plyr-config={JSON.stringify(playerConfig)}>
+            <source src={src} type={type} />
+          </video>
+        ) : (
+          <div
+            class="video-player"
+            data-autoplay={autoplay ? "true" : "false"}
+            data-id={modalId}
+            data-plyr-provider={provider}
+            data-plyr-embed-id={src}
+            data-plyr-poster={poster}
+            data-plyr-config={JSON.stringify(playerConfig)}
+          />
+        )}
       </div>
     </div>
-  )
-}
+  </div>
+)}
 
 <script>
   type PlyrConstructor = (typeof import("plyr"))["default"];

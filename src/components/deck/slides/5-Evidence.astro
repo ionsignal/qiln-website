@@ -61,88 +61,78 @@ const commitmentCount = pilotPartners.length;
         <path
           class="evidence-commitment-connector-mobile"
           d="M50 0 V200"
-          vector-effect="non-scaling-stroke">
-        </path>
+          vector-effect="non-scaling-stroke"></path>
         <path
           class="evidence-commitment-connector-desktop"
           d="M0 100 H50"
-          vector-effect="non-scaling-stroke">
-        </path>
+          vector-effect="non-scaling-stroke"></path>
         <path
           class="evidence-commitment-connector-desktop"
           d="M50 50 V150"
-          vector-effect="non-scaling-stroke">
-        </path>
+          vector-effect="non-scaling-stroke"></path>
         <path
           class="evidence-commitment-connector-desktop"
           d="M50 50 H100"
-          vector-effect="non-scaling-stroke">
-        </path>
+          vector-effect="non-scaling-stroke"></path>
         <path
           class="evidence-commitment-connector-desktop"
           d="M50 150 H100"
-          vector-effect="non-scaling-stroke">
-        </path>
+          vector-effect="non-scaling-stroke"></path>
       </svg>
     </div>
     <div class="evidence-partners">
       <ul
         class="evidence-partner-list"
         aria-label="Conditional paid-pilot partners">
-        {
-          pilotPartners.map((partnerName) => (
-            <li>
-              <article class="evidence-partner-card">
-                <DeckIcon icon="UsersRound" class="evidence-partner-icon" />
-                <div class="evidence-partner-copy">
-                  <h3 class="evidence-partner-name">{partnerName}</h3>
-                  <p class="evidence-partner-status">
-                    <span>Conditional</span>
-                    <span>paid pilot</span>
-                  </p>
-                </div>
-              </article>
-            </li>
-          ))
-        }
+        {pilotPartners.map((partnerName) => (
+          <li>
+            <article class="evidence-partner-card">
+              <DeckIcon icon="UsersRound" class="evidence-partner-icon" />
+              <div class="evidence-partner-copy">
+                <h3 class="evidence-partner-name">{partnerName}</h3>
+                <p class="evidence-partner-status">
+                  <span>Conditional</span>
+                  <span>paid pilot</span>
+                </p>
+              </div>
+            </article>
+          </li>
+        ))}
       </ul>
     </div>
   </div>
   <ol class="evidence-timeline" aria-label="Paid-pilot activation path">
-    {
-      activationMilestones.map((milestone, index) => {
-        const nextMilestone = activationMilestones[index + 1];
-        const connectorIsComplete =
-          milestone.status === "complete" &&
-          nextMilestone?.status === "complete";
-        return (
-          <li class:list={["evidence-timeline-item", `is-${milestone.status}`]}>
-            <span class="evidence-timeline-marker">
-              {milestone.status === "complete" && (
-                <LucideIcon icon="Check" class="h-5 w-5" aria-hidden="true" />
-              )}
-            </span>
-            <span class="evidence-timeline-label">{milestone.label}</span>
-            {nextMilestone && (
-              <span
-                class:list={[
-                  "evidence-timeline-connector",
-                  connectorIsComplete ? "is-complete" : "is-pending",
-                ]}
-                aria-hidden="true">
-                <span class="evidence-timeline-connector-line" />
-                <svg
-                  class="evidence-timeline-connector-arrow"
-                  viewBox="0 0 10 10"
-                  focusable="false">
-                  <path d="M1 2 L5 6 L9 2" />
-                </svg>
-              </span>
+    {activationMilestones.map((milestone, index) => {
+      const nextMilestone = activationMilestones[index + 1];
+      const connectorIsComplete =
+        milestone.status === "complete" && nextMilestone?.status === "complete";
+      return (
+        <li class:list={["evidence-timeline-item", `is-${milestone.status}`]}>
+          <span class="evidence-timeline-marker">
+            {milestone.status === "complete" && (
+              <LucideIcon icon="Check" class="h-5 w-5" aria-hidden="true" />
             )}
-          </li>
-        );
-      })
-    }
+          </span>
+          <span class="evidence-timeline-label">{milestone.label}</span>
+          {nextMilestone && (
+            <span
+              class:list={[
+                "evidence-timeline-connector",
+                connectorIsComplete ? "is-complete" : "is-pending",
+              ]}
+              aria-hidden="true">
+              <span class="evidence-timeline-connector-line" />
+              <svg
+                class="evidence-timeline-connector-arrow"
+                viewBox="0 0 10 10"
+                focusable="false">
+                <path d="M1 2 L5 6 L9 2" />
+              </svg>
+            </span>
+          )}
+        </li>
+      );
+    })}
   </ol>
 </div>
 

@@ -40,16 +40,12 @@ const canonicalUrl = canonical
 ---
 
 {title && <title>{removeWhitespace(title)}</title>}
-{
-  description && (
-    <meta name="description" content={removeWhitespace(description)} />
-  )
-}
-{
-  keywordContent && (
-    <meta name="keywords" content={removeWhitespace(keywordContent)} />
-  )
-}
+{description && (
+  <meta name="description" content={removeWhitespace(description)} />
+)}
+{keywordContent && (
+  <meta name="keywords" content={removeWhitespace(keywordContent)} />
+)}
 {author && <meta name="author" content={removeWhitespace(author)} />}
 {robots && <meta name="robots" content={removeWhitespace(robots)} />}
 {canonicalUrl && <link rel="canonical" href={canonicalUrl} item-prop="url" />}

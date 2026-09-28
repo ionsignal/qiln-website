@@ -22,143 +22,141 @@ const isChildActive = (item: NavigationLink) =>
 const isActive = isUrlActive(menu.url) || isChildActive(menu);
 ---
 
-{
-  menu.name && (
-    <>
-      {menu.menus && menu.menus.length > 0 ? (
-        <li class="hs-dropdown nav-item [--adaptive:none] [--strategy:static] lg:[--strategy:absolute]">
-          <button
-            id={dropdownToggleId}
-            type="button"
-            aria-haspopup="menu"
-            aria-expanded="false"
-            aria-controls={dropdownMenuId}
-            class:list={[
-              "hs-dropdown-toggle nav-link lg:hs-dropdown-open:text-white w-full justify-between gap-x-1",
-              { "nav-link-active": isActive },
-            ]}>
-            {menu.name}
-            <LucideIcon
-              icon="ChevronDown"
-              class="hs-dropdown-open:-rotate-180 h-4 w-4 shrink-0 transition-transform duration-200"
-              aria-hidden="true"
-            />
-          </button>
-          <div
-            id={dropdownMenuId}
-            role="menu"
-            aria-labelledby={dropdownToggleId}
-            class="hs-dropdown-menu hs-dropdown-open:opacity-100 top-full z-50 hidden w-full pt-2 opacity-0 before:absolute before:-top-4 before:left-0 before:h-4 before:w-full max-lg:transition-none lg:absolute lg:w-auto lg:pt-1 lg:transition-[opacity,margin] lg:duration-150 lg:before:-top-1 lg:before:h-1">
-            <div class="bg-theme-dark mx-2 p-2 shadow-2xl lg:mx-0 lg:rounded-md lg:border lg:border-white/10 lg:p-1 lg:shadow-none">
-              {menu.hasMegaMenu ? (
-                <div class="flex flex-col gap-2 lg:min-w-80 lg:gap-0">
-                  <div class="bg-primary/5 grid grid-cols-1 gap-2 rounded-2xl p-2 sm:grid-cols-2 lg:gap-0 lg:rounded-none lg:bg-transparent lg:p-0">
-                    {menu.menus.map((child) => (
-                      <a
-                        role="menuitem"
-                        {...resolveLinkAttributes(
-                          child.url,
-                          child.rel,
-                          child.target,
-                        )}
-                        class="group hover:bg-primary/5 lg:focus-visible:outline-primary/70 flex items-start gap-3 rounded-xl p-2 transition-colors lg:gap-2 lg:rounded-none lg:px-3 lg:py-2 lg:hover:bg-transparent lg:focus-visible:outline-1 lg:focus-visible:outline-offset-4 lg:focus-visible:outline-solid">
-                        {child.icon && (
-                          <div class="bg-primary/10 text-primary group-hover:bg-primary/90 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors group-hover:text-white lg:h-5 lg:w-5 lg:rounded-none lg:bg-transparent lg:text-white/50 lg:group-hover:bg-transparent lg:group-hover:text-white">
-                            <LucideIcon
-                              icon={child.icon}
-                              class="h-5 w-5"
-                              aria-hidden="true"
-                            />
-                          </div>
-                        )}
-                        <div>
-                          <div class="text-sm font-medium text-white/80 transition-colors group-hover:text-white lg:font-normal">
-                            {child.name}
-                          </div>
-                          {child.description && (
-                            <div class="mt-0.5 text-xs text-white/60">
-                              {child.description}
-                            </div>
-                          )}
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                  {menu.cta && menu.cta.enable && (
-                    <div class="hidden flex-col justify-between gap-4 lg:flex lg:flex-row lg:items-center lg:border-t lg:border-white/10 lg:px-3 lg:py-3">
-                      <div>
-                        <div class="text-sm font-medium text-white">
-                          {menu.cta.title}
-                        </div>
-                        <div class="mt-1 text-xs text-white/60">
-                          {menu.cta.description}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <ul class="flex min-w-48 flex-col gap-2 lg:min-w-52 lg:gap-0">
+{menu.name && (
+  <>
+    {menu.menus && menu.menus.length > 0 ? (
+      <li class="hs-dropdown nav-item [--adaptive:none] [--strategy:static] lg:[--strategy:absolute]">
+        <button
+          id={dropdownToggleId}
+          type="button"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls={dropdownMenuId}
+          class:list={[
+            "hs-dropdown-toggle nav-link lg:hs-dropdown-open:text-white w-full justify-between gap-x-1",
+            { "nav-link-active": isActive },
+          ]}>
+          {menu.name}
+          <LucideIcon
+            icon="ChevronDown"
+            class="hs-dropdown-open:-rotate-180 h-4 w-4 shrink-0 transition-transform duration-200"
+            aria-hidden="true"
+          />
+        </button>
+        <div
+          id={dropdownMenuId}
+          role="menu"
+          aria-labelledby={dropdownToggleId}
+          class="hs-dropdown-menu hs-dropdown-open:opacity-100 top-full z-50 hidden w-full pt-2 opacity-0 before:absolute before:-top-4 before:left-0 before:h-4 before:w-full max-lg:transition-none lg:absolute lg:w-auto lg:pt-1 lg:transition-[opacity,margin] lg:duration-150 lg:before:-top-1 lg:before:h-1">
+          <div class="bg-theme-dark mx-2 p-2 shadow-2xl lg:mx-0 lg:rounded-md lg:border lg:border-white/10 lg:p-1 lg:shadow-none">
+            {menu.hasMegaMenu ? (
+              <div class="flex flex-col gap-2 lg:min-w-80 lg:gap-0">
+                <div class="bg-primary/5 grid grid-cols-1 gap-2 rounded-2xl p-2 sm:grid-cols-2 lg:gap-0 lg:rounded-none lg:bg-transparent lg:p-0">
                   {menu.menus.map((child) => (
-                    <li>
-                      <a
-                        role="menuitem"
-                        {...resolveLinkAttributes(
-                          child.url,
-                          child.rel,
-                          child.target,
-                        )}
-                        class="group hover:bg-primary/5 lg:focus-visible:outline-primary/70 flex items-center gap-3 rounded-xl p-3 text-sm text-white/80 transition-colors hover:text-white lg:gap-2 lg:rounded-none lg:px-3 lg:py-2 lg:hover:bg-transparent lg:focus-visible:outline-1 lg:focus-visible:outline-offset-4 lg:focus-visible:outline-solid">
-                        {child.icon && (
+                    <a
+                      role="menuitem"
+                      {...resolveLinkAttributes(
+                        child.url,
+                        child.rel,
+                        child.target,
+                      )}
+                      class="group hover:bg-primary/5 lg:focus-visible:outline-primary/70 flex items-start gap-3 rounded-xl p-2 transition-colors lg:gap-2 lg:rounded-none lg:px-3 lg:py-2 lg:hover:bg-transparent lg:focus-visible:outline-1 lg:focus-visible:outline-offset-4 lg:focus-visible:outline-solid">
+                      {child.icon && (
+                        <div class="bg-primary/10 text-primary group-hover:bg-primary/90 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors group-hover:text-white lg:h-5 lg:w-5 lg:rounded-none lg:bg-transparent lg:text-white/50 lg:group-hover:bg-transparent lg:group-hover:text-white">
                           <LucideIcon
                             icon={child.icon}
-                            class="h-4 w-4 shrink-0 lg:text-white/50 lg:transition-colors lg:group-hover:text-white"
+                            class="h-5 w-5"
                             aria-hidden="true"
                           />
+                        </div>
+                      )}
+                      <div>
+                        <div class="text-sm font-medium text-white/80 transition-colors group-hover:text-white lg:font-normal">
+                          {child.name}
+                        </div>
+                        {child.description && (
+                          <div class="mt-0.5 text-xs text-white/60">
+                            {child.description}
+                          </div>
                         )}
-                        {child.name}
-                      </a>
-                    </li>
+                      </div>
+                    </a>
                   ))}
-                </ul>
-              )}
-            </div>
-          </div>
-        </li>
-      ) : (
-        <li class="nav-item" role="menuitem">
-          <a
-            {...resolveLinkAttributes(menu.url, menu.rel, menu.target)}
-            class:list={["nav-link", { "nav-link-active": isActive }]}>
-            {menu.badge && menu.badge.enable ? (
-              menu.badge.type === "dot" ? (
-                <span class="relative inline-block">
-                  {menu.name}
-                  <sup
-                    class:list={[
-                      "badge badge-dot",
-                      menu.badge.color && `badge-${menu.badge.color}`,
-                    ]}
-                  />
-                </span>
-              ) : (
-                <>
-                  {menu.name}
-                  <span
-                    class:list={[
-                      "badge",
-                      menu.badge.color && `badge-${menu.badge.color}`,
-                    ]}>
-                    {menu.badge.label}
-                  </span>
-                </>
-              )
+                </div>
+                {menu.cta && menu.cta.enable && (
+                  <div class="hidden flex-col justify-between gap-4 lg:flex lg:flex-row lg:items-center lg:border-t lg:border-white/10 lg:px-3 lg:py-3">
+                    <div>
+                      <div class="text-sm font-medium text-white">
+                        {menu.cta.title}
+                      </div>
+                      <div class="mt-1 text-xs text-white/60">
+                        {menu.cta.description}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
-              menu.name
+              <ul class="flex min-w-48 flex-col gap-2 lg:min-w-52 lg:gap-0">
+                {menu.menus.map((child) => (
+                  <li>
+                    <a
+                      role="menuitem"
+                      {...resolveLinkAttributes(
+                        child.url,
+                        child.rel,
+                        child.target,
+                      )}
+                      class="group hover:bg-primary/5 lg:focus-visible:outline-primary/70 flex items-center gap-3 rounded-xl p-3 text-sm text-white/80 transition-colors hover:text-white lg:gap-2 lg:rounded-none lg:px-3 lg:py-2 lg:hover:bg-transparent lg:focus-visible:outline-1 lg:focus-visible:outline-offset-4 lg:focus-visible:outline-solid">
+                      {child.icon && (
+                        <LucideIcon
+                          icon={child.icon}
+                          class="h-4 w-4 shrink-0 lg:text-white/50 lg:transition-colors lg:group-hover:text-white"
+                          aria-hidden="true"
+                        />
+                      )}
+                      {child.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             )}
-          </a>
-        </li>
-      )}
-    </>
-  )
-}
+          </div>
+        </div>
+      </li>
+    ) : (
+      <li class="nav-item" role="menuitem">
+        <a
+          {...resolveLinkAttributes(menu.url, menu.rel, menu.target)}
+          class:list={["nav-link", { "nav-link-active": isActive }]}>
+          {menu.badge && menu.badge.enable ? (
+            menu.badge.type === "dot" ? (
+              <span class="relative inline-block">
+                {menu.name}
+                <sup
+                  class:list={[
+                    "badge badge-dot",
+                    menu.badge.color && `badge-${menu.badge.color}`,
+                  ]}
+                />
+              </span>
+            ) : (
+              <>
+                {menu.name}
+                <span
+                  class:list={[
+                    "badge",
+                    menu.badge.color && `badge-${menu.badge.color}`,
+                  ]}>
+                  {menu.badge.label}
+                </span>
+              </>
+            )
+          ) : (
+            menu.name
+          )}
+        </a>
+      </li>
+    )}
+  </>
+)}

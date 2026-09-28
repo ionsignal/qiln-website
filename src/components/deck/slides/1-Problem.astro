@@ -35,28 +35,24 @@ const workflowArtifacts = [
       </h3>
     </div>
     <ul class="problem-change-list mt-4">
-      {
-        requestedChanges.map((change) => (
-          <li class="problem-artifact">
-            <LucideIcon
-              icon={change.icon}
-              class="text-primary h-4 w-4 shrink-0"
-              aria-hidden="true"
-            />
-            <span>{change.label}</span>
-          </li>
-        ))
-      }
+      {requestedChanges.map((change) => (
+        <li class="problem-artifact">
+          <LucideIcon
+            icon={change.icon}
+            class="text-primary h-4 w-4 shrink-0"
+            aria-hidden="true"
+          />
+          <span>{change.label}</span>
+        </li>
+      ))}
     </ul>
   </section>
   <div class="problem-transition">
     <div class="problem-unsafe-path" aria-hidden="true"></div>
     <ul class="problem-question-list" aria-label="Questions before production">
-      {
-        productionQuestions.map((question) => (
-          <li class="problem-question">{question}</li>
-        ))
-      }
+      {productionQuestions.map((question) => (
+        <li class="problem-question">{question}</li>
+      ))}
     </ul>
     <p class="problem-warning" role="note">
       <span>No captured known-good state.</span>
@@ -70,18 +66,16 @@ const workflowArtifacts = [
       </h3>
     </div>
     <ul class="problem-artifact-grid mt-5">
-      {
-        workflowArtifacts.map((artifact) => (
-          <li class="problem-artifact">
-            <LucideIcon
-              icon={artifact.icon}
-              class="text-primary h-4 w-4 shrink-0"
-              aria-hidden="true"
-            />
-            <span>{artifact.label}</span>
-          </li>
-        ))
-      }
+      {workflowArtifacts.map((artifact) => (
+        <li class="problem-artifact">
+          <LucideIcon
+            icon={artifact.icon}
+            class="text-primary h-4 w-4 shrink-0"
+            aria-hidden="true"
+          />
+          <span>{artifact.label}</span>
+        </li>
+      ))}
     </ul>
   </section>
 </div>

@@ -47,14 +47,9 @@ const absoluteImageUrl = imageSrc ? new URL(imageSrc, baseUrl).href : undefined;
 
 {absoluteImageUrl && <meta property="og:image" content={absoluteImageUrl} />}
 {title && <meta property="og:title" content={removeWhitespace(title)} />}
-{
-  config.site.title && (
-    <meta
-      property="og:site_name"
-      content={removeWhitespace(config.site.title)}
-    />
-  )
-}
+{config.site.title && (
+  <meta property="og:site_name" content={removeWhitespace(config.site.title)} />
+)}
 {description && <meta property="og:description" content={description} />}
 {ogType && <meta property="og:type" content={ogType} />}
 {ogLocale && <meta property="og:locale" content={ogLocale} />}

@@ -28,17 +28,14 @@ const { subscription } = config.settings;
 <footer
   data-site-footer
   class="to-primary/20 lg:to-primary/5 bg-linear-to-b from-transparent">
-  <div
-    class="lg:bg-[radial-gradient(55%_55%_at_50%_130%,--theme(--color-primary/15%)_40%,transparent_120%)] xl:bg-[radial-gradient(55%_55%_at_50%_100%,--theme(--color-primary/10%)_0%,transparent_100%)]">
+  <div class="lg:bg-[radial-gradient(55%_55%_at_50%_130%,--theme(--color-primary/15%)_40%,transparent_120%)] xl:bg-[radial-gradient(55%_55%_at_50%_100%,--theme(--color-primary/10%)_0%,transparent_100%)]">
     <div class="container space-y-16 lg:space-y-28">
       <div class="grid pt-16 lg:grid-cols-2 xl:grid-cols-3">
         <div class="flex flex-col gap-y-5 lg:pe-10">
           <Logo />
-          {
-            footerDescription && (
-              <p class="opacity-90" set:html={markdownify(footerDescription)} />
-            )
-          }
+          {footerDescription && (
+            <p class="opacity-90" set:html={markdownify(footerDescription)} />
+          )}
           <SocialComponent
             layout="classic"
             linkType="follow"
@@ -47,74 +44,70 @@ const { subscription } = config.settings;
             list={(config.social?.main || []).filter((social) => social.enable)}
           />
         </div>
-        <div
-          class="col-span-2 mt-10 grid gap-y-10 md:grid-cols-3 xl:mt-0 xl:ml-5">
+        <div class="col-span-2 mt-10 grid gap-y-10 md:grid-cols-3 xl:mt-0 xl:ml-5">
           <div class="md:border-l md:px-8 lg:px-8 xl:px-14">
-            {
-              quickLinksHeading && (
-                <h3 class="text-h5 text-light mb-6">{quickLinksHeading}</h3>
-              )
-            }
+            {quickLinksHeading && (
+              <h3 class="text-h5 text-light mb-6">{quickLinksHeading}</h3>
+            )}
             <ul class="flex flex-col gap-y-1.5">
-              {quickLinks.map((link) => <FooterLink link={link} />)}
+              {quickLinks.map((link) => (
+                <FooterLink link={link} />
+              ))}
             </ul>
           </div>
           <div class="col-span-2 md:border-l md:pl-8 lg:pl-8 xl:pl-14">
             <div class="grid gap-y-10 md:grid-cols-2">
               <div>
-                {
-                  resourcesHeading && (
-                    <h3 class="text-h5 text-light mb-6">{resourcesHeading}</h3>
-                  )
-                }
+                {resourcesHeading && (
+                  <h3 class="text-h5 text-light mb-6">{resourcesHeading}</h3>
+                )}
                 <ul class="flex flex-col gap-2">
-                  {resourceLinks.map((link) => <FooterLink link={link} />)}
+                  {resourceLinks.map((link) => (
+                    <FooterLink link={link} />
+                  ))}
                 </ul>
               </div>
               <div class="md:border-l md:pl-8 lg:pl-8 xl:pl-14">
-                {
-                  legalHeading && (
-                    <h3 class="text-h5 text-light mb-6">{legalHeading}</h3>
-                  )
-                }
+                {legalHeading && (
+                  <h3 class="text-h5 text-light mb-6">{legalHeading}</h3>
+                )}
                 <ul class="flex flex-col gap-2">
-                  {legalLinks.map((link) => <FooterLink link={link} />)}
+                  {legalLinks.map((link) => (
+                    <FooterLink link={link} />
+                  ))}
                 </ul>
               </div>
             </div>
-            {
-              subscription.enable && (
-                <div class="mt-8 border-t pt-5">
-                  {t("subscription.label") && (
-                    <p
-                      class="mb-2.5"
-                      set:html={markdownify(t("subscription.label"))}
-                    />
-                  )}
-                  <FooterSubscription formAction={subscription.formAction} />
-                </div>
-              )
-            }
+            {subscription.enable && (
+              <div class="mt-8 border-t pt-5">
+                {t("subscription.label") && (
+                  <p
+                    class="mb-2.5"
+                    set:html={markdownify(t("subscription.label"))}
+                  />
+                )}
+                <FooterSubscription formAction={subscription.formAction} />
+              </div>
+            )}
           </div>
         </div>
       </div>
       <div class="py-7 text-sm md:text-base">
         <div class="flex flex-wrap justify-between gap-x-8 gap-y-6">
-          <ul
-            class="has-list has-list-dot flex flex-wrap gap-y-2 md:flex-nowrap">
-            {footerLinks.map((link) => <FooterLink link={link} />)}
+          <ul class="has-list has-list-dot flex flex-wrap gap-y-2 md:flex-nowrap">
+            {footerLinks.map((link) => (
+              <FooterLink link={link} />
+            ))}
           </ul>
-          {
-            config.settings.copyright.enable && (
-              <ul class="has-list has-list-slash flex flex-wrap gap-y-4 text-white [&_a]:text-inherit">
-                {copyrightParts.map((value) => (
-                  <li class="[&_a]:text-secondary inline-block opacity-90 [&_a]:underline [&_a]:underline-offset-2 [&_a]:transition-colors [&_a]:duration-300 [&_a:hover]:text-white">
-                    <span set:html={markdownify(value)} />
-                  </li>
-                ))}
-              </ul>
-            )
-          }
+          {config.settings.copyright.enable && (
+            <ul class="has-list has-list-slash flex flex-wrap gap-y-4 text-white [&_a]:text-inherit">
+              {copyrightParts.map((value) => (
+                <li class="[&_a]:text-secondary inline-block opacity-90 [&_a]:underline [&_a]:underline-offset-2 [&_a]:transition-colors [&_a]:duration-300 [&_a:hover]:text-white">
+                  <span set:html={markdownify(value)} />
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>

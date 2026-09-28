@@ -47,14 +47,12 @@ const seoProps = {
               class="text-h2-sm md:text-h2 has-subtitle-text text-light"
               set:html={markdownify(data.title)}
             />
-            {
-              data.description && (
-                <p
-                  class="docs-page-lead"
-                  set:html={markdownify(data.description)}
-                />
-              )
-            }
+            {data.description && (
+              <p
+                class="docs-page-lead"
+                set:html={markdownify(data.description)}
+              />
+            )}
           </header>
           <div id="docs-content" class="prose-styles docs-page-body">
             <slot />
@@ -66,8 +64,7 @@ const seoProps = {
       </div>
       <DocsFooter />
     </div>
-    <aside
-      class="has-customized-scrollbar fixed inset-e-0 top-(--docs-header-h) z-40 hidden h-[calc(100vh-var(--docs-header-h))] w-(--docs-toc-w) overflow-y-auto border-l py-8 pr-4 pl-6 xl:block">
+    <aside class="has-customized-scrollbar fixed inset-e-0 top-(--docs-header-h) z-40 hidden h-[calc(100vh-var(--docs-header-h))] w-(--docs-toc-w) overflow-y-auto border-l py-8 pr-4 pl-6 xl:block">
       <Toc headings={headings} entry={entry} />
     </aside>
   </div>

@@ -29,48 +29,40 @@ const promotionAndRollback = await fetchEntry(
 
 <SiteLayout {...homepage.data}>
   <Hero />
-  {
-    knownGoodSnapshots && (
-      <FeatureSplit
-        id="known-good-snapshots"
-        content={knownGoodSnapshots.data}
-        diagram={KnownGoodDiagram}
-        imagePosition="right"
-      />
-    )
-  }
-  {
-    forkedBranches && (
-      <FeatureSplit
-        id="forked-branches"
-        content={forkedBranches.data}
-        diagram={TitleDiagram}
-        imagePosition="left"
-        hasBackground={true}
-      />
-    )
-  }
-  {
-    capsuleDiffsAndGoldenTests && (
-      <FeatureSplit
-        id="golden-tests-and-diffs"
-        content={capsuleDiffsAndGoldenTests.data}
-        diagram={DiffsTestsDiagram}
-        imagePosition="right"
-      />
-    )
-  }
-  {
-    promotionAndRollback && (
-      <FeatureSplit
-        id="promotion-and-rollback"
-        content={promotionAndRollback.data}
-        diagram={RollbackDiagram}
-        imagePosition="left"
-        hasBackground={true}
-      />
-    )
-  }
+  {knownGoodSnapshots && (
+    <FeatureSplit
+      id="known-good-snapshots"
+      content={knownGoodSnapshots.data}
+      diagram={KnownGoodDiagram}
+      imagePosition="right"
+    />
+  )}
+  {forkedBranches && (
+    <FeatureSplit
+      id="forked-branches"
+      content={forkedBranches.data}
+      diagram={TitleDiagram}
+      imagePosition="left"
+      hasBackground={true}
+    />
+  )}
+  {capsuleDiffsAndGoldenTests && (
+    <FeatureSplit
+      id="golden-tests-and-diffs"
+      content={capsuleDiffsAndGoldenTests.data}
+      diagram={DiffsTestsDiagram}
+      imagePosition="right"
+    />
+  )}
+  {promotionAndRollback && (
+    <FeatureSplit
+      id="promotion-and-rollback"
+      content={promotionAndRollback.data}
+      diagram={RollbackDiagram}
+      imagePosition="left"
+      hasBackground={true}
+    />
+  )}
   <!-- {blueprint && <BlueprintSection content={blueprint.data} />} -->
   <!-- {comparison && <ComparisonSection content={comparison.data} />} -->
   <FaqSection />

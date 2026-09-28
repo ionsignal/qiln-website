@@ -78,42 +78,40 @@ const selectedSlides = slideKeys.map((slideKey) => ({
   class="relative isolate flex min-h-svh w-full items-center py-6 md:py-10"
   aria-labelledby="deck-title">
   <Background />
-  <h1 id="deck-title" class="sr-only">{deckTitle}</h1>
+  <h1 id="deck-title" class="sr-only">
+    {deckTitle}
+  </h1>
   <div class="relative z-10 container w-full">
     <div class="relative xl:mx-12">
       <Frame class="w-full">
         <Slider id={deckId} class="pitch-deck-slider block w-full">
-          {
-            selectedSlides.map(({ content: slideContent, definition }) => {
-              if (definition.type === "title") {
-                return (
-                  <div data-scene-deck-scene class="min-w-0">
-                    <TitleSlide
-                      content={slideContent}
-                      siteTitle={config.site.title}
-                    />
-                  </div>
-                );
-              }
-              if (definition.type === "qr") {
-                return (
-                  <div data-scene-deck-scene class="min-w-0">
-                    <QrSlide content={content.slides.qr} />
-                  </div>
-                );
-              }
-              const Diagram = definition.diagram;
+          {selectedSlides.map(({ content: slideContent, definition }) => {
+            if (definition.type === "title") {
               return (
                 <div data-scene-deck-scene class="min-w-0">
-                  <Theme
+                  <TitleSlide
                     content={slideContent}
-                    headingId={definition.headingId}>
-                    <Diagram slot="diagram" />
-                  </Theme>
+                    siteTitle={config.site.title}
+                  />
                 </div>
               );
-            })
-          }
+            }
+            if (definition.type === "qr") {
+              return (
+                <div data-scene-deck-scene class="min-w-0">
+                  <QrSlide content={content.slides.qr} />
+                </div>
+              );
+            }
+            const Diagram = definition.diagram;
+            return (
+              <div data-scene-deck-scene class="min-w-0">
+                <Theme content={slideContent} headingId={definition.headingId}>
+                  <Diagram slot="diagram" />
+                </Theme>
+              </div>
+            );
+          })}
         </Slider>
       </Frame>
       <Controls deckId={deckId} />

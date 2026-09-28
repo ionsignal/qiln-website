@@ -78,14 +78,12 @@ const testEvidence = [
         </div>
       </header>
       <ul class="change-list">
-        {
-          capsuleChanges.map((change) => (
-            <li data-change-kind={change.kind}>
-              <span class="change-symbol">{change.symbol}</span>
-              <code>{change.label}</code>
-            </li>
-          ))
-        }
+        {capsuleChanges.map((change) => (
+          <li data-change-kind={change.kind}>
+            <span class="change-symbol">{change.symbol}</span>
+            <code>{change.label}</code>
+          </li>
+        ))}
       </ul>
       <div class="status-pill status-pill--reviewed">
         <LucideIcon
@@ -114,16 +112,14 @@ const testEvidence = [
         </div>
       </header>
       <ul class="test-evidence-list">
-        {
-          testEvidence.map((evidence) => (
-            <li>
-              <span>
-                <LucideIcon icon="Check" class="h-3 w-3" stroke-width="2" />
-              </span>
-              {evidence}
-            </li>
-          ))
-        }
+        {testEvidence.map((evidence) => (
+          <li>
+            <span>
+              <LucideIcon icon="Check" class="h-3 w-3" stroke-width="2" />
+            </span>
+            {evidence}
+          </li>
+        ))}
       </ul>
       <div class="status-pill status-pill--pass">
         <LucideIcon

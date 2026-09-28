@@ -50,23 +50,21 @@ const capsuleProperties = [
   aria-label={`${label}. ${description}`}>
   <div class="known-good-stage" aria-hidden="true">
     <ul class="artifact-list">
-      {
-        capturedArtifacts.map((artifact) => (
-          <li class="artifact-card">
-            <span class="artifact-icon">
-              <LucideIcon
-                icon={artifact.icon}
-                class="h-4 w-4"
-                stroke-width="1.5"
-              />
-            </span>
-            <span class="artifact-copy">
-              <strong>{artifact.label}</strong>
-              <span>{artifact.detail}</span>
-            </span>
-          </li>
-        ))
-      }
+      {capturedArtifacts.map((artifact) => (
+        <li class="artifact-card">
+          <span class="artifact-icon">
+            <LucideIcon
+              icon={artifact.icon}
+              class="h-4 w-4"
+              stroke-width="1.5"
+            />
+          </span>
+          <span class="artifact-copy">
+            <strong>{artifact.label}</strong>
+            <span>{artifact.detail}</span>
+          </span>
+        </li>
+      ))}
     </ul>
     <div class="artifact-connector">
       <svg
@@ -76,16 +74,36 @@ const capsuleProperties = [
         aria-hidden="true"
         focusable="false">
         <g class="artifact-connector-desktop">
-          <line class="artifact-connector-line" x1="0" y1="10" x2="130" y2="16">
-          </line>
-          <line class="artifact-connector-line" x1="0" y1="30" x2="130" y2="34">
-          </line>
-          <line class="artifact-connector-line" x1="0" y1="50" x2="130" y2="50">
-          </line>
-          <line class="artifact-connector-line" x1="0" y1="70" x2="130" y2="66">
-          </line>
-          <line class="artifact-connector-line" x1="0" y1="90" x2="130" y2="84">
-          </line>
+          <line
+            class="artifact-connector-line"
+            x1="0"
+            y1="10"
+            x2="130"
+            y2="16"></line>
+          <line
+            class="artifact-connector-line"
+            x1="0"
+            y1="30"
+            x2="130"
+            y2="34"></line>
+          <line
+            class="artifact-connector-line"
+            x1="0"
+            y1="50"
+            x2="130"
+            y2="50"></line>
+          <line
+            class="artifact-connector-line"
+            x1="0"
+            y1="70"
+            x2="130"
+            y2="66"></line>
+          <line
+            class="artifact-connector-line"
+            x1="0"
+            y1="90"
+            x2="130"
+            y2="84"></line>
         </g>
       </svg>
     </div>
@@ -106,14 +124,12 @@ const capsuleProperties = [
             </span>
           </div>
           <ul class="capsule-property-list">
-            {
-              capsuleProperties.map((property) => (
-                <li>
-                  <span />
-                  {property}
-                </li>
-              ))
-            }
+            {capsuleProperties.map((property) => (
+              <li>
+                <span />
+                {property}
+              </li>
+            ))}
           </ul>
         </div>
         <footer class="capsule-footer">

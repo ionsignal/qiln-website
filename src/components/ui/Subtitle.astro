@@ -11,22 +11,20 @@ type Props = Omit<HTMLAttributes<"div">, "class"> & {
 const { content, class: className, ...attributes } = Astro.props;
 ---
 
-{
-  content && (
-    <div
-      class:list={[
-        "from-primary/20 to-primary/5 mx-auto mb-2.5 flex w-fit items-center gap-2 rounded-full bg-linear-to-r from-80% py-1 ps-5 pe-5 text-white capitalize",
-        className,
-      ]}
-      {...attributes}>
-      <span set:html={markdownify(content)} />
-      <LucideIcon
-        icon="Sparkles"
-        width="20"
-        height="20"
-        stroke-width={1}
-        aria-hidden="true"
-      />
-    </div>
-  )
-}
+{content && (
+  <div
+    class:list={[
+      "from-primary/20 to-primary/5 mx-auto mb-2.5 flex w-fit items-center gap-2 rounded-full bg-linear-to-r from-80% py-1 ps-5 pe-5 text-white capitalize",
+      className,
+    ]}
+    {...attributes}>
+    <span set:html={markdownify(content)} />
+    <LucideIcon
+      icon="Sparkles"
+      width="20"
+      height="20"
+      stroke-width={1}
+      aria-hidden="true"
+    />
+  </div>
+)}

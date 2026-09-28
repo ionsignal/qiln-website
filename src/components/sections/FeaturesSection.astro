@@ -34,39 +34,37 @@ const { enable = true, title, subtitle } = actualContent;
 const list = isFeatureList(actualContent.list) ? actualContent.list : [];
 ---
 
-{
-  enable && (
-    <section class="scroll-mt-24 overflow-hidden lg:scroll-mt-32" id="features">
-      <div class="section-gradient relative py-16 after:top-0 lg:py-24">
-        <div class="container space-y-16 md:space-y-28">
-          {title && (
-            <div class="mx-auto max-w-2xl text-center" data-aos="fade-up-sm">
-              <Subtitle content={subtitle} />
-              <h2
-                class="has-subtitle-text capitalize"
-                set:html={markdownify(title)}
-              />
-            </div>
-          )}
-          {list && (
-            <div
-              class="grid gap-x-12 gap-y-10 lg:grid-cols-3"
-              data-aos="fade-up-sm"
-              data-aos-delay="200">
-              {list.map((item) => (
-                <div class="border-primary/40 before:bg-primary relative space-y-5 before:absolute before:-left-px before:content-[''] last:border-b-0 last:pb-0 max-sm:border-b max-sm:pb-10 before:max-sm:bottom-0 before:max-sm:h-px before:max-sm:w-1/4 last:before:max-sm:hidden sm:border-l sm:pl-10 before:sm:top-1/2 before:sm:h-1/4 before:sm:w-px before:sm:-translate-y-1/2">
-                  {item.title && (
-                    <h3 class="h4" set:html={markdownify(item.title)} />
-                  )}
-                  {item.description && (
-                    <p set:html={markdownify(item.description)} />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+{enable && (
+  <section class="scroll-mt-24 overflow-hidden lg:scroll-mt-32" id="features">
+    <div class="section-gradient relative py-16 after:top-0 lg:py-24">
+      <div class="container space-y-16 md:space-y-28">
+        {title && (
+          <div class="mx-auto max-w-2xl text-center" data-aos="fade-up-sm">
+            <Subtitle content={subtitle} />
+            <h2
+              class="has-subtitle-text capitalize"
+              set:html={markdownify(title)}
+            />
+          </div>
+        )}
+        {list && (
+          <div
+            class="grid gap-x-12 gap-y-10 lg:grid-cols-3"
+            data-aos="fade-up-sm"
+            data-aos-delay="200">
+            {list.map((item) => (
+              <div class="border-primary/40 before:bg-primary relative space-y-5 before:absolute before:-left-px before:content-[''] last:border-b-0 last:pb-0 max-sm:border-b max-sm:pb-10 before:max-sm:bottom-0 before:max-sm:h-px before:max-sm:w-1/4 last:before:max-sm:hidden sm:border-l sm:pl-10 before:sm:top-1/2 before:sm:h-1/4 before:sm:w-px before:sm:-translate-y-1/2">
+                {item.title && (
+                  <h3 class="h4" set:html={markdownify(item.title)} />
+                )}
+                {item.description && (
+                  <p set:html={markdownify(item.description)} />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </section>
-  )
-}
+    </div>
+  </section>
+)}

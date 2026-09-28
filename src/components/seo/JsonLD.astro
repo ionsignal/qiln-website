@@ -61,12 +61,10 @@ if (content) {
 }
 ---
 
-{
-  jsonLdData ? (
-    <script
-      type="application/ld+json"
-      is:inline
-      set:html={JSON.stringify(jsonLdData, null, 2)}
-    />
-  ) : null
-}
+{jsonLdData ? (
+  <script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify(jsonLdData, null, 2)}
+  />
+) : null}

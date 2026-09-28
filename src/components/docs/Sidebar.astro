@@ -29,18 +29,15 @@ const { tree, activeTrail } = Astro.props;
     </button>
   </div>
   <!-- Added: Scrollable container for the tree -->
-  <div
-    class="has-customized-scrollbar h-full overflow-y-auto p-4 pb-20 lg:py-8">
+  <div class="has-customized-scrollbar h-full overflow-y-auto p-4 pb-20 lg:py-8">
     <ul class="docs-sidebar-section">
-      {
-        tree.map((node) =>
-          node.type === "category" ? (
-            <SidebarCategory node={node} activeTrail={activeTrail} />
-          ) : (
-            <SidebarLink node={node} activeTrail={activeTrail} />
-          ),
-        )
-      }
+      {tree.map((node) =>
+        node.type === "category" ? (
+          <SidebarCategory node={node} activeTrail={activeTrail} />
+        ) : (
+          <SidebarLink node={node} activeTrail={activeTrail} />
+        ),
+      )}
     </ul>
   </div>
 </nav>

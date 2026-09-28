@@ -16,46 +16,44 @@ const contentId = `docs-cat-${node.id.replace(/\//g, "-")}`;
 const toggleId = `${contentId}-toggle`;
 ---
 
-{
-  hasChildren && (
-    <li class="docs-sidebar-category">
-      <button
-        id={toggleId}
-        type="button"
-        class:list={[
-          "docs-sidebar-category-toggle hs-collapse-toggle",
-          { open: isOpen },
-        ]}
-        data-hs-collapse={`#${contentId}`}
-        aria-controls={contentId}
-        aria-expanded={isOpen ? "true" : "false"}>
-        <span class="docs-sidebar-category-label">
-          {node.icon && (
-            <LucideIcon
-              icon={node.icon}
-              class="docs-sidebar-category-icon"
-              aria-hidden="true"
-            />
-          )}
-          <span>{node.label}</span>
-        </span>
-        <LucideIcon
-          icon="ChevronDown"
-          class="docs-sidebar-category-chevron"
-          aria-hidden="true"
-        />
-      </button>
-      <ul
-        id={contentId}
-        aria-labelledby={toggleId}
-        class:list={[
-          "docs-sidebar-category-content hs-collapse overflow-hidden transition-[height] duration-300",
-          isOpen ? "open" : "hidden",
-        ]}>
-        {node.children.map((child) => (
-          <SidebarLink node={child} activeTrail={activeTrail} />
-        ))}
-      </ul>
-    </li>
-  )
-}
+{hasChildren && (
+  <li class="docs-sidebar-category">
+    <button
+      id={toggleId}
+      type="button"
+      class:list={[
+        "docs-sidebar-category-toggle hs-collapse-toggle",
+        { open: isOpen },
+      ]}
+      data-hs-collapse={`#${contentId}`}
+      aria-controls={contentId}
+      aria-expanded={isOpen ? "true" : "false"}>
+      <span class="docs-sidebar-category-label">
+        {node.icon && (
+          <LucideIcon
+            icon={node.icon}
+            class="docs-sidebar-category-icon"
+            aria-hidden="true"
+          />
+        )}
+        <span>{node.label}</span>
+      </span>
+      <LucideIcon
+        icon="ChevronDown"
+        class="docs-sidebar-category-chevron"
+        aria-hidden="true"
+      />
+    </button>
+    <ul
+      id={contentId}
+      aria-labelledby={toggleId}
+      class:list={[
+        "docs-sidebar-category-content hs-collapse overflow-hidden transition-[height] duration-300",
+        isOpen ? "open" : "hidden",
+      ]}>
+      {node.children.map((child) => (
+        <SidebarLink node={child} activeTrail={activeTrail} />
+      ))}
+    </ul>
+  </li>
+)}

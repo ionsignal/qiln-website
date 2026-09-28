@@ -12,48 +12,46 @@ const { prev, next } = pagination;
 const hasPagination = Boolean(prev || next);
 ---
 
-{
-  hasPagination && (
-    <nav class="docs-pagination" aria-label="Documentation pagination">
-      <div class="docs-pagination-grid">
-        {prev ? (
-          <a
-            href={getDocPath(prev.slug)}
-            class="docs-pagination-link docs-pagination-prev"
-            rel="prev">
-            <LucideIcon
-              icon="ArrowLeft"
-              class="docs-pagination-icon"
-              aria-hidden="true"
-            />
-            <span class="docs-pagination-label">
-              <span class="docs-pagination-direction">Previous</span>
-              <span class="docs-pagination-title">{prev.label}</span>
-            </span>
-          </a>
-        ) : (
-          <span aria-hidden="true" />
-        )}
+{hasPagination && (
+  <nav class="docs-pagination" aria-label="Documentation pagination">
+    <div class="docs-pagination-grid">
+      {prev ? (
+        <a
+          href={getDocPath(prev.slug)}
+          class="docs-pagination-link docs-pagination-prev"
+          rel="prev">
+          <LucideIcon
+            icon="ArrowLeft"
+            class="docs-pagination-icon"
+            aria-hidden="true"
+          />
+          <span class="docs-pagination-label">
+            <span class="docs-pagination-direction">Previous</span>
+            <span class="docs-pagination-title">{prev.label}</span>
+          </span>
+        </a>
+      ) : (
+        <span aria-hidden="true" />
+      )}
 
-        {next ? (
-          <a
-            href={getDocPath(next.slug)}
-            class="docs-pagination-link docs-pagination-next"
-            rel="next">
-            <span class="docs-pagination-label">
-              <span class="docs-pagination-direction">Next</span>
-              <span class="docs-pagination-title">{next.label}</span>
-            </span>
-            <LucideIcon
-              icon="ArrowRight"
-              class="docs-pagination-icon"
-              aria-hidden="true"
-            />
-          </a>
-        ) : (
-          <span aria-hidden="true" />
-        )}
-      </div>
-    </nav>
-  )
-}
+      {next ? (
+        <a
+          href={getDocPath(next.slug)}
+          class="docs-pagination-link docs-pagination-next"
+          rel="next">
+          <span class="docs-pagination-label">
+            <span class="docs-pagination-direction">Next</span>
+            <span class="docs-pagination-title">{next.label}</span>
+          </span>
+          <LucideIcon
+            icon="ArrowRight"
+            class="docs-pagination-icon"
+            aria-hidden="true"
+          />
+        </a>
+      ) : (
+        <span aria-hidden="true" />
+      )}
+    </div>
+  </nav>
+)}

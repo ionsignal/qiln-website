@@ -281,25 +281,21 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
       viewBox="0 0 1000 420"
       preserveAspectRatio="none"
       focusable="false">
-      {
-        artifactSatellites.map((artifact) => (
-          <path
-            class="artifact-connection"
-            d={artifact.desktop.connectorPath}
-            vector-effect="non-scaling-stroke"
-          />
-        ))
-      }
+      {artifactSatellites.map((artifact) => (
+        <path
+          class="artifact-connection"
+          d={artifact.desktop.connectorPath}
+          vector-effect="non-scaling-stroke"
+        />
+      ))}
       <path
         class="fork-connection"
         d="M650 225 H892 V140"
-        vector-effect="non-scaling-stroke">
-      </path>
+        vector-effect="non-scaling-stroke"></path>
       <path
         class="route-connection"
         d="M650 314 H740"
-        vector-effect="non-scaling-stroke">
-      </path>
+        vector-effect="non-scaling-stroke"></path>
     </svg>
     <section class="artifact-constellation">
       <svg
@@ -307,44 +303,38 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
         focusable="false">
-        {
-          artifactSatellites.map((artifact) => (
-            <path
-              class="artifact-mobile-connection"
-              d={getMobileConnectorPath(artifact)}
-              vector-effect="non-scaling-stroke"
-            />
-          ))
-        }
+        {artifactSatellites.map((artifact) => (
+          <path
+            class="artifact-mobile-connection"
+            d={getMobileConnectorPath(artifact)}
+            vector-effect="non-scaling-stroke"
+          />
+        ))}
         <path
           class="artifact-capsule-connection"
           d={`M${mobileConvergence.x} ${mobileConvergence.y} V104`}
-          vector-effect="non-scaling-stroke">
-        </path>
+          vector-effect="non-scaling-stroke"></path>
         <circle
           class="artifact-convergence-node"
           cx={mobileConvergence.x}
           cy={mobileConvergence.y}
           r="0.75"
-          vector-effect="non-scaling-stroke">
-        </circle>
+          vector-effect="non-scaling-stroke"></circle>
       </svg>
       <ul class="artifact-satellite-list">
-        {
-          artifactSatellites.map((artifact) => (
-            <li
-              class="artifact-satellite"
-              data-artifact={artifact.id}
-              style={getArtifactLayoutStyle(artifact)}>
-              <LucideIcon
-                icon={artifact.icon}
-                class="h-3.5 w-3.5"
-                aria-hidden="true"
-              />
-              <span>{artifact.label}</span>
-            </li>
-          ))
-        }
+        {artifactSatellites.map((artifact) => (
+          <li
+            class="artifact-satellite"
+            data-artifact={artifact.id}
+            style={getArtifactLayoutStyle(artifact)}>
+            <LucideIcon
+              icon={artifact.icon}
+              class="h-3.5 w-3.5"
+              aria-hidden="true"
+            />
+            <span>{artifact.label}</span>
+          </li>
+        ))}
       </ul>
     </section>
     <div class="capsule-zone">
@@ -383,18 +373,15 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
       <path
         class="capsule-outcome-trunk"
         d="M250 -2 V24"
-        vector-effect="non-scaling-stroke">
-      </path>
+        vector-effect="non-scaling-stroke"></path>
       <path
         class="capsule-fork-connection"
         d="M250 24 H200 V76"
-        vector-effect="non-scaling-stroke">
-      </path>
+        vector-effect="non-scaling-stroke"></path>
       <path
         class="capsule-route-connection"
         d="M250 24 H375 V76"
-        vector-effect="non-scaling-stroke">
-      </path>
+        vector-effect="non-scaling-stroke"></path>
     </svg>
     <div class="outcome-zone">
       <div class="fork-system">
@@ -417,20 +404,25 @@ function getMobileConnectorPath(artifact: ArtifactSatellite): string {
           viewBox="0 0 96 104"
           preserveAspectRatio="none"
           focusable="false">
-          <path d="M4 24 H80 V52 H120" vector-effect="non-scaling-stroke">
-          </path>
+          <path
+            d="M4 24 H80 V52 H120"
+            vector-effect="non-scaling-stroke"></path>
           <path d="M4 80 H80 V52" vector-effect="non-scaling-stroke"></path>
           <g
             class="editor-fork-label editor-fork-label--human"
             transform="translate(40, 24)">
             <rect x="-21" y="-10" width="42" height="20" rx="10"></rect>
-            <text text-anchor="middle" dominant-baseline="middle">edit</text>
+            <text text-anchor="middle" dominant-baseline="middle">
+              edit
+            </text>
           </g>
           <g
             class="editor-fork-label editor-fork-label--agent"
             transform="translate(40, 80)">
             <rect x="-21" y="-10" width="42" height="20" rx="10"></rect>
-            <text text-anchor="middle" dominant-baseline="middle">edit</text>
+            <text text-anchor="middle" dominant-baseline="middle">
+              edit
+            </text>
           </g>
         </svg>
         <div class="fork-capsule">

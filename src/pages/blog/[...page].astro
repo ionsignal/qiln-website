@@ -30,30 +30,26 @@ const blogIndexMeta = await fetchEntry("homepage", "-blog");
   <section class="py-16 md:py-24 lg:py-32">
     <div class="container">
       <div class="mx-auto mb-16 max-w-2xl text-center">
-        {
-          blogIndexMeta?.data?.subtitle && (
-            <Subtitle content={blogIndexMeta.data.subtitle} />
-          )
-        }
-        {
-          blogIndexMeta?.data?.title && (
-            <h1
-              class="h2 md:text-h1 has-subtitle-text capitalize"
-              set:html={markdownify(blogIndexMeta.data.title)}
-            />
-          )
-        }
-        {
-          blogIndexMeta?.data?.description && (
-            <p
-              class="text-text-default mt-4 text-lg opacity-80"
-              set:html={markdownify(blogIndexMeta.data.description)}
-            />
-          )
-        }
+        {blogIndexMeta?.data?.subtitle && (
+          <Subtitle content={blogIndexMeta.data.subtitle} />
+        )}
+        {blogIndexMeta?.data?.title && (
+          <h1
+            class="h2 md:text-h1 has-subtitle-text capitalize"
+            set:html={markdownify(blogIndexMeta.data.title)}
+          />
+        )}
+        {blogIndexMeta?.data?.description && (
+          <p
+            class="text-text-default mt-4 text-lg opacity-80"
+            set:html={markdownify(blogIndexMeta.data.description)}
+          />
+        )}
       </div>
       <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {page.data.map((post) => <BlogCard post={post} />)}
+        {page.data.map((post) => (
+          <BlogCard post={post} />
+        ))}
       </div>
       <BlogPagination page={page} />
     </div>

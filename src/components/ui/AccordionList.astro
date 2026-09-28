@@ -25,49 +25,47 @@ const {
 
 <div class={className} {...attributes}>
   <div class="hs-accordion-group space-y-5">
-    {
-      items.map((item, index) => {
-        const uniqueId = groupId ? `${groupId}-${index + 1}` : `${index + 1}`;
-        const accordionId = `faq-${uniqueId}`;
-        const toggleId = `faq-toggle-${uniqueId}`;
-        const contentId = `faq-content-${uniqueId}`;
-        return (
+    {items.map((item, index) => {
+      const uniqueId = groupId ? `${groupId}-${index + 1}` : `${index + 1}`;
+      const accordionId = `faq-${uniqueId}`;
+      const toggleId = `faq-toggle-${uniqueId}`;
+      const contentId = `faq-content-${uniqueId}`;
+      return (
+        <div
+          class:list={[
+            "bg-primary/25 rounded-lg px-5",
+            "hs-accordion hs-accordion-active:opacity-100 opacity-70",
+            item.active && "active",
+          ]}
+          id={accordionId}>
+          <button
+            id={toggleId}
+            type="button"
+            aria-expanded={item.active ? "true" : "false"}
+            class="hs-accordion-toggle hs-accordion-active:border-b flex w-full items-center justify-between py-5 text-start text-lg text-white"
+            aria-controls={contentId}>
+            <span set:html={item.title} />
+            <span
+              class="hs-accordion-active:rotate-180 transition duration-300"
+              aria-hidden="true">
+              <LucideIcon icon="ArrowUpRight" class="text-xl text-white" />
+            </span>
+          </button>
           <div
+            role="region"
+            id={contentId}
+            aria-labelledby={toggleId}
             class:list={[
-              "bg-primary/25 rounded-lg px-5",
-              "hs-accordion hs-accordion-active:opacity-100 opacity-70",
-              item.active && "active",
-            ]}
-            id={accordionId}>
-            <button
-              id={toggleId}
-              type="button"
-              aria-expanded={item.active ? "true" : "false"}
-              class="hs-accordion-toggle hs-accordion-active:border-b flex w-full items-center justify-between py-5 text-start text-lg text-white"
-              aria-controls={contentId}>
-              <span set:html={item.title} />
-              <span
-                class="hs-accordion-active:rotate-180 transition duration-300"
-                aria-hidden="true">
-                <LucideIcon icon="ArrowUpRight" class="text-xl text-white" />
-              </span>
-            </button>
+              "hs-accordion-content overflow-hidden transition-[height] duration-300",
+              !item.active && "hidden",
+            ]}>
             <div
-              role="region"
-              id={contentId}
-              aria-labelledby={toggleId}
-              class:list={[
-                "hs-accordion-content overflow-hidden transition-[height] duration-300",
-                !item.active && "hidden",
-              ]}>
-              <div
-                class="prose-styles py-5"
-                set:html={markdownify(item.content, true)}
-              />
-            </div>
+              class="prose-styles py-5"
+              set:html={markdownify(item.content, true)}
+            />
           </div>
-        );
-      })
-    }
+        </div>
+      );
+    })}
   </div>
 </div>

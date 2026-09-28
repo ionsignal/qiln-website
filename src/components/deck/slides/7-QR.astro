@@ -16,15 +16,13 @@ const { content } = Astro.props;
   aria-labelledby="qr-slide-heading">
   <div class="qr-layout mx-auto max-w-5xl">
     <header class="qr-copy">
-      <p
-        class="text-primary text-sm font-medium tracking-[0.16em] uppercase md:text-base">
+      <p class="text-primary text-sm font-medium tracking-[0.16em] uppercase md:text-base">
         {content.eyebrow}
       </p>
       <h2 id="qr-slide-heading" class="mt-3 text-3xl/tight md:text-5xl/tight">
         {content.title}
       </h2>
-      <p
-        class="text-text-default mt-4 max-w-xl text-base leading-relaxed md:text-lg">
+      <p class="text-text-default mt-4 max-w-xl text-base leading-relaxed md:text-lg">
         {content.subtitle}
       </p>
       <section
@@ -34,15 +32,13 @@ const { content } = Astro.props;
           Connect with Qiln
         </h3>
         <ul class="qr-social-links-list">
-          {
-            content.socialLinks.map((socialUrl) => (
-              <li>
-                <a href={socialUrl} target="_blank" rel="noopener noreferrer">
-                  {socialUrl}
-                </a>
-              </li>
-            ))
-          }
+          {content.socialLinks.map((socialUrl) => (
+            <li>
+              <a href={socialUrl} target="_blank" rel="noopener noreferrer">
+                {socialUrl}
+              </a>
+            </li>
+          ))}
         </ul>
       </section>
     </header>

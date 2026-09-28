@@ -46,122 +46,120 @@ const diagramDescription =
 const hasVisual = Boolean(Diagram || image);
 ---
 
-{
-  enable && (
-    <section
-      id={id}
-      class:list={[
-        "feature-split relative w-full overflow-hidden",
-        "scroll-mt-24 lg:scroll-mt-32",
-        { "bg-accent/50": hasBackground },
-        className,
-      ]}
-      data-direction={imagePosition}>
-      <div class="container py-16 lg:py-24">
+{enable && (
+  <section
+    id={id}
+    class:list={[
+      "feature-split relative w-full overflow-hidden",
+      "scroll-mt-24 lg:scroll-mt-32",
+      { "bg-accent/50": hasBackground },
+      className,
+    ]}
+    data-direction={imagePosition}>
+    <div class="container py-16 lg:py-24">
+      <div
+        class:list={[
+          "grid grid-cols-1 gap-12 lg:items-center",
+          imagePosition === "left"
+            ? "lg:grid-cols-[minmax(0,14fr)_minmax(0,11fr)]"
+            : "lg:grid-cols-[minmax(0,11fr)_minmax(0,14fr)]",
+        ]}>
         <div
           class:list={[
-            "grid grid-cols-1 gap-12 lg:items-center",
-            imagePosition === "left"
-              ? "lg:grid-cols-[minmax(0,14fr)_minmax(0,11fr)]"
-              : "lg:grid-cols-[minmax(0,11fr)_minmax(0,14fr)]",
+            "motion-text opacity-0 will-change-transform",
+            imagePosition === "left" ? "lg:order-2" : "lg:order-1",
           ]}>
-          <div
-            class:list={[
-              "motion-text opacity-0 will-change-transform",
-              imagePosition === "left" ? "lg:order-2" : "lg:order-1",
-            ]}>
-            <div class="mx-auto flex max-w-xl flex-col gap-6 lg:gap-3 xl:gap-7">
-              {subtitle && <Subtitle content={subtitle} />}
-              {title && (
-                <h2
-                  class:list={[
-                    "has-subtitle-text capitalize",
-                    "lg:text-h4 xl:text-h2",
-                    imagePosition === "left" && "lg:text-right",
-                  ]}
-                  set:html={markdownify(title)}
-                />
-              )}
-              {description && (
-                <p
-                  class:list={[
-                    "text-text-default mx-auto max-w-4xl text-base leading-relaxed md:text-lg",
-                    imagePosition === "left" && "lg:text-right",
-                  ]}
-                  set:html={markdownify(description)}
-                />
-              )}
-              {features && features.length > 0 && (
-                <ul
-                  class:list={[
-                    "mt-2 gap-3",
-                    columns === 2 ? "grid grid-cols-2" : "flex flex-col",
-                    imagePosition === "left" && "lg:text-right",
-                  ]}>
-                  {features.map((feature) => (
-                    <li
-                      class:list={[
-                        "flex min-w-0 items-start gap-3",
-                        imagePosition === "left" && "lg:flex-row-reverse",
-                      ]}>
-                      <LucideIcon
-                        icon="CheckCircle2"
-                        class="text-primary mt-0.5 h-5 w-5 shrink-0"
-                      />
-                      <span
-                        class="min-w-0 text-sm text-white/70"
-                        set:html={markdownify(feature)}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-          <div
-            class:list={[
-              "motion-image relative opacity-0 will-change-transform",
-              imagePosition === "left" ? "lg:order-1" : "lg:order-2",
-            ]}>
-            {hasVisual && (
-              <>
-                <div
-                  aria-hidden="true"
-                  class:list={[
-                    "bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-primary/20%)_0%,transparent_100%)] pointer-events-none absolute inset-0 -z-10 scale-110",
-                    imagePosition === "right"
-                      ? "translate-x-8 translate-y-10 lg:translate-x-16 lg:translate-y-16"
-                      : "-translate-x-8 translate-y-10 lg:-translate-x-16 lg:translate-y-16",
-                  ]}
-                />
-                <div
-                  class:list={[
-                    "relative",
-                    Diagram ? "overflow-visible" : "overflow-hidden",
-                  ]}>
-                  {Diagram ? (
-                    <Diagram
-                      label={diagramLabel}
-                      description={diagramDescription}
+          <div class="mx-auto flex max-w-xl flex-col gap-6 lg:gap-3 xl:gap-7">
+            {subtitle && <Subtitle content={subtitle} />}
+            {title && (
+              <h2
+                class:list={[
+                  "has-subtitle-text capitalize",
+                  "lg:text-h4 xl:text-h2",
+                  imagePosition === "left" && "lg:text-right",
+                ]}
+                set:html={markdownify(title)}
+              />
+            )}
+            {description && (
+              <p
+                class:list={[
+                  "text-text-default mx-auto max-w-4xl text-base leading-relaxed md:text-lg",
+                  imagePosition === "left" && "lg:text-right",
+                ]}
+                set:html={markdownify(description)}
+              />
+            )}
+            {features && features.length > 0 && (
+              <ul
+                class:list={[
+                  "mt-2 gap-3",
+                  columns === 2 ? "grid grid-cols-2" : "flex flex-col",
+                  imagePosition === "left" && "lg:text-right",
+                ]}>
+                {features.map((feature) => (
+                  <li
+                    class:list={[
+                      "flex min-w-0 items-start gap-3",
+                      imagePosition === "left" && "lg:flex-row-reverse",
+                    ]}>
+                    <LucideIcon
+                      icon="CheckCircle2"
+                      class="text-primary mt-0.5 h-5 w-5 shrink-0"
                     />
-                  ) : (
-                    image && (
-                      <Image
-                        src={image}
-                        alt={resolvedImageAlt}
-                        class="h-auto w-full"
-                      />
-                    )
-                  )}
-                </div>
-              </>
+                    <span
+                      class="min-w-0 text-sm text-white/70"
+                      set:html={markdownify(feature)}
+                    />
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         </div>
+        <div
+          class:list={[
+            "motion-image relative opacity-0 will-change-transform",
+            imagePosition === "left" ? "lg:order-1" : "lg:order-2",
+          ]}>
+          {hasVisual && (
+            <>
+              <div
+                aria-hidden="true"
+                class:list={[
+                  "bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-primary/20%)_0%,transparent_100%)] pointer-events-none absolute inset-0 -z-10 scale-110",
+                  imagePosition === "right"
+                    ? "translate-x-8 translate-y-10 lg:translate-x-16 lg:translate-y-16"
+                    : "-translate-x-8 translate-y-10 lg:-translate-x-16 lg:translate-y-16",
+                ]}
+              />
+              <div
+                class:list={[
+                  "relative",
+                  Diagram ? "overflow-visible" : "overflow-hidden",
+                ]}>
+                {Diagram ? (
+                  <Diagram
+                    label={diagramLabel}
+                    description={diagramDescription}
+                  />
+                ) : (
+                  image && (
+                    <Image
+                      src={image}
+                      alt={resolvedImageAlt}
+                      class="h-auto w-full"
+                    />
+                  )
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </section>
-  )
-}
+    </div>
+  </section>
+)}
 
 <script>
   import { animate, inView } from "motion";
