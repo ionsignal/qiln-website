@@ -23,6 +23,7 @@
 
 /* Custom Utilities */
 @import "./typography.css";
+@import "./shortcodes.css";
 
 @layer base {
   @import "./base.css";
@@ -33,5 +34,4 @@
   @import "./chrome.css";
   @import "./components.css";
   @import "./docs.css";
-  @import "./shortcodes.css";
 }

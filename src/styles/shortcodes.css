@@ -1,4 +1,5 @@
-@layer components {
+/* Share the prose utility layer so scoped shortcode overrides win by specificity. */
+@layer utilities {
   /* FileTree */
   .prose-styles .file-tree ul {
     @apply m-0 list-none border-none p-0;
