@@ -28,9 +28,7 @@ function getUtcDayValue(date: Date): number {
 
 const { post } = Astro.props;
 const { Content, remarkPluginFrontmatter } = await render(post);
-const { minutesRead, lastModified } = getRemarkMetadata(
-  remarkPluginFrontmatter,
-);
+const { minutesRead } = getRemarkMetadata(remarkPluginFrontmatter);
 
 const authorData = post.data.author
   ? await getEntry(post.data.author)
@@ -43,16 +41,9 @@ const formattedPubDate = post.data.pubDate.toLocaleDateString("en-US", {
   timeZone: "UTC",
 });
 
-const parsedLastModified = lastModified ? new Date(lastModified) : undefined;
+const updatedDate = post.data.updatedDate;
 
-const safeLastModified =
-  parsedLastModified && Number.isFinite(parsedLastModified.valueOf())
-    ? parsedLastModified
-    : post.data.pubDate;
-
-const actualUpdatedDate = post.data.updatedDate ?? safeLastModified;
-
-const formattedModDate = actualUpdatedDate.toLocaleDateString("en-US", {
+const formattedUpdatedDate = updatedDate?.toLocaleDateString("en-US", {
   year: "numeric",
   month: "long",
   day: "numeric",
@@ -60,7 +51,8 @@ const formattedModDate = actualUpdatedDate.toLocaleDateString("en-US", {
 });
 
 const hasBeenUpdated =
-  getUtcDayValue(actualUpdatedDate) > getUtcDayValue(post.data.pubDate);
+  updatedDate !== undefined &&
+  getUtcDayValue(updatedDate) > getUtcDayValue(post.data.pubDate);
 
 const seoProps = {
   title: post.data.metaTitle || post.data.title,
@@ -77,55 +69,44 @@ const seoProps = {
   <article class="py-16 md:py-24">
     <div class="mx-auto w-full max-w-3xl px-8">
       <header class="mb-12 text-center">
-        {
-          post.data.categories.length > 0 && (
-            <div class="mb-6 flex justify-center gap-2">
-              {post.data.categories.map((category) => (
-                <span class="bg-primary/10 text-primary ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset">
-                  {category}
-                </span>
-              ))}
-            </div>
-          )
-        }
-        <h1
-          class="mb-6 text-4xl leading-tight font-bold tracking-tight text-white md:text-5xl">
+        {post.data.categories.length > 0 && (
+          <div class="mb-6 flex justify-center gap-2">
+            {post.data.categories.map((category) => (
+              <span class="bg-primary/10 text-primary ring-primary/20 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset">
+                {category}
+              </span>
+            ))}
+          </div>
+        )}
+        <h1 class="mb-6 text-4xl leading-tight font-bold tracking-tight text-white md:text-5xl">
           {post.data.title}
         </h1>
-        <div
-          class="text-text-default/80 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
+        <div class="text-text-default/80 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
           <time datetime={post.data.pubDate.toISOString()}>
             {formattedPubDate}
           </time>
-          {
-            minutesRead && (
-              <span class="flex items-center gap-1">
-                <LucideIcon icon="Clock" class="h-4 w-4" aria-hidden="true" />
-                {minutesRead}
-              </span>
-            )
-          }
-          {
-            authorData && (
-              <div class="flex items-center gap-2">
-                <Image
-                  src={authorData.data.avatar}
-                  alt={authorData.data.name}
-                  class="h-6 w-6 rounded-full bg-white/10"
-                />
-                <span class="font-medium text-white">
-                  {authorData.data.name}
-                </span>
-              </div>
-            )
-          }
+          {minutesRead && (
+            <span class="flex items-center gap-1">
+              <LucideIcon icon="Clock" class="h-4 w-4" aria-hidden="true" />
+              {minutesRead}
+            </span>
+          )}
+          {authorData && (
+            <div class="flex items-center gap-2">
+              <Image
+                src={authorData.data.avatar}
+                alt={authorData.data.name}
+                class="h-6 w-6 rounded-full bg-white/10"
+              />
+              <span class="font-medium text-white">{authorData.data.name}</span>
+            </div>
+          )}
         </div>
       </header>
-      <div
-        class="relative mb-16 aspect-21/9 w-full overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10">
+      <div class="relative mb-16 aspect-video w-full overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10">
         <Image
           src={post.data.image}
-          alt={post.data.title}
+          alt={post.data.imageAlt ?? ""}
           class="h-full w-full object-cover"
           loading="eager"
           fetchpriority="high"
@@ -134,16 +115,14 @@ const seoProps = {
       <div class="prose-styles">
         <Content />
       </div>
-      {
-        hasBeenUpdated && (
-          <p class="text-text-default/60 mt-8 text-sm italic">
-            Last updated on{" "}
-            <time datetime={actualUpdatedDate.toISOString()}>
-              {formattedModDate}
-            </time>
-          </p>
-        )
-      }
+      {hasBeenUpdated && updatedDate && (
+        <p class="text-text-default/60 mt-8 text-sm italic">
+          Last updated on{" "}
+          <time datetime={updatedDate.toISOString()}>
+            {formattedUpdatedDate}
+          </time>
+        </p>
+      )}
       <RelatedPosts currentPost={post} />
     </div>
   </article>

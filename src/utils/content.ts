@@ -62,7 +62,12 @@ export async function fetchRequiredEntry<C extends CollectionKey>(
 
 export async function getPublishedBlogPosts() {
   const posts = await fetchCollection("blog");
+  const publicationCutoff = Date.now();
   return posts
-    .slice()
+    .filter(
+      (post) =>
+        !import.meta.env.PROD ||
+        post.data.pubDate.valueOf() <= publicationCutoff,
+    )
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }

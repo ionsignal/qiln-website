@@ -24,28 +24,24 @@ const formattedDate = post.data.pubDate.toLocaleDateString("en-US", {
 });
 ---
 
-<article
-  class="group relative flex flex-col items-start justify-between rounded-2xl border border-white/10 bg-white/5 p-4 transition-colors duration-300 hover:bg-white/10">
+<article class="group relative flex flex-col items-start justify-between rounded-2xl border border-white/10 bg-white/5 p-4 transition-colors duration-300 hover:bg-white/10">
   <div class="relative mb-4 aspect-video w-full overflow-hidden rounded-xl">
     <Image
       src={post.data.image}
-      alt={post.data.title}
+      alt={post.data.imageAlt ?? ""}
       class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
     />
   </div>
   <div class="text-text-default/80 mb-3 flex items-center gap-x-4 text-xs">
     <time datetime={post.data.pubDate.toISOString()}>{formattedDate}</time>
-    {
-      minutesRead && (
-        <span class="flex items-center gap-1">
-          <LucideIcon icon="Clock" class="h-3 w-3" aria-hidden="true" />
-          {minutesRead}
-        </span>
-      )
-    }
+    {minutesRead && (
+      <span class="flex items-center gap-1">
+        <LucideIcon icon="Clock" class="h-3 w-3" aria-hidden="true" />
+        {minutesRead}
+      </span>
+    )}
   </div>
-  <h3
-    class="group-hover:text-primary mb-2 text-xl font-semibold text-white transition-colors">
+  <h3 class="group-hover:text-primary mb-2 text-xl font-semibold text-white transition-colors">
     <a href={formatUrl(`/blog/${post.id}`)}>
       <span class="absolute inset-0"></span>
       {post.data.title}
@@ -54,21 +50,19 @@ const formattedDate = post.data.pubDate.toLocaleDateString("en-US", {
   <p class="text-text-default mb-4 line-clamp-3 text-sm">
     {post.data.description}
   </p>
-  {
-    authorData && (
-      <div class="relative mt-auto flex w-full items-center gap-x-3 border-t border-white/10 pt-4">
-        <Image
-          src={authorData.data.avatar}
-          alt={authorData.data.name}
-          class="h-8 w-8 rounded-full bg-white/10"
-        />
-        <div class="text-sm leading-6">
-          <p class="font-semibold text-white">
-            <span class="absolute inset-0" />
-            {authorData.data.name}
-          </p>
-        </div>
+  {authorData && (
+    <div class="relative mt-auto flex w-full items-center gap-x-3 border-t border-white/10 pt-4">
+      <Image
+        src={authorData.data.avatar}
+        alt={authorData.data.name}
+        class="h-8 w-8 rounded-full bg-white/10"
+      />
+      <div class="text-sm leading-6">
+        <p class="font-semibold text-white">
+          <span class="absolute inset-0" />
+          {authorData.data.name}
+        </p>
       </div>
-    )
-  }
+    </div>
+  )}
 </article>

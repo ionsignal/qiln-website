@@ -348,6 +348,7 @@ export const collections = {
         pubDate: z.coerce.date(),
         updatedDate: z.coerce.date().optional(),
         image: image(),
+        imageAlt: z.string().optional(),
         categories: z.array(z.string()).default([]),
         draft: z.boolean().default(false),
         author: reference("authors").optional(),

@@ -48,3 +48,34 @@ tagline: ""
 # disableTagline: Set to `true` to disable the tagline from `config.toml` for this page.
 disableTagline: false
 ---
+
+## Blog authoring conventions
+
+These conventions apply to `src/content/blog/`. Keep this reference outside that collection so it cannot become a blog post.
+
+### Filenames and URLs
+
+- Use lowercase, hyphen-separated filenames without a frontmatter `slug` override.
+- The filename determines the post ID and URL. For example, `agents-get-forks-not-production.md` becomes `/blog/agents-get-forks-not-production/` with the current trailing-slash setting.
+- Keep published filenames stable. Renaming a published post changes its URL and requires a redirect decision.
+
+### Images and accessibility
+
+- Store each post's assets in `src/assets/images/blog/<post-filename-without-extension>/`.
+- Name the 16:9 cover `hero.png` and reference it through the required `image` frontmatter field.
+- Name 4:3 supporting images `<section-title>.png`, using lowercase, hyphen-separated names.
+- Use relative paths from the Markdown file. The existing post's cover path is `../../assets/images/blog/agents-get-forks-not-production/hero.png`.
+- Add image references only after their files exist. Check image file sizes before committing.
+- The optional `imageAlt` frontmatter field supplies cover alt text in blog cards and article pages. Omit it or use `""` for decorative artwork; missing alt text does not fall back to the article title.
+- Supply image-specific alt text for informative supporting images using Markdown image syntax and relative paths. Use empty alt text only for decorative images.
+- The current card frame is 16:9 and the article cover frame is 16:9, so article covers crop 16:9 artwork.
+
+### Publication and update dates
+
+- Author the required `pubDate` and optional `updatedDate` as quoted date-only values in `YYYY-MM-DD` format. These resolve to midnight UTC and are displayed in UTC.
+- Only an explicitly authored `updatedDate` controls the visible "Last updated" label. It appears only when its UTC calendar day is later than `pubDate`.
+- Git history, filesystem modification times, and build time do not supply editorial update dates.
+- Production excludes draft posts and posts whose `pubDate` is later than the current time captured by the shared publication helper. This applies to blog archives, generated article routes, and related posts.
+- Development keeps drafts and future-dated posts visible for preview.
+- Blog publication is controlled per post; the general collection-index draft note above does not apply to the current blog routes.
+- Scheduled publication requires a new production build at or after `pubDate`. Previously generated static output does not update automatically.
