@@ -1,70 +1,18 @@
 ---
-import generateJsonLd from "@/utils/jsonLd";
-import config from ".astro/config.generated.json";
-import type { SeoProps } from "@/types/seo";
+import generateJsonLd, { serializeJsonLd } from "@/utils/jsonLd";
+import type { ResolvedSeoMetadata } from "@/types/seo";
 
 interface Props {
-  content?: SeoProps;
+  metadata: ResolvedSeoMetadata;
 }
 
-const { content } = Astro.props;
-
-let jsonLdData = null;
-if (content) {
-  const {
-    title,
-    metaTitle,
-    description,
-    metaDescription,
-    image = config.opengraph.image,
-    taglineSeparator = " - ",
-    disableTagline,
-    canonical,
-    pageType,
-    structuredData,
-  } = content;
-  let resolvedTitle =
-    !disableTagline && metaTitle
-      ? metaTitle
-      : title
-        ? title
-        : config.site.title;
-  resolvedTitle += config.site.tagline
-    ? taglineSeparator + config.site.tagline
-    : "";
-  const resolvedDescription = metaDescription
-    ? metaDescription
-    : description
-      ? description
-      : config.site.description;
-  const resolvedCanonical = canonical
-    ? new URL(canonical, Astro.site ?? Astro.url.origin).href
-    : Astro.url.href;
-  const imageSrc = typeof image === "string" ? image : image.src;
-  const resolvedImage = imageSrc
-    ? new URL(imageSrc, Astro.site ?? Astro.url.origin).href
-    : "";
-  jsonLdData = generateJsonLd(
-    {
-      title: resolvedTitle,
-      description: resolvedDescription,
-      image: resolvedImage,
-      canonical: resolvedCanonical,
-      pageType,
-      structuredData,
-    },
-    {
-      site: Astro.site,
-      url: Astro.url,
-    },
-  );
-}
+const { metadata } = Astro.props;
+const jsonLdData = generateJsonLd(metadata);
+const serializedJsonLd = serializeJsonLd(jsonLdData);
 ---
 
-{jsonLdData ? (
-  <script
-    type="application/ld+json"
-    is:inline
-    set:html={JSON.stringify(jsonLdData, null, 2)}
-  />
-) : null}
+<script
+  type="application/ld+json"
+  is:inline
+  set:html={serializedJsonLd}
+/>

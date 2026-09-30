@@ -1,51 +1,20 @@
 ---
-import { formatUrl } from "@/utils/core";
-import { plainify, removeWhitespace } from "@/utils/text";
-import config from ".astro/config.generated.json";
-import type { SeoProps } from "@/types/seo";
+import type { ResolvedSeoMetadata } from "@/types/seo";
 
-type Props = SeoProps;
-
-const {
-  title: pageTitle,
-  metaTitle,
-  description: pageDescription,
-  metaDescription,
-  canonical,
-  keywords = config.seo.keywords,
-  disableTagline,
-  author = config.seo.author,
-  robots = config.seo.robots,
-} = Astro.props;
-let title = plainify(
-  metaTitle ? metaTitle : pageTitle ? pageTitle : config.site.title,
-);
-if (!disableTagline) {
-  title =
-    title +
-    (config.site.tagline &&
-      (config.site.taglineSeparator || " - ") + config.site.tagline);
+interface Props {
+  metadata: ResolvedSeoMetadata;
 }
-const description = plainify(
-  metaDescription
-    ? metaDescription
-    : pageDescription
-      ? pageDescription
-      : config.site.description,
-);
-const keywordContent = keywords.join(", ");
-const canonicalUrl = canonical
-  ? formatUrl(new URL(canonical, Astro.site ?? Astro.url.origin).href)
-  : formatUrl(Astro.url.href);
+
+const { metadata } = Astro.props;
 ---
 
-{title && <title>{removeWhitespace(title)}</title>}
-{description && (
-  <meta name="description" content={removeWhitespace(description)} />
+{metadata.title && <title>{metadata.title}</title>}
+{metadata.description && (
+  <meta name="description" content={metadata.description} />
 )}
-{keywordContent && (
-  <meta name="keywords" content={removeWhitespace(keywordContent)} />
+{metadata.keywords && (
+  <meta name="keywords" content={metadata.keywords} />
 )}
-{author && <meta name="author" content={removeWhitespace(author)} />}
-{robots && <meta name="robots" content={removeWhitespace(robots)} />}
-{canonicalUrl && <link rel="canonical" href={canonicalUrl} item-prop="url" />}
+{metadata.author && <meta name="author" content={metadata.author} />}
+{metadata.robots && <meta name="robots" content={metadata.robots} />}
+<link rel="canonical" href={metadata.canonical} />

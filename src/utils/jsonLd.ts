@@ -1,68 +1,80 @@
-import config from ".astro/config.generated.json";
-import type { SeoImage, JsonObject } from "@/types/seo";
+import type { JsonObject, ResolvedSeoMetadata } from "@/types/seo";
 
-export interface JsonLdContext {
-  site?: URL;
-  url: URL;
-}
+const reservedStructuredDataFields = new Set([
+  "@context",
+  "@type",
+  "name",
+  "description",
+  "image",
+  "url",
+  "isPartOf",
+  "publisher",
+  "inLanguage",
+]);
 
-export interface JsonLdInput {
-  canonical?: string;
-  title?: string;
-  description?: string;
-  image?: SeoImage;
-  pageType?: string;
-  structuredData?: JsonObject;
-}
+const reservedBlogPostingFields = new Set([
+  "headline",
+  "mainEntityOfPage",
+]);
 
 export default function generateJsonLd(
-  content: JsonLdInput,
-  context: JsonLdContext,
+  metadata: ResolvedSeoMetadata,
 ): JsonObject {
-  const {
-    canonical = "/",
-    title = "",
-    description = "",
-    image = "",
-    structuredData,
-  } = content;
-  const baseUrl = context.site ?? new URL(context.url.origin);
-  const imageSrc = typeof image === "string" ? image : image.src;
-  const lang = config.settings.multilingual.defaultLanguage || "en";
-  const siteTitle =
-    config.site.title +
-    (config.site.tagline &&
-      (config.site.taglineSeparator || " - ") + config.site.tagline);
-  const socialUrls = (config.social?.main || [])
-    .filter((item) => item.enable)
-    .map((item) => item.url);
-  const jsonLdData: JsonObject = {
-    ...(structuredData ?? {}),
+  const isBlogPosting = metadata.pageType === "BlogPosting";
+  const structuredDataExtensions: JsonObject = Object.fromEntries(
+    Object.entries(metadata.structuredData ?? {}).filter(
+      ([field]) =>
+        !reservedStructuredDataFields.has(field) &&
+        (!isBlogPosting || !reservedBlogPostingFields.has(field)),
+    ),
+  );
+  const publisher: JsonObject = {
+    "@type": "Organization",
+    name: metadata.publisher.name,
+    url: metadata.publisher.url,
+    sameAs: metadata.publisher.sameAs,
+    ...(metadata.publisher.logo
+      ? {
+          logo: {
+            "@type": "ImageObject",
+            url: metadata.publisher.logo,
+          },
+        }
+      : {}),
+  };
+
+  return {
+    ...structuredDataExtensions,
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: title,
-    description,
-    image: imageSrc ? new URL(imageSrc, baseUrl).href : "",
-    url: canonical,
+    "@type": metadata.pageType,
+    name: metadata.title,
+    description: metadata.description,
+    ...(metadata.image ? { image: metadata.image } : {}),
+    url: metadata.canonical,
     isPartOf: {
       "@type": "WebSite",
-      name: siteTitle,
-      description: config.site.description,
-      url: new URL("/", baseUrl).href,
+      name: metadata.site.name,
+      description: metadata.site.description,
+      url: metadata.site.url,
     },
-    publisher: {
-      "@type": "Organization",
-      name: config.seo.author,
-      url: new URL("/", baseUrl).href,
-      sameAs: socialUrls,
-      logo: {
-        "@type": "ImageObject",
-        url: new URL(config.site.logo, baseUrl).href,
-      },
-    },
+    publisher,
+    ...(metadata.language ? { inLanguage: metadata.language } : {}),
+    ...(isBlogPosting
+      ? {
+          ...(metadata.headline ? { headline: metadata.headline } : {}),
+          mainEntityOfPage: {
+            "@type": "WebPage",
+            "@id": metadata.canonical,
+          },
+        }
+      : {}),
   };
-  if (lang) {
-    jsonLdData.inLanguage = lang;
-  }
-  return jsonLdData;
+}
+
+/**
+ * Escaping every opening angle bracket prevents script-ending content from
+ * crossing the HTML script boundary without changing the decoded JSON values.
+ */
+export function serializeJsonLd(data: JsonObject): string {
+  return JSON.stringify(data, null, 2).replace(/</g, "\\u003c");
 }

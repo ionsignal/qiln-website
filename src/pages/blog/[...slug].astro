@@ -54,14 +54,40 @@ const hasBeenUpdated =
   updatedDate !== undefined &&
   getUtcDayValue(updatedDate) > getUtcDayValue(post.data.pubDate);
 
+const canIncludeDateModified =
+  updatedDate !== undefined &&
+  Number.isFinite(updatedDate.valueOf()) &&
+  updatedDate.valueOf() >= post.data.pubDate.valueOf();
+
 const seoProps = {
-  title: post.data.metaTitle || post.data.title,
-  description: post.data.metaDescription || post.data.description,
+  title: post.data.title,
+  metaTitle: post.data.metaTitle,
+  description: post.data.description,
+  metaDescription: post.data.metaDescription,
   image: post.data.image,
   canonical: post.data.canonical,
   keywords: post.data.keywords,
   robots: post.data.robots,
   disableTagline: post.data.disableTagline,
+  author: authorData?.data.name,
+  pageType: "BlogPosting",
+  ogType: "article",
+  structuredData: {
+    headline: post.data.title,
+    datePublished: post.data.pubDate.toISOString(),
+    ...(canIncludeDateModified && updatedDate
+      ? { dateModified: updatedDate.toISOString() }
+      : {}),
+    ...(authorData
+      ? {
+          author: {
+            "@type": "Organization",
+            name: authorData.data.name,
+            ...(authorData.data.url ? { url: authorData.data.url } : {}),
+          },
+        }
+      : {}),
+  },
 } satisfies SeoProps;
 ---
 

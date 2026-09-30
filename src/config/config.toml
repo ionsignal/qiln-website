@@ -3,7 +3,7 @@
   title              = "Qiln"
   description        = "Qiln is a persistent visual-first AI workspace for ComfyUI, private model vaults, custom nodes, snapshots, routes, endpoints, and reserved high-VRAM GPU capacity."
   tagline            = "Persistent AI Workspaces"
-  taglineSeparator   = ""                   # default is " - "
+  taglineSeparator   = " | "                # Default is " | "; an explicit "" joins without a separator.
   baseUrl            = "https://qiln.com"   # Base URL for the site and used in OpenGraph meta tags.
   logo               = "/images/logo.svg"   # Path to the site's logo
   logoHoverAnimation = false                # Enable or disable logo hover animation
