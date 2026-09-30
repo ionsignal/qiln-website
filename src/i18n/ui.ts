@@ -81,7 +81,7 @@ export const ui = {
     "common.learnMoreAbout": "Learn more about",
     "common.paginationNext": "Next",
     "common.paginationPrevious": "Previous",
-    "navigation.buttonLabel": "Try Now",
+    "navigation.buttonLabel": "See the demo",
     "navigation.demoLabel": "Demo",
     "integration.relatedIntegrationSectionTitle":
       "Vivamus sit amet **varius felis**",
