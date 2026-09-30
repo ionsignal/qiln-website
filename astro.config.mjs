@@ -12,15 +12,16 @@ import {
 import { fontProviders } from "astro/config";
 import { unified } from "@astrojs/markdown-remark";
 
-let {
+const {
   seo: { sitemap: sitemapConfig },
 } = config;
-const exclude = [
-  "widgets",
-  "sections",
-  "author",
-  ...(sitemapConfig.exclude || []),
-];
+function normalizeSitemapPathname(pathname) {
+  const rootedPathname = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  return rootedPathname.replace(/\/+$/, "") || "/";
+}
+const excludedSitemapPathnames = new Set(
+  (sitemapConfig.exclude || []).map(normalizeSitemapPathname),
+);
 const fonts = [
   {
     provider: fontProviders.google(),
@@ -64,7 +65,9 @@ export default defineConfig({
     sitemapConfig.enable
       ? sitemap({
           filter: (page) =>
-            !exclude.some((folder) => page.includes(`/${folder}`)),
+            !excludedSitemapPathnames.has(
+              normalizeSitemapPathname(new URL(page).pathname),
+            ),
         })
       : null,
   ],

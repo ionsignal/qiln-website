@@ -63,7 +63,7 @@ const footerMenuQuickLink: NavigationLink[] = [
 ];
 
 const footerMenuResources: NavigationLink[] = [
-  { enable: true, name: "Documentation", url: "#" },
+  { enable: true, name: "Documentation", url: "/docs" },
 ];
 
 const footerMenuLegal: NavigationLink[] = [

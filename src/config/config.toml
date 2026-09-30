@@ -29,7 +29,7 @@
     disallow = ["/cdn-cgi/"]                # Disallow specific paths (e.g. "/_astro/", "/cdn-cgi/")
   [seo.sitemap]
     enable = true                           # Enables or disables sitemap generation on site build
-    exclude = ["deck/explainer", "deck/vc"] # Exclude unadvertised and canonical-alias deck routes
+    exclude = ["deck/vc"] # Exact-route exclusion; trailing slashes are ignored
 
 [settings]
   pagination = 6                            # Number of posts displayed on each page blog list page
@@ -70,13 +70,13 @@
   enable = true
   label = "twitter"
   icon = "twitter"
-  url = "#social"
+  url = "https://x.com/qilnengine"
 
 [[social.main]]
   enable = true
   label = "linkedin"
   icon = "linkedin"
-  url = "#social"
+  url = "https://linkedin.com/company/qiln"
 
 [[social.main]]
   enable = true
