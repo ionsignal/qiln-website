@@ -122,6 +122,8 @@ The distinction matters: starting successfully is not the same as producing acce
 
 This is the direction we’re building toward, not a finished capability.
 
+![Qiln early development preview](../../assets/images/blog/agents-get-forks-not-production/building-early-preview.png)
+
 ## Agents get forks, not production
 
 This is the principle behind the intended agent workflow.
