@@ -79,12 +79,10 @@ export const ui = {
     "common.category": "Category",
     "common.publishedOn": "Published On",
     "common.learnMoreAbout": "Learn more about",
-    "common.emailPlaceholder": "Email Address",
     "common.paginationNext": "Next",
     "common.paginationPrevious": "Previous",
-    "navigation.buttonLabel": "Let us migrate your workflow →",
+    "navigation.buttonLabel": "Try Now",
     "navigation.demoLabel": "Demo",
-    "subscription.label": "Let us migrate your workflow →",
     "integration.relatedIntegrationSectionTitle":
       "Vivamus sit amet **varius felis**",
     "integration.backToIntegration": "Browse",

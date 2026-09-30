@@ -39,11 +39,6 @@
   [settings.copyright]
     enable = true
 
-  # Subscription Form located in footer
-  [settings.subscription]
-    enable = true # Enables or disable the subscription form
-    formAction = "https://getlaunchlist.com/s/z0EOXt"
-
   # Multilingual settings
   [settings.multilingual]
     enable = true
@@ -60,11 +55,6 @@
   [settings.headerDemoButton]
     enable = false
     url = ""
-
-  # Hero Subscription Button
-  [settings.navigationButton]
-    enable = true
-    url = "#early-testers"
 
 # OpenGraph Metadata
 # Specific OpenGraph settings, using values from the [site] section where possible.

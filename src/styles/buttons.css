@@ -105,37 +105,3 @@
     @apply top-1/2 opacity-0;
   }
 }
-
-.has-icon-moving-animation {
-  /* @apply overflow-hidden; */
-  &:hover .icon {
-    &.icon-before {
-      @apply -top-full left-full;
-    }
-
-    &.icon-after {
-      @apply top-0 left-0;
-    }
-  }
-
-  .icons-wrapper {
-    @apply relative overflow-hidden;
-  }
-
-  .icon {
-    @apply transition-[top,left] duration-500 ease-in-out;
-
-    &.icon-before,
-    &.icon-after {
-      @apply absolute inset-0 size-full;
-    }
-
-    &.icon-before {
-      @apply top-0;
-    }
-
-    &.icon-after {
-      @apply top-full -left-full;
-    }
-  }
-}

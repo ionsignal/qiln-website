@@ -74,11 +74,6 @@ export const collections = {
           )
           .optional(),
         features: z.array(z.string()).optional(),
-        subscription: z
-          .object({
-            enable: z.boolean().optional(),
-          })
-          .optional(),
         // Explicit Buttons Array (used by hero)
         buttons: z
           .array(

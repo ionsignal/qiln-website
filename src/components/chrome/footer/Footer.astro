@@ -9,7 +9,6 @@ import {
 import SocialComponent from "@/components/social/Social.astro";
 import Logo from "@/components/chrome/Logo.astro";
 import FooterLink from "@/components/chrome/footer/FooterLink.astro";
-import FooterSubscription from "@/components/chrome/footer/FooterSubscription.astro";
 
 const t = useTranslations();
 const footerDescription = t("footer.description");
@@ -22,7 +21,6 @@ const quickLinks = filteredEnabled(t("footerMenuQuickLink"));
 const resourceLinks = filteredEnabled(t("footerMenuResources"));
 const legalLinks = filteredEnabled(t("footerMenuLegal"));
 const footerLinks = filteredEnabled(t("footerMenu"));
-const { subscription } = config.settings;
 ---
 
 <footer
@@ -78,17 +76,6 @@ const { subscription } = config.settings;
                 </ul>
               </div>
             </div>
-            {subscription.enable && (
-              <div class="mt-8 border-t pt-5">
-                {t("subscription.label") && (
-                  <p
-                    class="mb-2.5"
-                    set:html={markdownify(t("subscription.label"))}
-                  />
-                )}
-                <FooterSubscription formAction={subscription.formAction} />
-              </div>
-            )}
           </div>
         </div>
       </div>
