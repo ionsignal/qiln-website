@@ -12,9 +12,7 @@ const { metadata } = Astro.props;
 {metadata.description && (
   <meta name="description" content={metadata.description} />
 )}
-{metadata.keywords && (
-  <meta name="keywords" content={metadata.keywords} />
-)}
+{metadata.keywords && <meta name="keywords" content={metadata.keywords} />}
 {metadata.author && <meta name="author" content={metadata.author} />}
 {metadata.robots && <meta name="robots" content={metadata.robots} />}
 <link rel="canonical" href={metadata.canonical} />

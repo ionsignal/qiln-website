@@ -12,10 +12,7 @@ const reservedStructuredDataFields = new Set([
   "inLanguage",
 ]);
 
-const reservedBlogPostingFields = new Set([
-  "headline",
-  "mainEntityOfPage",
-]);
+const reservedBlogPostingFields = new Set(["headline", "mainEntityOfPage"]);
 
 export default function generateJsonLd(
   metadata: ResolvedSeoMetadata,
