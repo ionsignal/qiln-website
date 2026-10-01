@@ -1,19 +1,5 @@
-/* 
- * Motion Engine Initial State (Replaces AOS)
- * Hides elements initially to prevent FOUC. 
- * Motion will handle the transition to opacity: 1 and apply transforms.
- */
-@media (prefers-reduced-motion: no-preference) {
-  [data-aos] {
-    opacity: 0;
-    will-change: transform, opacity;
-  }
-}
-
 @theme {
   --animate-blink: blink 1s step-end infinite;
-  --animate-marquee: marquee var(--marquee-duration, 50s) linear infinite
-    var(--marquee-direction, normal);
 
   @keyframes blink {
     0%,
@@ -22,15 +8,6 @@
     }
     50% {
       opacity: 0;
-    }
-  }
-
-  @keyframes marquee {
-    0% {
-      transform: translateX(0%);
-    }
-    100% {
-      transform: translateX(-50%);
     }
   }
 }

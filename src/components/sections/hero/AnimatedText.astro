@@ -46,7 +46,7 @@ if (content) {
 <script>
   import { animate, stagger, inView } from "motion";
 
-  const observerCleanups = new Map<HTMLElement, () => void>();
+  const animatedTextCleanups = new Map<HTMLElement, () => void>();
 
   function getNumericData(
     element: HTMLElement,
@@ -64,12 +64,14 @@ if (content) {
     document
       .querySelectorAll<HTMLElement>(".animated-text")
       .forEach((animatedText) => {
-        if (animatedText.hasAttribute("data-motion-initialized")) return;
-        animatedText.setAttribute("data-motion-initialized", "");
-        if (reducedMotion) {
-          animatedText.removeAttribute("data-motion-ready");
-          return;
-        }
+        if (animatedTextCleanups.has(animatedText)) return;
+        if (reducedMotion) return;
+
+        const words = Array.from(
+          animatedText.querySelectorAll<HTMLElement>(".word"),
+        );
+        if (words.length === 0) return;
+
         const duration = Math.max(
           getNumericData(animatedText, "duration", 0.6),
           0,
@@ -79,39 +81,82 @@ if (content) {
           getNumericData(animatedText, "stagger", 0.1),
           0,
         );
-        animatedText.setAttribute("data-motion-ready", "");
-        const stopObserving = inView(animatedText, (element) => {
-          const words = Array.from(
-            element.querySelectorAll<HTMLElement>(".word"),
+        const originalWordStyles = words.map((word) => ({
+          word,
+          opacity: word.style.opacity,
+          transform: word.style.transform,
+          filter: word.style.filter,
+        }));
+        let animation: ReturnType<typeof animate> | null = null;
+        let stopObserving: (() => void) | null = null;
+
+        const restorePresentation = () => {
+          const activeAnimation = animation;
+          animation = null;
+          try {
+            activeAnimation?.stop();
+          } finally {
+            originalWordStyles.forEach((originalStyles) => {
+              originalStyles.word.style.opacity = originalStyles.opacity;
+              originalStyles.word.style.transform = originalStyles.transform;
+              originalStyles.word.style.filter = originalStyles.filter;
+            });
+          }
+        };
+
+        try {
+          stopObserving = inView(animatedText, () => {
+            restorePresentation();
+            try {
+              const wordAnimation = animate(
+                words,
+                {
+                  opacity: [0, 1],
+                  y: [10, 0],
+                  filter: ["blur(10px)", "blur(0px)"],
+                },
+                {
+                  duration,
+                  delay: stagger(staggerDelay, { startDelay: delay }),
+                  ease: "easeOut",
+                },
+              );
+              animation = wordAnimation;
+              const restoreCompletedAnimation = () => {
+                if (animation === wordAnimation) {
+                  restorePresentation();
+                }
+              };
+              void Promise.resolve(wordAnimation).then(
+                restoreCompletedAnimation,
+                restoreCompletedAnimation,
+              );
+            } catch (error: unknown) {
+              restorePresentation();
+              console.error(
+                "[AnimatedText] Failed to start word animation.",
+                error,
+              );
+            }
+          });
+        } catch (error: unknown) {
+          restorePresentation();
+          console.error(
+            "[AnimatedText] Failed to observe word animation.",
+            error,
           );
-          if (words.length === 0) return;
-          animate(
-            words,
-            {
-              opacity: [0, 1],
-              y: [10, 0],
-              filter: ["blur(10px)", "blur(0px)"],
-            },
-            {
-              duration,
-              delay: stagger(staggerDelay, { startDelay: delay }),
-              ease: "easeOut",
-            },
-          );
+        }
+
+        animatedTextCleanups.set(animatedText, () => {
+          stopObserving?.();
+          restorePresentation();
         });
-        observerCleanups.set(animatedText, stopObserving);
       });
   }
 
   function teardownAnimatedText() {
-    observerCleanups.forEach((cleanup) => cleanup());
-    observerCleanups.clear();
-    document
-      .querySelectorAll<HTMLElement>(".animated-text")
-      .forEach((animatedText) => {
-        animatedText.removeAttribute("data-motion-initialized");
-        animatedText.removeAttribute("data-motion-ready");
-      });
+    animatedTextCleanups.forEach((cleanup) => cleanup());
+    animatedTextCleanups.clear();
   }
 
   if (document.readyState === "loading") {
@@ -128,12 +173,8 @@ if (content) {
 
 <style>
   @media (prefers-reduced-motion: no-preference) {
-    :global(.animated-text[data-motion-ready] .word) {
+    :global(.animated-text .word) {
       display: inline-block;
-      opacity: 0;
-      filter: blur(10px);
-      transform: translateY(10px);
-      will-change: transform, filter, opacity;
     }
   }
 </style>

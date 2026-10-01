@@ -44,25 +44,4 @@ const metadata = resolveSeoMetadata(Astro.props, {
   <JsonLD metadata={metadata} />
   <Font cssVariable="--astro-font-secondary" preload />
   <Font cssVariable="--astro-font-tertiary" preload />
-  <noscript>
-    <style>
-      [data-aos],
-      .motion-header,
-      .motion-left,
-      .motion-right,
-      .motion-text,
-      .motion-image {
-        opacity: 1 !important;
-        transform: none !important;
-      }
-      .animated-text .word {
-        opacity: 1 !important;
-        filter: none !important;
-        transform: none !important;
-      }
-      .page-loader {
-        display: none !important;
-      }
-    </style>
-  </noscript>
 </head>

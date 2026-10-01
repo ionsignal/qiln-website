@@ -9,7 +9,7 @@
   import HSScrollspy from "@preline/scrollspy/non-auto";
   import HSDropdown from "@preline/dropdown/non-auto";
 
-  import { animate, inView } from "motion";
+  import { animate } from "motion";
 
   const animationMap = {
     "fade-up-sm": { opacity: [0, 1], y: [30, 0] },
@@ -19,12 +19,28 @@
     "fade-in": { opacity: [0, 1] },
   };
 
+  interface PreparedMotionEntrance {
+    originalOpacity: string;
+    originalOpacityPriority: string;
+    originalTransform: string;
+    originalTransformPriority: string;
+    animation: ReturnType<typeof animate> | null;
+    recoveryTimeoutId: number | null;
+  }
+
   const docsDesktopBreakpointQuery = "(min-width: 1024px)";
-  const motionObserverCleanups: Array<() => void> = [];
-  const horizontalScrollCleanups: Array<() => void> = [];
+  const consumedMotionTargets = new WeakSet<HTMLElement>();
+  const preparedMotionEntrances = new Map<
+    HTMLElement,
+    PreparedMotionEntrance
+  >();
+  const completionRecoveryBufferMs = 2000;
+  const maximumTimeoutMs = 2_147_483_647;
 
   let prelineInitialized = false;
   let behaviorInitialized = false;
+  let motionEntranceObserver: IntersectionObserver | null = null;
+  let motionPreferenceController: AbortController | null = null;
   let docsSidebarBreakpointController: AbortController | null = null;
   let pendingDocsSidebarForceCloseFrameId: number | null = null;
 
@@ -114,70 +130,235 @@
     forceCloseWhenDesktop();
   }
 
-  function initializeMotionAnimations() {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  function restoreMotionEntrance(
+    element: HTMLElement,
+    entrance: PreparedMotionEntrance,
+  ): void {
+    if (preparedMotionEntrances.get(element) !== entrance) return;
+    preparedMotionEntrances.delete(element);
+    if (entrance.recoveryTimeoutId !== null) {
+      window.clearTimeout(entrance.recoveryTimeoutId);
+      entrance.recoveryTimeoutId = null;
+    }
+    const animation = entrance.animation;
+    entrance.animation = null;
+    try {
+      animation?.stop();
+    } catch (error: unknown) {
+      console.error(
+        "[GlobalScripts] Failed to stop entrance animation.",
+        error,
+      );
+    } finally {
+      if (entrance.originalOpacity) {
+        element.style.setProperty(
+          "opacity",
+          entrance.originalOpacity,
+          entrance.originalOpacityPriority,
+        );
+      } else {
+        element.style.removeProperty("opacity");
+      }
+      if (entrance.originalTransform) {
+        element.style.setProperty(
+          "transform",
+          entrance.originalTransform,
+          entrance.originalTransformPriority,
+        );
+      } else {
+        element.style.removeProperty("transform");
+      }
+    }
+  }
+
+  function disconnectMotionEntranceObserver(): void {
+    motionEntranceObserver?.disconnect();
+    motionEntranceObserver = null;
+  }
+
+  function restoreMotionEntrances(): void {
+    preparedMotionEntrances.forEach((entrance, element) => {
+      restoreMotionEntrance(element, entrance);
+    });
+  }
+
+  function playMotionEntrance(
+    element: HTMLElement,
+    entrance: PreparedMotionEntrance,
+  ): void {
+    if (
+      preparedMotionEntrances.get(element) !== entrance ||
+      consumedMotionTargets.has(element)
+    ) {
       return;
     }
-    document.querySelectorAll<HTMLElement>("[data-aos]").forEach((element) => {
-      const animationName = element.getAttribute("data-aos") || "fade-in";
-      const keyframes = isAnimationName(animationName)
-        ? animationMap[animationName]
-        : animationMap["fade-in"];
-      const durationMs = getNumericAttribute(
-        element,
-        "data-aos-duration",
-        700,
-        0,
+    consumedMotionTargets.add(element);
+    if (
+      !element.isConnected ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      restoreMotionEntrance(element, entrance);
+      return;
+    }
+    const animationName = element.getAttribute("data-aos") || "fade-in";
+    const keyframes = isAnimationName(animationName)
+      ? animationMap[animationName]
+      : animationMap["fade-in"];
+    const durationMs = getNumericAttribute(
+      element,
+      "data-aos-duration",
+      700,
+      0,
+    );
+    const delayMs = getNumericAttribute(element, "data-aos-delay", 0, 0);
+    const recoveryDurationMs =
+      durationMs + delayMs + completionRecoveryBufferMs;
+    if (
+      !Number.isFinite(recoveryDurationMs) ||
+      recoveryDurationMs > maximumTimeoutMs
+    ) {
+      restoreMotionEntrance(element, entrance);
+      return;
+    }
+    try {
+      // Recovery owns restoration even if an interrupted animation never settles.
+      entrance.recoveryTimeoutId = window.setTimeout(() => {
+        restoreMotionEntrance(element, entrance);
+      }, recoveryDurationMs);
+      const animation = animate(element, keyframes, {
+        duration: durationMs / 1000,
+        delay: delayMs / 1000,
+        ease: "easeOut",
+      });
+      entrance.animation = animation;
+      void Promise.resolve(animation).then(
+        () => restoreMotionEntrance(element, entrance),
+        (error: unknown) => {
+          if (preparedMotionEntrances.get(element) !== entrance) return;
+          restoreMotionEntrance(element, entrance);
+          console.error("[GlobalScripts] Entrance animation failed.", error);
+        },
       );
-      const amount = getNumericAttribute(
-        element,
-        "data-aos-overlap",
-        0.1,
-        0,
-        1,
+    } catch (error: unknown) {
+      restoreMotionEntrance(element, entrance);
+      console.error(
+        "[GlobalScripts] Failed to start entrance animation.",
+        error,
       );
-      const delayMs = getNumericAttribute(element, "data-aos-delay", 0, 0);
-      const stopObserving = inView(
-        element,
-        () => {
-          animate(element, keyframes, {
-            duration: durationMs / 1000,
-            delay: delayMs / 1000,
-            ease: "easeOut",
+    }
+  }
+
+  function prepareMotionTarget(
+    element: HTMLElement,
+    observer: IntersectionObserver,
+  ): void {
+    if (
+      consumedMotionTargets.has(element) ||
+      preparedMotionEntrances.has(element)
+    ) {
+      return;
+    }
+    const bounds = element.getBoundingClientRect();
+    if (bounds.width <= 0 || bounds.height <= 0) return;
+    if (bounds.bottom <= 0) {
+      consumedMotionTargets.add(element);
+      return;
+    }
+    const viewportWidth =
+      document.documentElement.clientWidth || window.innerWidth;
+    const viewportHeight =
+      document.documentElement.clientHeight || window.innerHeight;
+    if (bounds.right <= 0 || bounds.left >= viewportWidth) return;
+    if (bounds.top < viewportHeight) {
+      consumedMotionTargets.add(element);
+      return;
+    }
+    const entrance: PreparedMotionEntrance = {
+      originalOpacity: element.style.opacity,
+      originalOpacityPriority: element.style.getPropertyPriority("opacity"),
+      originalTransform: element.style.transform,
+      originalTransformPriority: element.style.getPropertyPriority("transform"),
+      animation: null,
+      recoveryTimeoutId: null,
+    };
+    preparedMotionEntrances.set(element, entrance);
+    element.style.opacity = "0";
+    observer.observe(element);
+  }
+
+  function prepareMotionEntrances(): void {
+    if (
+      motionEntranceObserver ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      typeof IntersectionObserver === "undefined"
+    ) {
+      return;
+    }
+    try {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (motionEntranceObserver !== observer) return;
+          entries.forEach((entry) => {
+            if (
+              !entry.isIntersecting ||
+              !(entry.target instanceof HTMLElement)
+            ) {
+              return;
+            }
+            observer.unobserve(entry.target);
+            const entrance = preparedMotionEntrances.get(entry.target);
+            if (entrance) {
+              playMotionEntrance(entry.target, entrance);
+            }
           });
         },
-        { amount },
+        { threshold: 0 },
       );
-      motionObserverCleanups.push(stopObserving);
-    });
-  }
-
-  function isInsideSceneDeckFrame(element: Element): boolean {
-    return element.closest("[data-scene-deck-frame]") !== null;
-  }
-
-  function initializeHorizontalScroll() {
-    document.querySelectorAll("*").forEach((element) => {
-      if (
-        !(element instanceof HTMLElement) ||
-        isInsideSceneDeckFrame(element) ||
-        element.scrollWidth <= element.clientWidth
-      ) {
-        return;
-      }
-      const handleWheel = (event: WheelEvent) => {
-        if (!event.shiftKey) return;
-        event.preventDefault();
-        element.scrollBy({
-          left: event.deltaY * 3,
-          behavior: "smooth",
+      motionEntranceObserver = observer;
+      document
+        .querySelectorAll<HTMLElement>("[data-aos]")
+        .forEach((element) => {
+          prepareMotionTarget(element, observer);
         });
-      };
-      element.addEventListener("wheel", handleWheel, { passive: false });
-      horizontalScrollCleanups.push(() => {
-        element.removeEventListener("wheel", handleWheel);
-      });
-    });
+    } catch (error: unknown) {
+      disconnectMotionEntranceObserver();
+      restoreMotionEntrances();
+      console.error("[GlobalScripts] Failed to prepare entrances.", error);
+    }
+  }
+
+  function initializeMotionAnimations(): void {
+    if (motionPreferenceController) return;
+    const controller = new AbortController();
+    motionPreferenceController = controller;
+    try {
+      const motionPreference = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      );
+      motionPreference.addEventListener(
+        "change",
+        () => {
+          if (motionPreference.matches) {
+            disconnectMotionEntranceObserver();
+            restoreMotionEntrances();
+          } else {
+            prepareMotionEntrances();
+          }
+        },
+        { signal: controller.signal },
+      );
+      prepareMotionEntrances();
+    } catch (error: unknown) {
+      teardownMotionAnimations();
+      console.error("[GlobalScripts] Failed to initialize entrances.", error);
+    }
+  }
+
+  function teardownMotionAnimations(): void {
+    motionPreferenceController?.abort();
+    motionPreferenceController = null;
+    disconnectMotionEntranceObserver();
+    restoreMotionEntrances();
   }
 
   function initializeGlobalScripts() {
@@ -186,15 +367,11 @@
     behaviorInitialized = true;
     initializeDocsSidebarBreakpointWatcher();
     initializeMotionAnimations();
-    initializeHorizontalScroll();
   }
 
   function teardownGlobalBehavior() {
     teardownDocsSidebarBreakpointWatcher();
-    motionObserverCleanups.forEach((cleanup) => cleanup());
-    motionObserverCleanups.length = 0;
-    horizontalScrollCleanups.forEach((cleanup) => cleanup());
-    horizontalScrollCleanups.length = 0;
+    teardownMotionAnimations();
     behaviorInitialized = false;
   }
   if (document.readyState === "loading") {

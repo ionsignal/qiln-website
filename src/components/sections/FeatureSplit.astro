@@ -66,27 +66,20 @@ const hasVisual = Boolean(Diagram || image);
         ]}>
         <div
           class:list={[
-            "motion-text opacity-0 will-change-transform",
+            "motion-text",
             imagePosition === "left" ? "lg:order-2" : "lg:order-1",
           ]}>
           <div class="mx-auto flex max-w-xl flex-col gap-6 lg:gap-3 xl:gap-7">
             {subtitle && <Subtitle content={subtitle} />}
             {title && (
               <h2
-                class:list={[
-                  "has-subtitle-text capitalize",
-                  "lg:text-h4 xl:text-h2",
-                  imagePosition === "left" && "lg:text-right",
-                ]}
+                class="has-subtitle-text capitalize lg:text-h4 xl:text-h2"
                 set:html={markdownify(title)}
               />
             )}
             {description && (
               <p
-                class:list={[
-                  "text-text-default mx-auto max-w-4xl text-base leading-relaxed md:text-lg",
-                  imagePosition === "left" && "lg:text-right",
-                ]}
+                class="text-text-default mx-auto max-w-4xl text-base leading-relaxed md:text-lg"
                 set:html={markdownify(description)}
               />
             )}
@@ -95,14 +88,9 @@ const hasVisual = Boolean(Diagram || image);
                 class:list={[
                   "mt-2 gap-3",
                   columns === 2 ? "grid grid-cols-2" : "flex flex-col",
-                  imagePosition === "left" && "lg:text-right",
                 ]}>
                 {features.map((feature) => (
-                  <li
-                    class:list={[
-                      "flex min-w-0 items-start gap-3",
-                      imagePosition === "left" && "lg:flex-row-reverse",
-                    ]}>
+                  <li class="grid min-w-0 grid-cols-[1.25rem_minmax(0,1fr)] items-start gap-3">
                     <LucideIcon
                       icon="CheckCircle2"
                       class="text-primary mt-0.5 h-5 w-5 shrink-0"
@@ -119,7 +107,7 @@ const hasVisual = Boolean(Diagram || image);
         </div>
         <div
           class:list={[
-            "motion-image relative opacity-0 will-change-transform",
+            "motion-image relative",
             imagePosition === "left" ? "lg:order-1" : "lg:order-2",
           ]}>
           {hasVisual && (
@@ -127,7 +115,7 @@ const hasVisual = Boolean(Diagram || image);
               <div
                 aria-hidden="true"
                 class:list={[
-                  "bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-primary/20%)_0%,transparent_100%)] pointer-events-none absolute inset-0 -z-10 scale-110",
+                  "bg-[radial-gradient(50%_50%_at_50%_50%,--theme(--color-primary/20%)_0%,--theme(--color-primary/0%)_100%)] pointer-events-none absolute inset-0 -z-10 scale-110",
                   imagePosition === "right"
                     ? "translate-x-8 translate-y-10 lg:translate-x-16 lg:translate-y-16"
                     : "-translate-x-8 translate-y-10 lg:-translate-x-16 lg:translate-y-16",
@@ -162,96 +150,271 @@ const hasVisual = Boolean(Diagram || image);
 )}
 
 <script>
-  import { animate, inView } from "motion";
+  import { animate } from "motion";
 
-  const sectionCleanups = new Map<HTMLElement, () => void>();
+  interface PreparedFeatureEntrance {
+    originalOpacity: string;
+    originalOpacityPriority: string;
+    originalTransform: string;
+    originalTransformPriority: string;
+    isImage: boolean;
+    imagePosition: string | null;
+    animation: ReturnType<typeof animate> | null;
+    recoveryTimeoutId: number | null;
+  }
 
-  function initializeFeatureSplit(section: HTMLElement) {
-    if (sectionCleanups.has(section)) return;
+  const consumedFeatureTargets = new WeakSet<HTMLElement>();
+  const preparedFeatureEntrances = new Map<
+    HTMLElement,
+    PreparedFeatureEntrance
+  >();
+  const completionRecoveryBufferMs = 2000;
 
-    section.setAttribute("data-motion-initialized", "");
+  let featureEntranceObserver: IntersectionObserver | null = null;
+  let featureMotionController: AbortController | null = null;
 
-    const textElement = section.querySelector<HTMLElement>(".motion-text");
-    const imageElement = section.querySelector<HTMLElement>(".motion-image");
-    const imagePosition = section.getAttribute("data-direction");
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+  function restoreFeatureEntrance(
+    element: HTMLElement,
+    entrance: PreparedFeatureEntrance,
+  ): void {
+    if (preparedFeatureEntrances.get(element) !== entrance) return;
+    preparedFeatureEntrances.delete(element);
+    if (entrance.recoveryTimeoutId !== null) {
+      window.clearTimeout(entrance.recoveryTimeoutId);
+      entrance.recoveryTimeoutId = null;
+    }
+    const animation = entrance.animation;
+    entrance.animation = null;
+    try {
+      animation?.stop();
+    } catch (error: unknown) {
+      console.error("[FeatureSplit] Failed to stop entrance animation.", error);
+    } finally {
+      if (entrance.originalOpacity) {
+        element.style.setProperty(
+          "opacity",
+          entrance.originalOpacity,
+          entrance.originalOpacityPriority,
+        );
+      } else {
+        element.style.removeProperty("opacity");
+      }
+      if (entrance.originalTransform) {
+        element.style.setProperty(
+          "transform",
+          entrance.originalTransform,
+          entrance.originalTransformPriority,
+        );
+      } else {
+        element.style.removeProperty("transform");
+      }
+    }
+  }
 
-    if (reducedMotion) {
-      [textElement, imageElement].forEach((element) => {
-        if (!element) return;
+  function disconnectFeatureEntranceObserver(): void {
+    featureEntranceObserver?.disconnect();
+    featureEntranceObserver = null;
+  }
 
-        element.style.opacity = "1";
-        element.style.transform = "none";
-      });
+  function restoreFeatureEntrances(): void {
+    preparedFeatureEntrances.forEach((entrance, element) => {
+      restoreFeatureEntrance(element, entrance);
+    });
+  }
 
-      sectionCleanups.set(section, () => {
-        section.removeAttribute("data-motion-initialized");
-      });
+  function playFeatureEntrance(
+    element: HTMLElement,
+    entrance: PreparedFeatureEntrance,
+  ): void {
+    if (
+      preparedFeatureEntrances.get(element) !== entrance ||
+      consumedFeatureTargets.has(element)
+    ) {
       return;
     }
-
-    const stopObserving = inView(
-      section,
-      () => {
-        if (textElement) {
-          animate(
-            textElement,
-            { opacity: [0, 1], y: [30, 0] },
-            { duration: 0.8, ease: "easeOut" },
-          );
-        }
-
-        if (imageElement) {
-          const xOffset = imagePosition === "left" ? -40 : 40;
-
-          animate(
-            imageElement,
+    consumedFeatureTargets.add(element);
+    if (
+      !element.isConnected ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      restoreFeatureEntrance(element, entrance);
+      return;
+    }
+    const duration = entrance.isImage ? 0.9 : 0.8;
+    try {
+      // Recovery owns restoration even if an interrupted animation never settles.
+      entrance.recoveryTimeoutId = window.setTimeout(() => {
+        restoreFeatureEntrance(element, entrance);
+      }, duration * 1000 + completionRecoveryBufferMs);
+      const animation = entrance.isImage
+        ? animate(
+            element,
             {
               opacity: [0, 1],
               scale: [1.04, 1],
-              x: [xOffset, 0],
+              x: [entrance.imagePosition === "left" ? -40 : 40, 0],
             },
             {
               type: "spring",
               bounce: 0.3,
-              duration: 0.9,
-              delay: 0.1,
+              duration,
             },
+          )
+        : animate(
+            element,
+            { opacity: [0, 1], y: [30, 0] },
+            { duration, ease: "easeOut" },
           );
-        }
-      },
-      { amount: 0.2 },
-    );
-
-    sectionCleanups.set(section, () => {
-      stopObserving();
-      section.removeAttribute("data-motion-initialized");
-    });
+      entrance.animation = animation;
+      void Promise.resolve(animation).then(
+        () => restoreFeatureEntrance(element, entrance),
+        (error: unknown) => {
+          if (preparedFeatureEntrances.get(element) !== entrance) return;
+          restoreFeatureEntrance(element, entrance);
+          console.error("[FeatureSplit] Entrance animation failed.", error);
+        },
+      );
+    } catch (error: unknown) {
+      restoreFeatureEntrance(element, entrance);
+      console.error("[FeatureSplit] Failed to start entrance animation.", error);
+    }
   }
 
-  function initializeFeatureSplits() {
-    document
-      .querySelectorAll<HTMLElement>(".feature-split")
-      .forEach(initializeFeatureSplit);
+  function prepareFeatureTarget(
+    element: HTMLElement,
+    observer: IntersectionObserver,
+    isImage: boolean,
+    imagePosition: string | null,
+  ): void {
+    if (
+      consumedFeatureTargets.has(element) ||
+      preparedFeatureEntrances.has(element)
+    ) {
+      return;
+    }
+    const bounds = element.getBoundingClientRect();
+    if (bounds.width <= 0 || bounds.height <= 0) return;
+    if (bounds.bottom <= 0) {
+      consumedFeatureTargets.add(element);
+      return;
+    }
+    const viewportWidth =
+      document.documentElement.clientWidth || window.innerWidth;
+    const viewportHeight =
+      document.documentElement.clientHeight || window.innerHeight;
+    if (bounds.right <= 0 || bounds.left >= viewportWidth) return;
+    if (bounds.top < viewportHeight) {
+      consumedFeatureTargets.add(element);
+      return;
+    }
+    const entrance: PreparedFeatureEntrance = {
+      originalOpacity: element.style.opacity,
+      originalOpacityPriority: element.style.getPropertyPriority("opacity"),
+      originalTransform: element.style.transform,
+      originalTransformPriority: element.style.getPropertyPriority("transform"),
+      isImage,
+      imagePosition,
+      animation: null,
+      recoveryTimeoutId: null,
+    };
+    preparedFeatureEntrances.set(element, entrance);
+    element.style.opacity = "0";
+    observer.observe(element);
   }
 
-  function teardownFeatureSplits() {
-    sectionCleanups.forEach((cleanup) => cleanup());
-    sectionCleanups.clear();
+  function prepareFeatureEntrances(): void {
+    if (
+      featureEntranceObserver ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      typeof IntersectionObserver === "undefined"
+    ) {
+      return;
+    }
+    try {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (featureEntranceObserver !== observer) return;
+          entries.forEach((entry) => {
+            if (
+              !entry.isIntersecting ||
+              !(entry.target instanceof HTMLElement)
+            ) {
+              return;
+            }
+            observer.unobserve(entry.target);
+            const entrance = preparedFeatureEntrances.get(entry.target);
+            if (entrance) {
+              playFeatureEntrance(entry.target, entrance);
+            }
+          });
+        },
+        { threshold: 0 },
+      );
+      featureEntranceObserver = observer;
+      document
+        .querySelectorAll<HTMLElement>(".feature-split")
+        .forEach((section) => {
+          const imagePosition = section.getAttribute("data-direction");
+          const textElement =
+            section.querySelector<HTMLElement>(".motion-text");
+          const imageElement =
+            section.querySelector<HTMLElement>(".motion-image");
+          if (textElement) {
+            prepareFeatureTarget(textElement, observer, false, imagePosition);
+          }
+          if (imageElement) {
+            prepareFeatureTarget(imageElement, observer, true, imagePosition);
+          }
+        });
+    } catch (error: unknown) {
+      disconnectFeatureEntranceObserver();
+      restoreFeatureEntrances();
+      console.error("[FeatureSplit] Failed to prepare entrances.", error);
+    }
+  }
+
+  function initializeFeatureEntrances(): void {
+    if (featureMotionController) return;
+    const controller = new AbortController();
+    featureMotionController = controller;
+    try {
+      const motionPreference = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      );
+      motionPreference.addEventListener(
+        "change",
+        () => {
+          if (motionPreference.matches) {
+            disconnectFeatureEntranceObserver();
+            restoreFeatureEntrances();
+          } else {
+            prepareFeatureEntrances();
+          }
+        },
+        { signal: controller.signal },
+      );
+      prepareFeatureEntrances();
+    } catch (error: unknown) {
+      teardownFeatureEntrances();
+      console.error("[FeatureSplit] Failed to initialize entrances.", error);
+    }
+  }
+
+  function teardownFeatureEntrances(): void {
+    featureMotionController?.abort();
+    featureMotionController = null;
+    disconnectFeatureEntranceObserver();
+    restoreFeatureEntrances();
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initializeFeatureSplits, {
+    document.addEventListener("DOMContentLoaded", initializeFeatureEntrances, {
       once: true,
     });
   } else {
-    initializeFeatureSplits();
+    initializeFeatureEntrances();
   }
 
-  document.addEventListener("astro:page-load", initializeFeatureSplits);
-  document.addEventListener("astro:before-swap", teardownFeatureSplits);
-  window.addEventListener("pagehide", teardownFeatureSplits);
-  window.addEventListener("pageshow", initializeFeatureSplits);
+  window.addEventListener("pagehide", teardownFeatureEntrances);
+  window.addEventListener("pageshow", initializeFeatureEntrances);
 </script>
