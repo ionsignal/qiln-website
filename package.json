@@ -14,10 +14,6 @@
   "bugs": {
     "url": "https://github.com/ionsignal/qiln-website/issues"
   },
-  "overrides": {
-    "fast-uri": "3.1.8",
-    "undici": "8.10.2"
-  },
   "scripts": {
     "dev": "npm run toml:watch & astro dev",
     "predev": "npm run toml:build",
@@ -43,6 +39,11 @@
     "esbuild": false,
     "core-js": false
   },
+  "overrides": {
+    "fast-uri": "3.1.8",
+    "undici": "8.10.2",
+    "devalue": "5.9.3"
+  },
   "dependencies": {
     "@astrojs/rss": "4.0.19",
     "@floating-ui/dom": "1.8.0",
@@ -57,10 +58,10 @@
     "gpu-curtains": "0.16.3",
     "marked": "18.0.14",
     "mdast-util-to-string": "4.0.0",
-    "motion": "13.4.6",
+    "motion": "13.5.0",
     "plyr": "3.8.4",
     "reading-time": "1.5.0",
-    "sanitize-html": "2.17.7"
+    "sanitize-html": "2.18.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
