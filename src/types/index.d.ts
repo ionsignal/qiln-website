@@ -1,16 +1,3 @@
-import type { ImageMetadata } from "astro";
-
-export type MarqueeConfig = {
-  pauseOnHover: boolean;
-  reverse?: "reverse" | "";
-  duration: string;
-};
-
-export type MarqueeListItem = {
-  src: string | ImageMetadata;
-  alt: string;
-};
-
 export type VideoConfig = {
   src: string;
   type?: string;
@@ -36,11 +23,6 @@ export type SocialLink = {
   label: string;
   icon: string;
   url: string;
-};
-
-export type Social = {
-  enable: boolean;
-  list: SocialLink[];
 };
 
 export type GlobalValues =

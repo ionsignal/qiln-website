@@ -120,33 +120,18 @@ export const collections = {
               .optional(),
           })
           .optional(),
-        // Marquee configuration (from customers)
-        marquee: z
-          .object({
-            pauseOnHover: z.boolean().optional(),
-            reverse: z.string().optional(),
-            duration: z.string().optional(),
-          })
-          .optional(),
         showCategories: z.boolean().optional(),
-        // Discriminated Union for the overloaded 'list' property
+        // Section-specific text lists
         list: z
           .union([
-            // A. Customers List (Images)
-            z.array(
-              z.object({
-                src: z.union([image(), z.string()]),
-                alt: z.string().optional(),
-              }),
-            ),
-            // B. Features List (Text)
+            // A. Features List (Text)
             z.array(
               z.object({
                 title: z.string(),
                 description: z.string().optional(),
               }),
             ),
-            // C. FAQ Categories List
+            // B. FAQ Categories List
             z.array(
               z.object({
                 label: z.string(),
@@ -160,51 +145,6 @@ export const collections = {
               }),
             ),
           ])
-          .optional(),
-        yaml: z.string().optional(),
-        callouts: z
-          .array(
-            z.object({
-              title: z.string(),
-              description: z.string(),
-              icon: z.string().optional(),
-              lines: z.array(z.number()),
-            }),
-          )
-          .optional(),
-        infoBox: z
-          .object({
-            description: z.string(),
-          })
-          .optional(),
-        // Comparison Section Matrix
-        tabs: z
-          .array(
-            z.object({
-              id: z.string(),
-              label: z.string(),
-              tagline: z.string().optional(),
-              mobileCompetitor: z.string(),
-              competitors: z.array(
-                z.object({
-                  id: z.string(),
-                  name: z.string(),
-                  highlight: z.boolean().optional(),
-                  badge: z.string().optional(),
-                  mobileHide: z.boolean().optional(),
-                }),
-              ),
-              rows: z.array(
-                z.object({
-                  label: z.string(),
-                  isPrice: z.boolean().optional(),
-                  isBestFor: z.boolean().optional(),
-                  cells: z.record(z.string(), z.string()),
-                }),
-              ),
-              footnotes: z.array(z.string()).optional(),
-            }),
-          )
           .optional(),
       }),
   }),
