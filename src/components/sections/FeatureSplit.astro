@@ -73,13 +73,19 @@ const hasVisual = Boolean(Diagram || image);
             {subtitle && <Subtitle content={subtitle} />}
             {title && (
               <h2
-                class:list={["has-subtitle-text text-left capitalize lg:text-h4 xl:text-h2", { "lg:text-right": imagePosition === "left" }]}
+                class:list={[
+                  "has-subtitle-text text-left capitalize lg:text-h4 xl:text-h2",
+                  { "lg:text-right": imagePosition === "left" },
+                ]}
                 set:html={markdownify(title)}
               />
             )}
             {description && (
               <p
-                class:list={["text-text-default mx-auto max-w-4xl text-left text-base leading-relaxed md:text-lg", { "lg:text-right": imagePosition === "left" }]}
+                class:list={[
+                  "text-text-default mx-auto max-w-4xl text-left text-base leading-relaxed md:text-lg",
+                  { "lg:text-right": imagePosition === "left" },
+                ]}
                 set:html={markdownify(description)}
               />
             )}
@@ -90,13 +96,20 @@ const hasVisual = Boolean(Diagram || image);
                   columns === 2 ? "grid grid-cols-2" : "flex flex-col",
                 ]}>
                 {features.map((feature) => (
-                  <li class:list={["flex min-w-0 items-start gap-3", { "lg:justify-end": imagePosition === "left" }]}>
+                  <li
+                    class:list={[
+                      "flex min-w-0 items-start gap-3",
+                      { "lg:justify-end": imagePosition === "left" },
+                    ]}>
                     <LucideIcon
                       icon="CheckCircle2"
                       class="text-primary mt-0.5 h-5 w-5 shrink-0"
                     />
                     <span
-                      class:list={["min-w-0 text-left text-sm text-white/70", { "lg:text-right": imagePosition === "left" }]}
+                      class:list={[
+                        "min-w-0 text-left text-sm text-white/70",
+                        { "lg:text-right": imagePosition === "left" },
+                      ]}
                       set:html={markdownify(feature)}
                     />
                   </li>
@@ -243,9 +256,12 @@ const hasVisual = Boolean(Diagram || image);
     const duration = entrance.isImage ? 0.9 : 0.8;
     try {
       // Recovery owns restoration even if an interrupted animation never settles.
-      entrance.recoveryTimeoutId = window.setTimeout(() => {
-        restoreFeatureEntrance(element, entrance);
-      }, duration * 1000 + completionRecoveryBufferMs);
+      entrance.recoveryTimeoutId = window.setTimeout(
+        () => {
+          restoreFeatureEntrance(element, entrance);
+        },
+        duration * 1000 + completionRecoveryBufferMs,
+      );
       const animation = entrance.isImage
         ? animate(
             element,
@@ -276,7 +292,10 @@ const hasVisual = Boolean(Diagram || image);
       );
     } catch (error: unknown) {
       restoreFeatureEntrance(element, entrance);
-      console.error("[FeatureSplit] Failed to start entrance animation.", error);
+      console.error(
+        "[FeatureSplit] Failed to start entrance animation.",
+        error,
+      );
     }
   }
 
