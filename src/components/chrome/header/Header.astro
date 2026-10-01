@@ -1,5 +1,6 @@
 ---
-import config from ".astro/config.generated.json";
+import config from "@config";
+import { main } from "@/config/navigation";
 import Logo from "@/components/chrome/Logo.astro";
 import NavigationButton from "@/components/chrome/header/NavigationButton.astro";
 import NavMenuItem from "@/components/chrome/header/MenuItem.astro";
@@ -9,7 +10,7 @@ import { useTranslations, sortByWeight, filteredEnabled } from "@/utils/core";
 import { headerSocials } from "@/utils/socials";
 
 const t = useTranslations();
-const navigationItems = sortByWeight(filteredEnabled(t("main")));
+const navigationItems = sortByWeight(filteredEnabled(main));
 const {
   site: { logoHoverAnimation },
   settings: { stickyHeader, headerDemoButton },

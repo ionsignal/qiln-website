@@ -1,5 +1,11 @@
 ---
-import config from ".astro/config.generated.json";
+import config from "@config";
+import {
+  footerMenu,
+  footerMenuQuickLink,
+  footerMenuResources,
+  footerMenuLegal,
+} from "@/config/navigation";
 import { markdownify } from "@/utils/text";
 import {
   filteredEnabled,
@@ -16,10 +22,10 @@ const copyrightParts = splitProtectedText(copyrightText);
 const quickLinksHeading = t("footer.quickLinks");
 const resourcesHeading = t("footer.resources");
 const legalHeading = t("footer.legal");
-const quickLinks = filteredEnabled(t("footerMenuQuickLink"));
-const resourceLinks = filteredEnabled(t("footerMenuResources"));
-const legalLinks = filteredEnabled(t("footerMenuLegal"));
-const footerLinks = filteredEnabled(t("footerMenu"));
+const quickLinks = filteredEnabled(footerMenuQuickLink);
+const resourceLinks = filteredEnabled(footerMenuResources);
+const legalLinks = filteredEnabled(footerMenuLegal);
+const footerLinks = filteredEnabled(footerMenu);
 ---
 
 <footer

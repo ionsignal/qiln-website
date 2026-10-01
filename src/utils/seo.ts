@@ -1,4 +1,4 @@
-import config from ".astro/config.generated.json";
+import config from "@config";
 import { formatUrl } from "@/utils/core";
 import { plainify, removeWhitespace } from "@/utils/text";
 import type {

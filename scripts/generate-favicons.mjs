@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import sharp from "sharp";
-import config from "../.astro/config.generated.json" with { type: "json" };
+import config from "../site-config.json" with { type: "json" };
 
 // Constants
 const FAVICON_DIR = "./public/images/favicons/";

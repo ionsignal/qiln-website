@@ -1,5 +1,5 @@
-import { ui, defaultLang } from "@/i18n/ui";
-import config from ".astro/config.generated.json";
+import config from "@config";
+import { ui, fallbackLang } from "@/i18n/ui";
 
 const useTrailingSlash: boolean = Boolean(config.site.trailingSlash);
 
@@ -44,12 +44,23 @@ function mergeRecords(
   return result;
 }
 
+function isUiLanguage(language: string): language is keyof typeof ui {
+  return Object.prototype.hasOwnProperty.call(ui, language);
+}
+
+function getDefaultUiLanguage(): keyof typeof ui {
+  const language = config.settings.multilingual.defaultLanguage;
+  return isUiLanguage(language) ? language : fallbackLang;
+}
+
 /**
  * Provides O(1) synchronous dictionary lookups for the UI.
  */
-export const useTranslations = (lang: keyof typeof ui = defaultLang) => {
-  return function t<K extends keyof (typeof ui)[typeof defaultLang]>(key: K) {
-    return ui[lang][key] || ui[defaultLang][key];
+export const useTranslations = (
+  lang: keyof typeof ui = getDefaultUiLanguage(),
+) => {
+  return function t<K extends keyof (typeof ui)[typeof fallbackLang]>(key: K) {
+    return ui[lang][key] || ui[fallbackLang][key];
   };
 };
 

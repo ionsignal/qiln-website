@@ -2,7 +2,7 @@ import sitemap from "@astrojs/sitemap";
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
 import rehypeExternalLinks from "rehype-external-links";
-import config from "./.astro/config.generated.json" with { type: "json" };
+import config from "./site-config.json" with { type: "json" };
 import remarkParseContent from "./src/utils/remark/ast.ts";
 import { defineConfig } from "astro/config";
 import {

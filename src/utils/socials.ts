@@ -1,4 +1,4 @@
-import config from ".astro/config.generated.json";
+import config from "@config";
 import type { SocialLink } from "@/types";
 
 const HEADER_PLATFORMS = ["github", "discord", "twitter"] as const;

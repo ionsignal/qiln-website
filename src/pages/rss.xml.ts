@@ -1,6 +1,6 @@
 import rss from "@astrojs/rss";
 import sanitizeHtml from "sanitize-html";
-import config from ".astro/config.generated.json";
+import config from "@config";
 import { getPublishedBlogPosts } from "@/utils/content";
 import { markdownify } from "@/utils/text";
 import type { APIRoute } from "astro";

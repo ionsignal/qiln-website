@@ -10,10 +10,10 @@
     "incremental": true,
     "types": ["node"],
     "paths": {
-      ".astro/*": ["./.astro/*"],
       "@/*": ["./src/*"],
       "@/components/*": ["./src/components/*"],
-      "@/shortcodes/*": ["./src/shortcodes/*"]
+      "@/shortcodes/*": ["./src/shortcodes/*"],
+      "@config": ["./site-config.json"]
     }
   },
   "include": [".astro/types.d.ts", "**/*"],

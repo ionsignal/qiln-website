@@ -29,6 +29,10 @@ pnpm-lock.yaml
 .netlify
 .vercel
 
+# Project
+/site-config.json
+/site-config.json.tmp
+
 # Other
 PROMPT.md
 CODE.md
