@@ -73,7 +73,6 @@ export interface ResolvedSeoMetadata {
 
 export interface LayoutProps extends SeoProps {
   class?: string;
-  homepage?: boolean;
   fitToScreen?: boolean;
   draft?: boolean;
   excludeFromSitemap?: boolean;

@@ -4,27 +4,20 @@ import "@/styles/globals.css";
 import Head from "@/components/global/Head.astro";
 import BreakpointIndicator from "@/components/dev/BreakpointIndicator.astro";
 import GlobalScripts from "@/components/global/GlobalScripts.astro";
-import PageLoader from "@/components/global/PageLoader.astro";
 import config from ".astro/config.generated.json";
 import type { LayoutProps } from "@/types/seo";
 
 type Props = LayoutProps & {
   includeGlobalScripts?: boolean;
-  includePageLoader?: boolean;
 };
 
-const {
-  class: className,
-  includeGlobalScripts = true,
-  includePageLoader = true,
-} = Astro.props;
+const { class: className, includeGlobalScripts = true } = Astro.props;
 ---
 
 <!doctype html>
 <html lang={config.settings.multilingual.defaultLanguage || "en"}>
   <Head {...Astro.props} />
   <body>
-    {includePageLoader && !Astro.props.homepage && <PageLoader />}
     <main class:list={[className]}>
       <slot />
     </main>

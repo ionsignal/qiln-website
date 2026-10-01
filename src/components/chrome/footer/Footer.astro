@@ -6,7 +6,6 @@ import {
   splitProtectedText,
   useTranslations,
 } from "@/utils/core";
-import SocialComponent from "@/components/social/Social.astro";
 import Logo from "@/components/chrome/Logo.astro";
 import FooterLink from "@/components/chrome/footer/FooterLink.astro";
 
@@ -34,13 +33,6 @@ const footerLinks = filteredEnabled(t("footerMenu"));
           {footerDescription && (
             <p class="opacity-90" set:html={markdownify(footerDescription)} />
           )}
-          <SocialComponent
-            layout="classic"
-            linkType="follow"
-            class="mt-5 gap-1"
-            size="sm"
-            list={(config.social?.main || []).filter((social) => social.enable)}
-          />
         </div>
         <div class="col-span-2 mt-10 grid gap-y-10 md:grid-cols-3 xl:mt-0 xl:ml-5">
           <div class="md:border-l md:px-8 lg:px-8 xl:px-14">

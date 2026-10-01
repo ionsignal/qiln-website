@@ -16,19 +16,6 @@ type Props = {
   content?: SectionData;
 };
 
-type TickerTitle =
-  | {
-      isTicker: true;
-      prefix: string;
-      options: string[];
-      suffix: string;
-      longestOption: string;
-      fallbackTitle: string;
-    }
-  | {
-      isTicker: false;
-    };
-
 const t = useTranslations();
 const tryNowLabel = t("navigation.buttonLabel");
 const defaultContent = (await fetchEntry("sections", "hero"))?.data;
@@ -38,35 +25,6 @@ const actualContent = overrideObjects<SectionData>(
 );
 
 const { title, subtitle, badge, description, buttons } = actualContent;
-
-function parseTickerTitle(rawTitle: string | undefined): TickerTitle {
-  if (!rawTitle) return { isTicker: false };
-  const match = rawTitle.match(/^(.*?)\[(.*?)\](.*)$/);
-  if (!match) return { isTicker: false };
-  const prefix = match[1].trim();
-  const options = match[2]
-    .split("|")
-    .map((option) => option.trim())
-    .filter(Boolean);
-  const suffix = match[3].trim();
-  if (options.length < 2) return { isTicker: false };
-  const longestOption = options.reduce(
-    (currentLongest, option) =>
-      currentLongest.length > option.length ? currentLongest : option,
-    "",
-  );
-  const fallbackTitle = `${prefix} ${options[0]} ${suffix}`.trim();
-  return {
-    isTicker: true,
-    prefix,
-    options,
-    suffix,
-    longestOption,
-    fallbackTitle,
-  };
-}
-
-const tickerTitle = parseTickerTitle(title);
 ---
 
 <section id="home" class="scroll-mt-24 lg:scroll-mt-32">
@@ -85,44 +43,11 @@ const tickerTitle = parseTickerTitle(title);
           <div class="relative inline-block w-full">
             {(title || subtitle) && (
               <h1 class="has-subtitle-text font-secondary flex flex-col gap-y-2 text-left text-3xl/tight text-white max-[425px]:text-2xl/tight md:gap-y-4 md:text-5xl/tight lg:text-6xl/tight">
-                {tickerTitle.isTicker ? (
-                  <>
-                    <span
-                      class="sr-only"
-                      set:html={markdownify(tickerTitle.fallbackTitle)}
-                    />
-                    <qiln-ticker aria-hidden="true" class="inline text-left">
-                      {tickerTitle.prefix && (
-                        <span set:html={markdownify(tickerTitle.prefix)} />
-                      )}
-                      <span class="text-primary relative isolate z-0 -mx-3 inline-flex items-baseline gap-0 px-0 py-0 align-baseline whitespace-nowrap">
-                        <span class="ticker-container relative z-10 inline-grid items-baseline justify-items-start overflow-hidden text-left">
-                          <span class="invisible col-start-1 row-start-1">
-                            {tickerTitle.longestOption}
-                          </span>
-                          {tickerTitle.options.map((option, index) => (
-                            <span
-                              class:list={[
-                                "ticker-item col-start-1 row-start-1 will-change-[transform,filter,opacity]",
-                                index === 0 ? "opacity-100" : "opacity-0",
-                              ]}>
-                              {option}
-                            </span>
-                          ))}
-                        </span>
-                      </span>
-                      {tickerTitle.suffix && (
-                        <span set:html={markdownify(tickerTitle.suffix)} />
-                      )}
-                    </qiln-ticker>
-                  </>
-                ) : (
-                  title && (
-                    <span
-                      class="text-primary text-4xl font-bold md:text-5xl lg:text-6xl"
-                      set:html={markdownify(title)}
-                    />
-                  )
+                {title && (
+                  <span
+                    class="text-primary text-4xl font-bold md:text-5xl lg:text-6xl"
+                    set:html={markdownify(title)}
+                  />
                 )}
                 {subtitle && (
                   <span
@@ -151,8 +76,13 @@ const tickerTitle = parseTickerTitle(title);
           <button
             type="button"
             disabled
-            class="btn btn-md btn-solid-primary flex h-14 w-full max-w-full items-center justify-center font-bold sm:max-w-72">
+            class="btn btn-md btn-solid-primary flex h-14 w-full max-w-full items-center justify-center gap-3 font-bold sm:max-w-72">
             {tryNowLabel}
+            <LucideIcon
+              icon="Play"
+              class="h-5 w-5 shrink-0"
+              aria-hidden="true"
+            />
           </button>
           {buttons?.map((button) => (
             <ActionButton
@@ -166,7 +96,7 @@ const tickerTitle = parseTickerTitle(title);
               <span class="rounded-ful flex h-6 w-12 items-center justify-center">
                 <LucideIcon
                   icon={button.icon || "BookOpen"}
-                  class="h-5 w-5 transition-all duration-300 group-hover:rotate-180"
+                  class="h-5 w-5"
                   aria-hidden="true"
                 />
               </span>
@@ -182,151 +112,6 @@ const tickerTitle = parseTickerTitle(title);
     </div>
   </div>
 </section>
-
-<script>
-  import { animate } from "motion";
-
-  class QilnTicker extends HTMLElement {
-    private intervalId: ReturnType<typeof setInterval> | null = null;
-    private visibilityObserver: IntersectionObserver | null = null;
-    private activeIndex = 0;
-    private items: HTMLElement[] = [];
-    private isVisible = false;
-    private prefersReducedMotion = false;
-
-    connectedCallback() {
-      this.teardown();
-
-      this.items = Array.from(
-        this.querySelectorAll<HTMLElement>(".ticker-item"),
-      );
-      this.activeIndex = 0;
-      this.resetItems();
-
-      if (this.items.length < 2) return;
-
-      this.prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-
-      if (this.prefersReducedMotion) return;
-
-      document.addEventListener(
-        "visibilitychange",
-        this.handleDocumentVisibilityChange,
-      );
-      if (typeof IntersectionObserver === "undefined") {
-        this.isVisible = true;
-        this.scheduleRotation();
-        return;
-      }
-      this.visibilityObserver = new IntersectionObserver(
-        this.handleIntersection,
-        { threshold: 0 },
-      );
-      this.visibilityObserver.observe(this);
-    }
-
-    disconnectedCallback() {
-      this.teardown();
-      this.resetItems();
-      this.items = [];
-    }
-
-    private handleDocumentVisibilityChange = () => {
-      if (document.visibilityState === "visible" && this.isVisible) {
-        this.scheduleRotation();
-      } else {
-        this.stopRotation();
-      }
-    };
-
-    private handleIntersection = (entries: IntersectionObserverEntry[]) => {
-      this.isVisible = entries[0]?.isIntersecting ?? false;
-
-      if (this.isVisible && document.visibilityState === "visible") {
-        this.scheduleRotation();
-      } else {
-        this.stopRotation();
-      }
-    };
-
-    private scheduleRotation() {
-      if (
-        this.prefersReducedMotion ||
-        this.intervalId !== null ||
-        this.items.length < 2
-      ) {
-        return;
-      }
-      this.intervalId = setInterval(() => {
-        this.rotateItems();
-      }, 3000);
-    }
-
-    private stopRotation() {
-      if (this.intervalId === null) return;
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
-
-    private rotateItems() {
-      const outgoingItem = this.items[this.activeIndex];
-      const nextIndex = (this.activeIndex + 1) % this.items.length;
-      const incomingItem = this.items[nextIndex];
-
-      if (!outgoingItem || !incomingItem) return;
-
-      this.activeIndex = nextIndex;
-
-      animate(
-        outgoingItem,
-        {
-          y: ["0%", "-100%"],
-          opacity: [1, 0],
-          filter: ["blur(0px)", "blur(4px)"],
-        },
-        { type: "spring", stiffness: 400, damping: 30 },
-      );
-
-      animate(
-        incomingItem,
-        {
-          y: ["100%", "0%"],
-          opacity: [0, 1],
-          filter: ["blur(4px)", "blur(0px)"],
-        },
-        { type: "spring", stiffness: 400, damping: 30 },
-      );
-    }
-
-    private resetItems() {
-      this.items.forEach((item) => {
-        item.getAnimations().forEach((animation) => animation.cancel());
-        item.style.removeProperty("transform");
-        item.style.removeProperty("filter");
-        item.style.removeProperty("opacity");
-      });
-    }
-
-    private teardown() {
-      this.stopRotation();
-      this.visibilityObserver?.disconnect();
-      this.visibilityObserver = null;
-      document.removeEventListener(
-        "visibilitychange",
-        this.handleDocumentVisibilityChange,
-      );
-      this.isVisible = false;
-      this.prefersReducedMotion = false;
-      this.activeIndex = 0;
-    }
-  }
-
-  if (!customElements.get("qiln-ticker")) {
-    customElements.define("qiln-ticker", QilnTicker);
-  }
-</script>
 
 <style>
   .hero-product-frame {

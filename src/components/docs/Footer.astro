@@ -1,5 +1,4 @@
 ---
-import Logo from "@/components/chrome/Logo.astro";
 import config from ".astro/config.generated.json";
 import { markdownify } from "@/utils/text";
 import { splitProtectedText, useTranslations } from "@/utils/core";
@@ -29,7 +28,6 @@ const copyrightLine = copyrightEnabled
   aria-label="Site footer"
   class:list={["docs-footer", className]}>
   <div class="docs-footer-inner">
-    <Logo loading="lazy" />
     {copyrightLine && (
       <p
         class="docs-footer-copyright md:text-end"
